@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowRight, Github, Linkedin, Twitter } from 'lucide-react'
-import { getAllBlogPosts } from '@/lib/contentful'
+import { getAllPosts } from '@/lib/posts'
 import { BlogCard } from '@/components/blog-card'
 import { SectionHeading } from '@/components/section-heading'
 import { locales, type Locale } from '@/i18n'
-import type { BlogPost } from '@/types'
+import { toWritingPost, type WritingPost } from '@/lib/writing'
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -27,13 +27,7 @@ export default async function HomePage({
   const t = await getTranslations('home')
   const tSocial = await getTranslations('social')
 
-  let recentPosts: BlogPost[] = []
-  try {
-    const posts = await getAllBlogPosts()
-    recentPosts = posts.slice(0, 3)
-  } catch {
-    // Contentful is not configured yet — fall back to the section links below.
-  }
+  const recentPosts: WritingPost[] = getAllPosts().slice(0, 3).map(toWritingPost)
 
   const sections = [
     { href: `/${locale}/blog`, key: 'writing' },
@@ -98,7 +92,7 @@ export default async function HomePage({
 
           <div className="space-y-4">
             {recentPosts.map((post) => (
-              <BlogCard key={post.sys.id} post={post} locale={locale} />
+              <BlogCard key={post.slug} post={post} locale={locale} />
             ))}
           </div>
         </section>

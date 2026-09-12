@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { getBookmarkCollections } from '@/lib/contentful'
+import { getBookmarkCollections } from '@/content/bookmarks'
 import { BookmarkCard } from '@/components/bookmark-card'
 import { EmptyState } from '@/components/empty-state'
 import { PageHeader } from '@/components/page-header'
@@ -29,12 +29,7 @@ export default async function BookmarksPage({
   setRequestLocale(locale)
   const t = await getTranslations('bookmarks')
 
-  let collections: Record<string, Bookmark[]> = {}
-  try {
-    collections = await getBookmarkCollections()
-  } catch {
-    // Contentful is not configured yet.
-  }
+  const collections: Record<string, Bookmark[]> = getBookmarkCollections()
 
   const collectionNames = Object.keys(collections).sort()
 
@@ -56,7 +51,7 @@ export default async function BookmarksPage({
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {collections[collection].map((bookmark) => (
-                  <BookmarkCard key={bookmark.sys.id} bookmark={bookmark} />
+                  <BookmarkCard key={bookmark.url} bookmark={bookmark} />
                 ))}
               </div>
             </section>

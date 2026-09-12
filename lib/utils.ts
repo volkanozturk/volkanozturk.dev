@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { format, parseISO, type Locale as DateFnsLocale } from 'date-fns'
 import { enGB, nl, tr } from 'date-fns/locale'
-import type { Document } from '@contentful/rich-text-types'
 import type { Locale } from '@/i18n'
 
 export function cn(...inputs: ClassValue[]) {
@@ -44,17 +43,18 @@ export function formatDateRange(
 
 const WORDS_PER_MINUTE = 200
 
-/** Flattens the text of a Contentful rich text document. */
-function extractText(node: any): string {
-  if (!node) return ''
-  if (typeof node.value === 'string') return node.value
-  if (Array.isArray(node.content)) return node.content.map(extractText).join(' ')
-  return ''
+/** Strips the Markdown syntax that would otherwise inflate the word count. */
+function plainText(markdown: string): string {
+  return markdown
+    .replace(/```[\s\S]*?```/g, ' ') // fenced code
+    .replace(/\[figure:[a-z0-9-]+\]/gi, ' ') // figure markers
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // links -> label
+    .replace(/[#>*_`~-]/g, ' ')
 }
 
 /** Rough reading time in whole minutes; always at least 1. */
-export function readingTime(content?: Document, fallback?: string): number {
-  const text = content ? extractText(content) : (fallback ?? '')
+export function readingTime(body?: string, fallback?: string): number {
+  const text = plainText(body || fallback || '')
   const words = text.trim().split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.round(words / WORDS_PER_MINUTE))
 }

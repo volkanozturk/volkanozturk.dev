@@ -43,7 +43,7 @@ export function WritingList({ posts, locale }: WritingListProps) {
               </h2>
               <div className="divide-y divide-border/60 border-t border-border/60">
                 {group.posts.map((post) => (
-                  <PostListItem key={post.id} post={post} locale={locale} />
+                  <PostListItem key={post.slug} post={post} locale={locale} />
                 ))}
               </div>
             </section>

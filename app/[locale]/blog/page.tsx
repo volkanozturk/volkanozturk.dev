@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { getAllBlogPosts } from '@/lib/contentful'
+import { getAllPosts } from '@/lib/posts'
 import { PageHeader } from '@/components/page-header'
 import { WritingList } from '@/components/writing-list'
 import { toWritingPost, type WritingPost } from '@/lib/writing'
@@ -31,14 +31,9 @@ export default async function BlogPage({
   setRequestLocale(locale)
   const t = await getTranslations('blog')
 
-  let posts: WritingPost[] = []
-  try {
-    // Reading time needs the rich-text document, so posts are reduced to a lean
-    // serializable shape here rather than in the client component.
-    posts = (await getAllBlogPosts()).map(toWritingPost)
-  } catch {
-    // Contentful is not configured yet.
-  }
+  // Reduced to a lean serializable shape here so the Markdown body and the
+  // reading-time calculation stay on the server.
+  const posts: WritingPost[] = getAllPosts().map(toWritingPost)
 
   return (
     <div className="space-y-12">
@@ -47,7 +42,7 @@ export default async function BlogPage({
       {/*
         With no posts there is nothing to filter and no year to head, so the
         category controls and the grouped list are not rendered at all — just a
-        quiet line. Both reappear on their own once Contentful returns entries.
+        quiet line. Both reappear on their own once a published post exists.
       */}
       {posts.length > 0 ? (
         <WritingList posts={posts} locale={locale} />

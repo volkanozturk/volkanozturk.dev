@@ -8,15 +8,15 @@ Personal site — blog, career journey and bookmarks — in three languages.
 
 A personal portfolio site with three content sections: **Writing** (blog posts),
 **Journey** (work history and education) and **Bookmarks** (saved links). Content
-comes from Contentful; the site is statically exported and served from Cloudflare
-Pages.
+lives in this repository as Markdown and typed data; the site is statically
+exported and served from Cloudflare Pages.
 
 | | |
 |---|---|
 | Framework | Next.js 14 (App Router, `output: 'export'`) |
 | Styling | Tailwind CSS |
 | i18n | next-intl — English (default), Turkish, Dutch |
-| CMS | Contentful |
+| Content | Markdown files in `content/` |
 | Hosting | Cloudflare Pages (free plan) |
 
 Every page is pre-rendered at build time, so the site works without JavaScript.
@@ -25,7 +25,6 @@ Every page is pre-rendered at build time, so the site works without JavaScript.
 
 - Node.js 18 or newer
 - npm
-- A Contentful account (free tier is enough)
 - A Cloudflare account (free plan is enough)
 
 ## Local Development
@@ -34,19 +33,6 @@ Every page is pre-rendered at build time, so the site works without JavaScript.
 git clone https://github.com/volkanozturk/volkanozturk.dev.git
 cd volkanozturk.dev
 npm install
-cp .env.example .env.local
-```
-
-Fill in your Contentful keys in `.env.local`:
-
-```
-CONTENTFUL_SPACE_ID=your_space_id
-CONTENTFUL_ACCESS_TOKEN=your_delivery_token
-```
-
-Then start the dev server:
-
-```bash
 npm run dev
 ```
 
@@ -55,8 +41,7 @@ Open http://localhost:3000/en — in development `/` returns 404, because
 only served as a directory index by the static host. On the deployed site `/`
 works normally.
 
-Without Contentful keys the site still builds and runs — each section renders its
-empty state instead of content.
+No credentials are required: all content lives in this repository.
 
 | Command | Purpose |
 |---|---|
@@ -64,48 +49,68 @@ empty state instead of content.
 | `npm run build` | Static export into `out/` |
 | `npm run lint` | ESLint |
 
-## Contentful Setup
+## Content
 
-1. Create a space at [contentful.com](https://contentful.com) (Free plan).
-2. Go to **Settings → API keys → Add API key** and copy the **Space ID** and the
-   **Content Delivery API access token**.
-3. Under **Content model**, create the three content types below. The **Field ID**
-   column must match exactly — the code reads those IDs.
+All content lives in the repository. There is no CMS and no network call at build time.
 
-### `blogPost`
+| Path | Holds |
+|---|---|
+| `content/posts/<slug>.md` | Blog articles — YAML frontmatter + Markdown body |
+| `content/bookmarks.ts` | Bookmarks, grouped by `collection` |
+| `messages/*.json` → `journey.timeline` | Journey entries (translated per locale) |
+| `lib/posts.ts` | Loading and validation for posts |
 
-| Field name | Field ID | Type |
-|---|---|---|
-| Title | `title` | Short text |
-| Slug | `slug` | Short text (unique) |
-| Excerpt | `excerpt` | Short text |
-| Content | `content` | Rich text |
-| Published date | `publishedDate` | Date & time |
-| Tags | `tags` | Short text, list (optional) |
-| Cover image | `coverImage` | Media (optional) |
+### Post frontmatter
 
-### `journeyEntry`
+```yaml
+---
+title: "Kafka Consumer Lag: When Should You Worry?"
+slug: kafka-consumer-lag-when-should-you-worry
+category: engineering          # engineering | notes | life
+excerpt: "One sentence shown in the listing and used as the meta description."
+publishedDate: 2026-09-12T20:27:00.000Z
+tags:
+  - Kafka
+  - Consumers
+draft: false
+---
+```
 
-| Field name | Field ID | Type |
-|---|---|---|
-| Company / school | `company` | Short text |
-| Role / degree | `role` | Short text |
-| Start date | `startDate` | Date & time |
-| End date | `endDate` | Date & time (optional — empty means "Present") |
-| Description | `description` | Long text |
-| Type | `type` | Short text — accepts `work` or `education` |
-| Location | `location` | Short text (optional) |
-| URL | `url` | Short text (optional — renders the company as a link) |
+The filename must match the `slug`, which is what keeps slugs unique and stable.
+A published post must have `title`, `slug`, `category`, `excerpt` and a valid
+`publishedDate`; anything missing or an unknown category **fails the build** with
+a message naming the file. Drafts (`draft: true`) may be incomplete and are
+excluded from every public page.
 
-### `bookmark`
+### Adding, previewing and publishing a post
 
-| Field name | Field ID | Type |
-|---|---|---|
-| Title | `title` | Short text |
-| URL | `url` | Short text |
-| Description | `description` | Short text (optional) |
-| Collection | `collection` | Short text — groups bookmarks into sections |
-| Tags | `tags` | Short text, list (optional) |
+1. **Add** — create `content/posts/<slug>.md` with the frontmatter above and
+   `draft: true`.
+2. **Preview** — `INCLUDE_DRAFTS=1 npm run dev`, then open
+   http://localhost:3000/en/blog/<slug>.
+3. **Publish** — set `draft: false`, set `publishedDate`, commit, then build and
+   deploy as below.
+
+`INCLUDE_DRAFTS=1` works **only under `npm run dev`**. `npm run build` always
+excludes drafts — if the flag is set it is ignored and the build logs a warning,
+so a stray environment variable in CI or a shell profile cannot publish a draft.
+Drafts are filtered in one place (`getAllPosts` in `lib/posts.ts`), which every
+route, listing and metadata lookup goes through.
+
+### Markdown supported
+
+Headings, ordered and unordered lists, links, emphasis, inline code, fenced code
+blocks, blockquotes and horizontal rules. Raw HTML in a post is ignored rather
+than rendered.
+
+A paragraph containing only a figure marker is replaced by a diagram component:
+
+```
+[figure:kafka-lag]
+```
+
+Figures are registered in `components/post-figures.tsx`. They are real inline
+SVG, so they follow the theme and their labels are translated.
 
 ## Cloudflare Pages Deployment
 
@@ -123,12 +128,7 @@ and deploys on every push. No GitHub Actions workflow is involved.
    | Build command | `npm run build` |
    | Build output directory | `out` |
 
-4. Add environment variables (Production **and** Preview):
-
-   | Name | Value |
-   |---|---|
-   | `CONTENTFUL_SPACE_ID` | Your space ID |
-   | `CONTENTFUL_ACCESS_TOKEN` | Your delivery token |
+4. No environment variables are required — content ships with the repository.
 
 5. Click **Save and Deploy**. Every push to `main` now builds and deploys
    automatically; pull requests get preview deployments.
@@ -152,17 +152,6 @@ The domain is already on Cloudflare nameservers and its DNS records are in place
 If you attach the domain to a **new** Pages project, first remove it from the old
 one — a hostname can only be bound to one project at a time. Update the CNAME
 targets to the new project's `pages.dev` hostname afterwards.
-
-## Contentful Webhook (optional)
-
-Rebuild the site automatically when content is published:
-
-1. Pages project → **Settings → Builds & deployments → Deploy hooks** → create a
-   hook for branch `main` and copy its URL.
-2. Contentful → **Settings → Webhooks → Add webhook** → paste the URL, method
-   `POST`.
-3. Limit the triggers to **Entry → publish** and **Entry → unpublish** so drafts
-   do not spend build minutes.
 
 ## Internationalization
 

@@ -6,7 +6,7 @@ interface BookmarkCardProps {
 }
 
 export function BookmarkCard({ bookmark }: BookmarkCardProps) {
-  const { title, url, description } = bookmark.fields
+  const { title, url, description } = bookmark
 
   const domain = (() => {
     try {

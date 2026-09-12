@@ -1,7 +1,7 @@
 /**
- * Canonical category values. These are the exact strings stored in Contentful —
- * never translated there. The UI maps them to localized labels via the
- * `blog.categories.*` message keys.
+ * Canonical category values. These are the exact strings written in a post's
+ * frontmatter — never translated there. The UI maps them to localized labels
+ * via the `blog.categories.*` message keys.
  */
 export const CATEGORIES = ['engineering', 'notes', 'life'] as const
 

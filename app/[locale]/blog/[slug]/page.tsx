@@ -1,35 +1,24 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowLeft, Clock } from 'lucide-react'
-import { getBlogPostBySlug, getAllBlogSlugs } from '@/lib/contentful'
+import { getPostBySlug, getAllPostSlugs } from '@/lib/posts'
+import { Markdown } from '@/components/markdown'
 import { cn, formatDate, readingTime, tagStyle } from '@/lib/utils'
 import { locales, type Locale } from '@/i18n'
-import { normalizeCategory } from '@/lib/categories'
-import { resolveFigure } from '@/components/post-figures'
-
 
 /**
- * `output: 'export'` rejects a dynamic route with zero params, so before
- * Contentful is configured we emit a single placeholder per locale. Those
- * pages call `notFound()` below and are exported as 404s.
+ * `output: 'export'` rejects a dynamic route with zero params, so if every post
+ * is a draft we emit a single placeholder per locale. Those pages call
+ * `notFound()` below and are exported as 404s.
  */
 const PLACEHOLDER_SLUG = 'not-found'
 
-export async function generateStaticParams() {
-  let slugs: string[] = []
-  try {
-    slugs = await getAllBlogSlugs()
-  } catch {
-    // Contentful is not configured yet.
-  }
-
-  if (slugs.length === 0) slugs = [PLACEHOLDER_SLUG]
-
-  return locales.flatMap((locale) => slugs.map((slug) => ({ locale, slug })))
+export function generateStaticParams() {
+  const slugs = getAllPostSlugs()
+  const params = slugs.length > 0 ? slugs : [PLACEHOLDER_SLUG]
+  return locales.flatMap((locale) => params.map((slug) => ({ locale, slug })))
 }
 
 export async function generateMetadata({
@@ -38,108 +27,22 @@ export async function generateMetadata({
   params: { locale: Locale; slug: string }
 }): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'blog' })
+  const post = getPostBySlug(slug)
+  if (!post) return { title: t('notFound') }
 
-  try {
-    const post = await getBlogPostBySlug(slug)
-    if (!post) return { title: t('notFound') }
-
-    return {
-      title: post.fields.title,
-      description: post.fields.excerpt,
-      alternates: { canonical: `/${locale}/blog/${slug}` },
-      openGraph: {
-        title: post.fields.title,
-        description: post.fields.excerpt,
-        type: 'article',
-        publishedTime: post.fields.publishedDate,
-        section: normalizeCategory(post.fields.category, slug),
-        tags: post.fields.tags,
-      },
-    }
-  } catch {
-    return { title: t('title') }
-  }
-}
-
-/** Flattens a node's text, preserving the newlines inside a value. */
-function nodeText(node: any): string {
-  if (typeof node?.value === 'string') return node.value
-  if (Array.isArray(node?.content)) return node.content.map(nodeText).join('')
-  return ''
-}
-
-/**
- * Contentful rich text has no code-block node type — a multi-line snippet arrives
- * as a paragraph whose text nodes all carry the `code` mark. Rendering that as a
- * normal <p> collapses the newlines, so those paragraphs become <pre> instead.
- */
-function isCodeBlock(node: any): boolean {
-  const content = node?.content
-  if (!Array.isArray(content) || content.length === 0) return false
-
-  const hasCode = content.some((child: any) =>
-    child?.marks?.some((mark: any) => mark.type === MARKS.CODE)
-  )
-  if (!hasCode) return false
-
-  return content.every(
-    (child: any) =>
-      child?.nodeType === 'text' &&
-      (child.value === '' ||
-        child.marks?.some((mark: any) => mark.type === MARKS.CODE))
-  )
-}
-
-const renderOptions = {
-  renderNode: {
-    [BLOCKS.PARAGRAPH]: (node: any, children: any) => {
-      // A paragraph holding only `[figure:<key>]` becomes that diagram.
-      const Figure = resolveFigure(nodeText(node))
-      if (Figure) return <Figure />
-
-      return isCodeBlock(node) ? (
-        <pre className="mb-4 overflow-x-auto rounded-lg border border-border bg-muted/60 p-4 text-sm leading-relaxed">
-          <code className="font-mono">{nodeText(node)}</code>
-        </pre>
-      ) : (
-        <p className="mb-4 leading-relaxed">{children}</p>
-      )
+  return {
+    title: post.title,
+    description: post.excerpt,
+    alternates: { canonical: `/${locale}/blog/${slug}` },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: 'article',
+      publishedTime: post.publishedDate,
+      section: post.category,
+      tags: post.tags,
     },
-    [BLOCKS.HEADING_1]: (_node: any, children: any) => (
-      <h1 className="mb-4 mt-8 text-3xl font-bold">{children}</h1>
-    ),
-    [BLOCKS.HEADING_2]: (_node: any, children: any) => (
-      <h2 className="mb-3 mt-8 text-2xl font-semibold">{children}</h2>
-    ),
-    [BLOCKS.HEADING_3]: (_node: any, children: any) => (
-      <h3 className="mb-2 mt-6 text-xl font-semibold">{children}</h3>
-    ),
-    [BLOCKS.UL_LIST]: (_node: any, children: any) => (
-      <ul className="mb-4 list-disc space-y-1 pl-6">{children}</ul>
-    ),
-    [BLOCKS.OL_LIST]: (_node: any, children: any) => (
-      <ol className="mb-4 list-decimal space-y-1 pl-6">{children}</ol>
-    ),
-    [BLOCKS.LIST_ITEM]: (_node: any, children: any) => (
-      <li className="text-foreground">{children}</li>
-    ),
-    [BLOCKS.QUOTE]: (_node: any, children: any) => (
-      <blockquote className="my-4 border-l-2 border-border pl-4 italic text-muted-foreground">
-        {children}
-      </blockquote>
-    ),
-    [BLOCKS.HR]: () => <hr className="my-8 border-border" />,
-    [INLINES.HYPERLINK]: (node: any, children: any) => (
-      <a
-        href={node.data.uri}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-foreground underline underline-offset-4 transition-colors hover:text-muted-foreground"
-      >
-        {children}
-      </a>
-    ),
-  },
+  }
 }
 
 export default async function BlogPostPage({
@@ -150,17 +53,10 @@ export default async function BlogPostPage({
   setRequestLocale(locale)
   const t = await getTranslations('blog')
 
-  let post = null
-  try {
-    post = await getBlogPostBySlug(slug)
-  } catch {
-    // Contentful is unavailable — fall through to the 404.
-  }
-
+  const post = getPostBySlug(slug)
   if (!post) notFound()
 
-  const { title, content, excerpt, publishedDate, tags } = post.fields
-  const category = normalizeCategory(post.fields.category, slug)
+  const { title, excerpt, publishedDate, tags, category, body } = post
 
   return (
     <article className="space-y-10">
@@ -188,11 +84,11 @@ export default async function BlogPostPage({
           </span>
           <span className="inline-flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" />
-            {t('readingTime', { minutes: readingTime(content, excerpt) })}
+            {t('readingTime', { minutes: readingTime(body, excerpt) })}
           </span>
         </div>
 
-        {tags && tags.length > 0 && (
+        {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {tags.map((tag) => (
               <span
@@ -210,7 +106,7 @@ export default async function BlogPostPage({
       </header>
 
       <div className="prose prose-neutral max-w-none text-foreground dark:prose-invert">
-        {content && documentToReactComponents(content, renderOptions)}
+        <Markdown>{body}</Markdown>
       </div>
     </article>
   )

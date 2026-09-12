@@ -1,14 +1,13 @@
-import type { BlogPost } from '@/types'
-import { normalizeCategory, type Category } from '@/lib/categories'
+import type { Post } from '@/lib/posts'
+import type { Category } from '@/lib/categories'
 import { readingTime } from '@/lib/utils'
 
 /**
  * Serializable shape handed to the client-side list. Deliberately lean: the
- * Contentful rich-text document stays on the server, so reading time is computed
- * during the build rather than shipped to the browser.
+ * Markdown body stays on the server, so reading time is computed during the
+ * build rather than shipped to the browser.
  */
 export interface WritingPost {
-  id: string
   slug: string
   title: string
   excerpt: string
@@ -18,18 +17,17 @@ export interface WritingPost {
   minutes: number
 }
 
-export function toWritingPost(post: BlogPost): WritingPost {
-  const { title, slug, excerpt, content, publishedDate, tags, category } = post.fields
+export function toWritingPost(post: Post): WritingPost {
+  const { title, slug, excerpt, publishedDate, tags, category, body } = post
 
   return {
-    id: post.sys.id,
     slug,
     title,
-    excerpt: excerpt ?? '',
+    excerpt,
     publishedDate,
-    category: normalizeCategory(category, slug),
-    tags: tags ?? [],
-    minutes: readingTime(content, excerpt),
+    category,
+    tags,
+    minutes: readingTime(body, excerpt),
   }
 }
 

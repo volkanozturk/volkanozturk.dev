@@ -4,10 +4,10 @@ import { KafkaLagFigure } from '@/components/figures/kafka-lag-figure'
 /**
  * Diagrams that a post can pull into its body.
  *
- * Contentful rich text cannot carry markup, so a post references a figure by
- * writing a paragraph containing only `[figure:<key>]`. The rich-text renderer
- * swaps that paragraph for the component below, which keeps the diagram as real
- * inline SVG — themeable, responsive and translatable — instead of a flat image.
+ * Markdown carries no components, so a post references a figure by writing a
+ * paragraph containing only `[figure:<key>]`. The Markdown renderer swaps that
+ * paragraph for the component below, which keeps the diagram as real inline
+ * SVG — themeable, responsive and translatable — instead of a flat image.
  */
 export const postFigures: Record<string, ComponentType> = {
   'kafka-lag': KafkaLagFigure,

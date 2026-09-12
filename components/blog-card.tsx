@@ -1,18 +1,18 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Clock } from 'lucide-react'
-import type { BlogPost } from '@/types'
+import type { WritingPost } from '@/lib/writing'
 import type { Locale } from '@/i18n'
-import { cn, formatDate, readingTime, tagStyle } from '@/lib/utils'
+import { cn, formatDate, tagStyle } from '@/lib/utils'
 
 interface BlogCardProps {
-  post: BlogPost
+  post: WritingPost
   locale: Locale
 }
 
 export function BlogCard({ post, locale }: BlogCardProps) {
   const t = useTranslations('blog')
-  const { title, slug, excerpt, content, publishedDate, tags } = post.fields
+  const { title, slug, excerpt, publishedDate, tags, minutes } = post
 
   return (
     <Link
@@ -25,7 +25,7 @@ export function BlogCard({ post, locale }: BlogCardProps) {
         </time>
         <span className="inline-flex shrink-0 items-center gap-1.5">
           <Clock className="h-3 w-3" />
-          {t('readingTime', { minutes: readingTime(content, excerpt) })}
+          {t('readingTime', { minutes })}
         </span>
       </div>
 
@@ -37,7 +37,7 @@ export function BlogCard({ post, locale }: BlogCardProps) {
         </p>
       )}
 
-      {tags && tags.length > 0 && (
+      {tags.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {tags.map((tag) => (
             <span

@@ -9,8 +9,6 @@ import { getBlogPostBySlug, getAllBlogSlugs } from '@/lib/contentful'
 import { cn, formatDate, readingTime, tagStyle } from '@/lib/utils'
 import { locales, type Locale } from '@/i18n'
 
-// Every locale × every slug is pre-rendered — required for the static export.
-export const dynamicParams = false
 
 /**
  * `output: 'export'` rejects a dynamic route with zero params, so before

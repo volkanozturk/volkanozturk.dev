@@ -1,5 +1,12 @@
-import type { TimelineEntry as TimelineEntryData } from '@/lib/journey-data'
 import { cn } from '@/lib/utils'
+
+/** One timeline row, as stored in `journey.timeline` in the message files. */
+export interface TimelineEntryData {
+  year: string
+  title: string
+  description: string
+  isCurrent?: boolean
+}
 
 interface TimelineEntryProps {
   entry: TimelineEntryData

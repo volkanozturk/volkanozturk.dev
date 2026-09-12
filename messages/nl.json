@@ -51,11 +51,65 @@
   },
   "journey": {
     "title": "Reis",
-    "description": "Mijn loopbaan en opleiding tot nu toe.",
-    "work": "Werkervaring",
-    "education": "Opleiding",
-    "present": "Heden",
-    "empty": "Nog niets te zien. Zodra Contentful is ingesteld, verschijnt je reis hier."
+    "description": "Mijn carrière en opleiding tot nu toe.",
+    "timeline": [
+      {
+        "year": "2026",
+        "title": "Vandaag",
+        "description": "Ik blijf schaalbare backendsystemen bouwen met Java, Spring Boot, Kafka, Kubernetes en cloud-native technologieën.",
+        "isCurrent": true
+      },
+      {
+        "year": "2024",
+        "title": "Senior Backend Engineer · LeoVegas Group",
+        "description": "Doorgegroeid naar een senior rol binnen Core Experience / UYC — backendplatforms voor documentverificatie, KYC, AML en klantreizen."
+      },
+      {
+        "year": "2022",
+        "title": "Backend Engineer · LeoVegas Group",
+        "description": "Verhuisd naar Nederland. Gejoind bij LeoVegas Group voor grootschalige backend- en gedistribueerde systemen."
+      },
+      {
+        "year": "2021",
+        "title": "Software Consultant · ING Turkije",
+        "description": "Bijgedragen aan consumentenkredietplatforms, Java-modernisering en microservicearchitectuur."
+      },
+      {
+        "year": "2018",
+        "title": "Software Engineer · Migros",
+        "description": "Gewerkt aan grootschalige e-commercesystemen, microservices en cloudtransformatie."
+      },
+      {
+        "year": "2017",
+        "title": "Masterdiploma",
+        "description": "Master Computertechnologie afgerond aan de Beykent Universiteit."
+      },
+      {
+        "year": "2016",
+        "title": "Software Developer · ÇiçekSepeti",
+        "description": "Overgestapt naar softwareontwikkeling, voornamelijk aan backendsystemen en API's."
+      },
+      {
+        "year": "2015",
+        "title": "E-commerce & Software Support · ÇiçekSepeti",
+        "description": "Gejoind bij ÇiçekSepeti en dieper de wereld van e-commercetechnologie ingedoken."
+      },
+      {
+        "year": "2014",
+        "title": "Software Support Engineer · TV8",
+        "description": "Praktijkervaring opgedaan met bedrijfsapplicaties, databases en Java-technologieën."
+      },
+      {
+        "year": "2012",
+        "title": "IT Operations",
+        "description": "Parttime gewerkt in IT bij Istanbul Cerrahi Hospital tijdens mijn studie."
+      },
+      {
+        "year": "2009",
+        "title": "Eerste stap in IT",
+        "description": "Professionele carrière gestart met een IT-stage bij WOW Istanbul Hotels & Convention Center."
+      }
+    ]
   },
   "bookmarks": {
     "title": "Bookmarks",

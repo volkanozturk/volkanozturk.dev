@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { PageHeader } from '@/components/page-header'
-import { TimelineEntry } from '@/components/timeline-entry'
-import { journeyTimeline } from '@/lib/journey-data'
+import { TimelineEntry, type TimelineEntryData } from '@/components/timeline-entry'
 import { locales, type Locale } from '@/i18n'
 
 const STACK = ['Java', 'Spring Boot', 'Kafka', 'Kubernetes', 'AWS']
@@ -28,16 +27,19 @@ export default async function JourneyPage({
   setRequestLocale(locale)
   const t = await getTranslations('journey')
 
+  // `raw` returns the array untouched — these are plain strings, not ICU messages.
+  const timeline = t.raw('timeline') as TimelineEntryData[]
+
   return (
     <div className="space-y-12">
       <PageHeader title={t('title')} description={t('description')} />
 
       <div className="-mx-3">
-        {journeyTimeline.map((entry, i) => (
+        {timeline.map((entry, i) => (
           <TimelineEntry
             key={entry.year + entry.title}
             entry={entry}
-            isLast={i === journeyTimeline.length - 1}
+            isLast={i === timeline.length - 1}
           />
         ))}
       </div>

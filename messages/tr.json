@@ -2,7 +2,7 @@
   "meta": {
     "title": "Volkan Öztürk",
     "titleTemplate": "%s · Volkan Öztürk",
-    "description": "Yazılım mühendisi. Yazılar, yolculuk ve bookmarklar.",
+    "description": "Kıdemli Java Geliştirici. Yazılar, yolculuk ve bookmarklar.",
     "author": "Volkan Öztürk"
   },
   "nav": {
@@ -14,10 +14,10 @@
     "switchTo": "{language} diline geç"
   },
   "home": {
-    "greeting": "Volkan Öztürk",
+    "greeting": "Merhaba 👋 Ben Volkan",
     "role": "Yazılım Mühendisi",
     "status": "Yeni projelere açığım",
-    "bio": "Yazılım geliştiriyorum ve yol boyunca öğrendiklerimi yazmayı seviyorum. Bu site; yazılarımı, kariyer yolculuğumu ve saklamaya değer bulduğum bağlantıları bir arada tuttuğum yer.",
+    "bio": "Hilversum, Hollanda'da yaşayan kıdemli Java geliştirici ve minimalist. Sağlam backend sistemleri inşa ediyor, temiz ve sade çözümler üretmeyi seviyorum. Daha önce ING Türkiye'de Yazılım Mühendisi, Migros'ta Java Yazılım Mühendisi, ÇiçekSepeti'nde Yazılım Mühendisi ve TV8'de Yazılım Geliştirici olarak çalıştım.",
     "recentPosts": "Son yazılar",
     "viewAll": "Tümünü gör",
     "sections": {

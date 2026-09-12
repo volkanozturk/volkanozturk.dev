@@ -2,7 +2,7 @@
   "meta": {
     "title": "Volkan Öztürk",
     "titleTemplate": "%s · Volkan Öztürk",
-    "description": "Software engineer. Writing, journey and bookmarks.",
+    "description": "Senior Java Developer. Writings, journey and bookmarks.",
     "author": "Volkan Öztürk"
   },
   "nav": {
@@ -14,10 +14,10 @@
     "switchTo": "Switch to {language}"
   },
   "home": {
-    "greeting": "Volkan Öztürk",
+    "greeting": "Hi 👋 I'm Volkan",
     "role": "Software Engineer",
     "status": "Available for work",
-    "bio": "I build software, and I like writing about what I learn along the way. This site is where I keep my posts, my career journey and the links I found worth saving.",
+    "bio": "Senior Java Developer and minimalist based in Hilversum, The Netherlands. I build reliable backend systems and care deeply about clean, simple solutions. Previously worked as a Software Engineer at ING Turkey, Java Software Engineer at Migros, Software Engineer at ÇiçekSepeti, and Software Developer at TV8.",
     "recentPosts": "Recent posts",
     "viewAll": "View all",
     "sections": {

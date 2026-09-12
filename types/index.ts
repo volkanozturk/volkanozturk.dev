@@ -1,4 +1,5 @@
 import { Document } from '@contentful/rich-text-types'
+import type { Category } from '@/lib/categories'
 
 // Blog Post (Contentful'dan gelecek)
 export interface BlogPost {
@@ -13,6 +14,8 @@ export interface BlogPost {
     excerpt: string
     content: Document
     publishedDate: string
+    /** Canonical value: engineering | notes | life. Required in the app model. */
+    category: Category
     tags?: string[]
     coverImage?: ContentfulAsset
   }

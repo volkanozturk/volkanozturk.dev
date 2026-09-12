@@ -1,0 +1,524 @@
+{
+  "title": "Kafka Consumer Lag: When Should You Worry?",
+  "slug": "kafka-consumer-lag-when-should-you-worry",
+  "category": "engineering",
+  "excerpt": "Consumer-group lag is usually an offset gap, not a delay in seconds — what matters is whether it drains, how long it stays up, and whether the delay fits what the service promises.",
+  "tags": [
+    "Kafka",
+    "Consumers",
+    "Operations"
+  ],
+  "content": {
+    "nodeType": "document",
+    "data": {},
+    "content": [
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "The alert fires: consumer lag on a topic is over the threshold. The first instinct is usually to restart the service or add another instance. Both feel productive. Neither tells you whether anything is actually wrong.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "Lag on its own is just a number; what matters is the shape it makes over time.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "heading-2",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "What lag actually measures",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "This is about consumer-group lag measured from committed offsets — the number group tooling reports, and not the only way lag can be measured.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "A consumer group saves its progress through each partition as a committed offset: the position it would resume from if the process restarted. Lag is the distance between the end of the partition's log and that saved position. Since a consumer may already be working through records it has not committed, lag measured this way can look worse than the real processing delay.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "It is also usually shown as an offset gap, not a delay in seconds — and a gap is not a stopwatch. A large gap cleared in seconds is not the same problem as a small one where every record makes a slow downstream call.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "heading-2",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "A spike that recovers",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "Picture an ordinary Spring Boot service with a ",
+            "marks": [],
+            "data": {}
+          },
+          {
+            "nodeType": "text",
+            "value": "@KafkaListener",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ],
+            "data": {}
+          },
+          {
+            "nodeType": "text",
+            "value": " on a topic. Something upstream publishes a batch — a scheduled job, a retry sweep, a backfill. Lag jumps, the consumer runs behind for a few minutes, then the burst ends and lag drains back toward zero on its own.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "A temporary backlog like this can be expected, as long as the processing delay stays inside what the application requires. Absorbing a burst is what a log is for. Push past that requirement and the same shape is a problem — and restarting at the peak can delay recovery rather than speed it up.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "[figure:kafka-lag]",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "heading-2",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "When lag deserves attention",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "A different pattern deserves attention:",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "unordered-list",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "list-item",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {},
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Lag climbs and never comes back down, through quiet periods as well as busy ones.",
+                    "marks": [],
+                    "data": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "nodeType": "list-item",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {},
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "It drains far more slowly than it built up.",
+                    "marks": [],
+                    "data": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "nodeType": "list-item",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {},
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "It sits on one or two partitions while the rest of the group has little to do.",
+                    "marks": [],
+                    "data": {}
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "The last one has several possible causes: skewed keys sending most traffic to one partition, slow processing, a record that keeps failing and being retried, or a resource limit on that consumer. Work out which before acting — in a standard consumer group, extra consumers cannot split a single hot partition.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "heading-2",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "What to check before changing anything",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "unordered-list",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "list-item",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {},
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Incoming rate versus processing rate.",
+                    "marks": [
+                      {
+                        "type": "bold"
+                      }
+                    ],
+                    "data": {}
+                  },
+                  {
+                    "nodeType": "text",
+                    "value": " If records arrive faster than the consumer can process them and stay that way, the backlog will keep growing. A short spike that settles again is just a burst.",
+                    "marks": [],
+                    "data": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "nodeType": "list-item",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {},
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Errors and retries.",
+                    "marks": [
+                      {
+                        "type": "bold"
+                      }
+                    ],
+                    "data": {}
+                  },
+                  {
+                    "nodeType": "text",
+                    "value": " A consumer stuck retrying one record looks busy while making no progress.",
+                    "marks": [],
+                    "data": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "nodeType": "list-item",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {},
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Downstream latency.",
+                    "marks": [
+                      {
+                        "type": "bold"
+                      }
+                    ],
+                    "data": {}
+                  },
+                  {
+                    "nodeType": "text",
+                    "value": " Consumers are often slow not because of Kafka, but because of what they call.",
+                    "marks": [],
+                    "data": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "nodeType": "list-item",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {},
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Rebalances.",
+                    "marks": [
+                      {
+                        "type": "bold"
+                      }
+                    ],
+                    "data": {}
+                  },
+                  {
+                    "nodeType": "text",
+                    "value": " Frequent rebalances can interrupt processing and slow recovery, and membership changes trigger them — including the restart you were about to do.",
+                    "marks": [],
+                    "data": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "nodeType": "list-item",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {},
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Partition distribution.",
+                    "marks": [
+                      {
+                        "type": "bold"
+                      }
+                    ],
+                    "data": {}
+                  },
+                  {
+                    "nodeType": "text",
+                    "value": " Spread evenly, or concentrated?",
+                    "marks": [],
+                    "data": {}
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "nodeType": "heading-2",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "Why adding consumers has a ceiling",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "Inside a consumer group, each partition is assigned to exactly one consumer. For a group subscribed only to a six-partition topic, at most six consumers can hold an assignment at once; beyond that, some members will have no partitions to read from.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "So “add more instances” helps only while there are partitions left to hand out. Past that the options are fewer records, faster processing, or more partitions — which changes how keys map to them.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "heading-2",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "The takeaway",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "Judge lag on three things: how long it has been elevated, whether it recovers without help, and whether the delay matters for what the service promises. A payment path and a nightly aggregation can show the same number and mean entirely different things.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "text",
+            "value": "There is no single safe threshold for every application. What matters is how far behind this consumer can fall before it affects users or misses a processing deadline — as much a product question as a Kafka one.",
+            "marks": [],
+            "data": {}
+          }
+        ]
+      },
+      {
+        "nodeType": "hr",
+        "data": {},
+        "content": []
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "hyperlink",
+            "data": {
+              "uri": "https://kafka.apache.org/40/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html"
+            },
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "KafkaConsumer — consumer groups, offsets and rebalancing",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "nodeType": "paragraph",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "hyperlink",
+            "data": {
+              "uri": "https://kafka.apache.org/40/javadoc/org/apache/kafka/clients/consumer/ConsumerRebalanceListener.html"
+            },
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "ConsumerRebalanceListener — eager and cooperative rebalancing",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

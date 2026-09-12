@@ -43,11 +43,27 @@
   },
   "blog": {
     "title": "Artikelen",
-    "description": "Software, wat ik leer en wat mij bezighoudt.",
-    "empty": "Nog geen artikelen. Zodra Contentful is ingesteld, verschijnen ze hier.",
+    "description": "Software engineering, dagelijkse notities en dingen die het schrijven waard zijn.",
+    "empty": "Hier staat nog niets. Ik werk aan de eerste stukken.",
     "back": "Terug naar artikelen",
     "readingTime": "{minutes} min leestijd",
-    "notFound": "Artikel niet gevonden"
+    "notFound": "Artikel niet gevonden",
+    "filterLabel": "Filter op categorie",
+    "emptyCategory": "Nog niets in deze categorie.",
+    "categories": {
+      "engineering": "Engineering",
+      "notes": "Notities",
+      "life": "Leven"
+    },
+    "showAll": "Alle artikelen tonen",
+    "figures": {
+      "lag": {
+        "spike": "Piek die wegloopt",
+        "sustained": "Lag die blijft groeien",
+        "caption": "Alleen illustratieve vormen — geen gemeten data.",
+        "alt": "Twee schetsen van consumer lag in de tijd. Links stijgt de lag tijdens een piek en zakt daarna vanzelf terug naar de basislijn. Rechts blijft de lag stijgen en keert nooit terug naar de basislijn."
+      }
+    }
   },
   "journey": {
     "title": "Reis",

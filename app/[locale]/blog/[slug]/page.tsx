@@ -2,12 +2,14 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import { BLOCKS, INLINES } from '@contentful/rich-text-types'
+import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowLeft, Clock } from 'lucide-react'
 import { getBlogPostBySlug, getAllBlogSlugs } from '@/lib/contentful'
 import { cn, formatDate, readingTime, tagStyle } from '@/lib/utils'
 import { locales, type Locale } from '@/i18n'
+import { normalizeCategory } from '@/lib/categories'
+import { resolveFigure } from '@/components/post-figures'
 
 
 /**
@@ -44,11 +46,14 @@ export async function generateMetadata({
     return {
       title: post.fields.title,
       description: post.fields.excerpt,
+      alternates: { canonical: `/${locale}/blog/${slug}` },
       openGraph: {
         title: post.fields.title,
         description: post.fields.excerpt,
         type: 'article',
         publishedTime: post.fields.publishedDate,
+        section: normalizeCategory(post.fields.category, slug),
+        tags: post.fields.tags,
       },
     }
   } catch {
@@ -56,11 +61,50 @@ export async function generateMetadata({
   }
 }
 
+/** Flattens a node's text, preserving the newlines inside a value. */
+function nodeText(node: any): string {
+  if (typeof node?.value === 'string') return node.value
+  if (Array.isArray(node?.content)) return node.content.map(nodeText).join('')
+  return ''
+}
+
+/**
+ * Contentful rich text has no code-block node type — a multi-line snippet arrives
+ * as a paragraph whose text nodes all carry the `code` mark. Rendering that as a
+ * normal <p> collapses the newlines, so those paragraphs become <pre> instead.
+ */
+function isCodeBlock(node: any): boolean {
+  const content = node?.content
+  if (!Array.isArray(content) || content.length === 0) return false
+
+  const hasCode = content.some((child: any) =>
+    child?.marks?.some((mark: any) => mark.type === MARKS.CODE)
+  )
+  if (!hasCode) return false
+
+  return content.every(
+    (child: any) =>
+      child?.nodeType === 'text' &&
+      (child.value === '' ||
+        child.marks?.some((mark: any) => mark.type === MARKS.CODE))
+  )
+}
+
 const renderOptions = {
   renderNode: {
-    [BLOCKS.PARAGRAPH]: (_node: any, children: any) => (
-      <p className="mb-4 leading-relaxed">{children}</p>
-    ),
+    [BLOCKS.PARAGRAPH]: (node: any, children: any) => {
+      // A paragraph holding only `[figure:<key>]` becomes that diagram.
+      const Figure = resolveFigure(nodeText(node))
+      if (Figure) return <Figure />
+
+      return isCodeBlock(node) ? (
+        <pre className="mb-4 overflow-x-auto rounded-lg border border-border bg-muted/60 p-4 text-sm leading-relaxed">
+          <code className="font-mono">{nodeText(node)}</code>
+        </pre>
+      ) : (
+        <p className="mb-4 leading-relaxed">{children}</p>
+      )
+    },
     [BLOCKS.HEADING_1]: (_node: any, children: any) => (
       <h1 className="mb-4 mt-8 text-3xl font-bold">{children}</h1>
     ),
@@ -116,6 +160,7 @@ export default async function BlogPostPage({
   if (!post) notFound()
 
   const { title, content, excerpt, publishedDate, tags } = post.fields
+  const category = normalizeCategory(post.fields.category, slug)
 
   return (
     <article className="space-y-10">
@@ -130,8 +175,14 @@ export default async function BlogPostPage({
       <header className="space-y-4">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
-          <time dateTime={publishedDate}>{formatDate(publishedDate, locale)}</time>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-muted-foreground">
+          <time dateTime={publishedDate} className="tabular-nums">
+            {formatDate(publishedDate, locale, 'd MMM yyyy')}
+          </time>
+          <span aria-hidden className="text-muted-foreground/40">
+            ·
+          </span>
+          <span>{t(`categories.${category}`)}</span>
           <span aria-hidden className="text-muted-foreground/40">
             ·
           </span>

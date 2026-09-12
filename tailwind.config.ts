@@ -65,6 +65,18 @@ const config: Config = {
             },
             'code::before': { content: '""' },
             'code::after': { content: '""' },
+            pre: {
+              color: 'hsl(var(--foreground))',
+              backgroundColor: 'hsl(var(--muted))',
+            },
+            // Code inside a block must not inherit the inline-code chrome.
+            'pre code': {
+              backgroundColor: 'transparent',
+              padding: '0',
+              borderRadius: '0',
+              color: 'inherit',
+              fontWeight: 'inherit',
+            },
           },
         },
       },

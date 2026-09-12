@@ -43,11 +43,27 @@
   },
   "blog": {
     "title": "Yazılar",
-    "description": "Yazılım, öğrendiklerim ve aklımdan geçenler.",
-    "empty": "Henüz yazı yok. Contentful yapılandırıldığında yazıların burada görünecek.",
+    "description": "Yazılım mühendisliği, günlük notlar ve yazmaya değer bulduğum şeyler.",
+    "empty": "Burada henüz bir şey yok. İlk yazılar üzerinde çalışıyorum.",
     "back": "Yazılara dön",
     "readingTime": "{minutes} dk okuma",
-    "notFound": "Yazı bulunamadı"
+    "notFound": "Yazı bulunamadı",
+    "filterLabel": "Kategoriye göre filtrele",
+    "emptyCategory": "Bu kategoride henüz bir şey yok.",
+    "categories": {
+      "engineering": "Mühendislik",
+      "notes": "Notlar",
+      "life": "Yaşam"
+    },
+    "showAll": "Tüm yazıları göster",
+    "figures": {
+      "lag": {
+        "spike": "Boşalan ani yükseliş",
+        "sustained": "Sürekli büyüyen gecikme",
+        "caption": "Yalnızca temsili şekiller — ölçülmüş veri değil.",
+        "alt": "Zaman içinde tüketici gecikmesinin iki çizimi. Solda, gecikme bir yük artışında yükselir ve kendiliğinden başlangıç seviyesine döner. Sağda, gecikme yükselir ve bir daha başlangıç seviyesine dönmez."
+      }
+    }
   },
   "journey": {
     "title": "Yolculuk",

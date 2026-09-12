@@ -43,11 +43,27 @@
   },
   "blog": {
     "title": "Writing",
-    "description": "Software, the things I learn and whatever is on my mind.",
-    "empty": "No posts yet. Once Contentful is configured, your posts will show up here.",
+    "description": "Software engineering, everyday notes, and things I find worth writing about.",
+    "empty": "Nothing here yet. I'm working on the first few pieces.",
     "back": "Back to writing",
     "readingTime": "{minutes} min read",
-    "notFound": "Post not found"
+    "notFound": "Post not found",
+    "filterLabel": "Filter by category",
+    "emptyCategory": "Nothing in this category yet.",
+    "categories": {
+      "engineering": "Engineering",
+      "notes": "Notes",
+      "life": "Life"
+    },
+    "showAll": "Show all posts",
+    "figures": {
+      "lag": {
+        "spike": "Burst that drains",
+        "sustained": "Lag that keeps growing",
+        "caption": "Illustrative shapes only — not measured data.",
+        "alt": "Two sketches of consumer lag over time. On the left, lag rises during a burst and then falls back to the baseline on its own. On the right, lag climbs and never returns to the baseline."
+      }
+    }
   },
   "journey": {
     "title": "Journey",

@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --radius: 0.75rem;
+
+    /* Page gradient: very light gray fading into white */
+    --page-gradient: linear-gradient(
+      180deg,
+      hsl(240 20% 97%) 0%,
+      hsl(0 0% 100%) 420px,
+      hsl(0 0% 100%) 100%
+    );
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --page-gradient: linear-gradient(
+      180deg,
+      hsl(240 10% 7%) 0%,
+      hsl(240 10% 3.9%) 420px,
+      hsl(240 10% 3.9%) 100%
+    );
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background-image: var(--page-gradient);
+    background-attachment: fixed;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: hsl(var(--foreground) / 0.92);
+    color: hsl(var(--background));
+    text-shadow: none;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background rounded-sm;
+  }
+}
+
+@layer components {
+  /* Underline that grows from the left on hover — used by the nav links. */
+  .nav-underline::after {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.25rem;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms ease-out;
+  }
+
+  .nav-underline:hover::after,
+  .nav-underline[data-active="true"]::after {
+    transform: scaleX(1);
+  }
+
+  /* Site name in the navigation bar. */
+  .gradient-text {
+    background-image: linear-gradient(
+      100deg,
+      hsl(var(--foreground)) 0%,
+      hsl(var(--foreground) / 0.65) 55%,
+      hsl(var(--foreground)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Thin colored accent used by section headers. */
+  .section-heading {
+    @apply relative pl-3 text-sm font-medium uppercase tracking-widest text-muted-foreground;
+  }
+
+  .section-heading::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.15em;
+    bottom: 0.15em;
+    width: 2px;
+    border-radius: 9999px;
+    background-image: linear-gradient(
+      180deg,
+      hsl(217 91% 60%),
+      hsl(262 83% 68%)
+    );
+  }
+}
+
+@layer utilities {
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 400ms ease-out both;
+  }
+
+  @keyframes auroraDrift {
+    0%,
+    100% {
+      transform: translate3d(-4%, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(4%, -3%, 0) scale(1.08);
+    }
+  }
+
+  /* CSS-only ambient gradient behind the hero. */
+  .hero-aurora::before {
+    content: "";
+    position: absolute;
+    inset: -40% -20% auto -20%;
+    height: 340px;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(40% 60% at 20% 50%, hsl(217 91% 60% / 0.16), transparent 70%),
+      radial-gradient(40% 60% at 70% 40%, hsl(262 83% 68% / 0.14), transparent 70%),
+      radial-gradient(35% 55% at 45% 70%, hsl(160 84% 45% / 0.1), transparent 70%);
+    filter: blur(28px);
+    animation: auroraDrift 18s ease-in-out infinite;
+  }
+
+  @keyframes statusPulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.45;
+      transform: scale(0.85);
+    }
+  }
+
+  .animate-status-pulse {
+    animation: statusPulse 2.4s ease-in-out infinite;
+  }
+
+  /* Respect users who prefer reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .animate-fade-in,
+    .animate-status-pulse,
+    .hero-aurora::before {
+      animation: none;
+    }
+  }
+}

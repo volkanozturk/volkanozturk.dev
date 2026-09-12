@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "title": "Volkan Öztürk",
+    "titleTemplate": "%s · Volkan Öztürk",
+    "description": "Software engineer. Artikelen, reis en bookmarks.",
+    "author": "Volkan Öztürk"
+  },
+  "nav": {
+    "home": "Home",
+    "writing": "Artikelen",
+    "journey": "Reis",
+    "bookmarks": "Bookmarks",
+    "language": "Taal",
+    "switchTo": "Wissel naar {language}"
+  },
+  "home": {
+    "greeting": "Volkan Öztürk",
+    "role": "Software Engineer",
+    "status": "Beschikbaar voor werk",
+    "bio": "Ik bouw software en schrijf graag over wat ik onderweg leer. Op deze site verzamel ik mijn artikelen, mijn loopbaan en de links die ik de moeite waard vond om te bewaren.",
+    "recentPosts": "Recente artikelen",
+    "viewAll": "Bekijk alles",
+    "sections": {
+      "title": "Secties",
+      "writing": {
+        "title": "Artikelen",
+        "description": "Technische en persoonlijke artikelen"
+      },
+      "journey": {
+        "title": "Reis",
+        "description": "Mijn loopbaan en opleiding"
+      },
+      "bookmarks": {
+        "title": "Bookmarks",
+        "description": "Links die het bewaren waard zijn"
+      }
+    }
+  },
+  "social": {
+    "github": "GitHub",
+    "twitter": "X (Twitter)",
+    "linkedin": "LinkedIn"
+  },
+  "blog": {
+    "title": "Artikelen",
+    "description": "Software, wat ik leer en wat mij bezighoudt.",
+    "empty": "Nog geen artikelen. Zodra Contentful is ingesteld, verschijnen ze hier.",
+    "back": "Terug naar artikelen",
+    "readingTime": "{minutes} min leestijd",
+    "notFound": "Artikel niet gevonden"
+  },
+  "journey": {
+    "title": "Reis",
+    "description": "Mijn loopbaan en opleiding tot nu toe.",
+    "work": "Werkervaring",
+    "education": "Opleiding",
+    "present": "Heden",
+    "empty": "Nog niets te zien. Zodra Contentful is ingesteld, verschijnt je reis hier."
+  },
+  "bookmarks": {
+    "title": "Bookmarks",
+    "description": "Links die ik bewaard heb omdat ik ze nuttig of interessant vond.",
+    "empty": "Nog geen bookmarks. Zodra Contentful is ingesteld, verschijnen ze hier."
+  },
+  "footer": {
+    "rights": "© {year} Volkan Öztürk. Alle rechten voorbehouden."
+  },
+  "404": {
+    "message": "Deze pagina kon niet worden gevonden.",
+    "back": "Terug naar home"
+  }
+}

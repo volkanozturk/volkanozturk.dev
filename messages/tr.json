@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "title": "Volkan Öztürk",
+    "titleTemplate": "%s · Volkan Öztürk",
+    "description": "Yazılım mühendisi. Yazılar, yolculuk ve bookmarklar.",
+    "author": "Volkan Öztürk"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "writing": "Yazılar",
+    "journey": "Yolculuk",
+    "bookmarks": "Bookmarks",
+    "language": "Dil",
+    "switchTo": "{language} diline geç"
+  },
+  "home": {
+    "greeting": "Volkan Öztürk",
+    "role": "Yazılım Mühendisi",
+    "status": "Yeni projelere açığım",
+    "bio": "Yazılım geliştiriyorum ve yol boyunca öğrendiklerimi yazmayı seviyorum. Bu site; yazılarımı, kariyer yolculuğumu ve saklamaya değer bulduğum bağlantıları bir arada tuttuğum yer.",
+    "recentPosts": "Son yazılar",
+    "viewAll": "Tümünü gör",
+    "sections": {
+      "title": "Bölümler",
+      "writing": {
+        "title": "Yazılar",
+        "description": "Teknik ve kişisel yazılar"
+      },
+      "journey": {
+        "title": "Yolculuk",
+        "description": "Kariyer ve eğitim geçmişim"
+      },
+      "bookmarks": {
+        "title": "Bookmarks",
+        "description": "Saklamaya değer bağlantılar"
+      }
+    }
+  },
+  "social": {
+    "github": "GitHub",
+    "twitter": "X (Twitter)",
+    "linkedin": "LinkedIn"
+  },
+  "blog": {
+    "title": "Yazılar",
+    "description": "Yazılım, öğrendiklerim ve aklımdan geçenler.",
+    "empty": "Henüz yazı yok. Contentful yapılandırıldığında yazıların burada görünecek.",
+    "back": "Yazılara dön",
+    "readingTime": "{minutes} dk okuma",
+    "notFound": "Yazı bulunamadı"
+  },
+  "journey": {
+    "title": "Yolculuk",
+    "description": "Bugüne kadarki kariyer ve eğitim geçmişim.",
+    "work": "İş deneyimi",
+    "education": "Eğitim",
+    "present": "Devam ediyor",
+    "empty": "Henüz içerik yok. Contentful yapılandırıldığında yolculuğun burada görünecek."
+  },
+  "bookmarks": {
+    "title": "Bookmarks",
+    "description": "Faydalı veya ilginç bulduğum için kaydettiğim bağlantılar.",
+    "empty": "Henüz bookmark yok. Contentful yapılandırıldığında burada görünecek."
+  },
+  "footer": {
+    "rights": "© {year} Volkan Öztürk. Tüm hakları saklıdır."
+  },
+  "404": {
+    "message": "Bu sayfa bulunamadı.",
+    "back": "Ana sayfaya dön"
+  }
+}

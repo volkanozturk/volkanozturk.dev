@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "title": "Volkan Öztürk",
+    "titleTemplate": "%s · Volkan Öztürk",
+    "description": "Software engineer. Writing, journey and bookmarks.",
+    "author": "Volkan Öztürk"
+  },
+  "nav": {
+    "home": "Home",
+    "writing": "Writing",
+    "journey": "Journey",
+    "bookmarks": "Bookmarks",
+    "language": "Language",
+    "switchTo": "Switch to {language}"
+  },
+  "home": {
+    "greeting": "Volkan Öztürk",
+    "role": "Software Engineer",
+    "status": "Available for work",
+    "bio": "I build software, and I like writing about what I learn along the way. This site is where I keep my posts, my career journey and the links I found worth saving.",
+    "recentPosts": "Recent posts",
+    "viewAll": "View all",
+    "sections": {
+      "title": "Sections",
+      "writing": {
+        "title": "Writing",
+        "description": "Technical and personal posts"
+      },
+      "journey": {
+        "title": "Journey",
+        "description": "My career and education"
+      },
+      "bookmarks": {
+        "title": "Bookmarks",
+        "description": "Links worth keeping"
+      }
+    }
+  },
+  "social": {
+    "github": "GitHub",
+    "twitter": "X (Twitter)",
+    "linkedin": "LinkedIn"
+  },
+  "blog": {
+    "title": "Writing",
+    "description": "Software, the things I learn and whatever is on my mind.",
+    "empty": "No posts yet. Once Contentful is configured, your posts will show up here.",
+    "back": "Back to writing",
+    "readingTime": "{minutes} min read",
+    "notFound": "Post not found"
+  },
+  "journey": {
+    "title": "Journey",
+    "description": "My career and education so far.",
+    "work": "Work experience",
+    "education": "Education",
+    "present": "Present",
+    "empty": "Nothing here yet. Once Contentful is configured, your journey will show up here."
+  },
+  "bookmarks": {
+    "title": "Bookmarks",
+    "description": "Links I saved because I found them useful or interesting.",
+    "empty": "No bookmarks yet. Once Contentful is configured, they will show up here."
+  },
+  "footer": {
+    "rights": "© {year} Volkan Öztürk. All rights reserved."
+  },
+  "404": {
+    "message": "This page could not be found.",
+    "back": "Back to home"
+  }
+}

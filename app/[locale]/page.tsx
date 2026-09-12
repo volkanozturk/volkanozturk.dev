@@ -36,30 +36,23 @@ export default async function HomePage({
   ] as const
 
   return (
-    <div className="space-y-24">
+    <div className="space-y-16">
       {/* Hero */}
-      <section className="hero-aurora relative isolate space-y-6">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-status-pulse absolute inline-flex h-full w-full rounded-full bg-emerald-500" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
+      <section className="hero-aurora relative isolate space-y-5">
+        <span className="inline-flex items-center rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm">
           {t('status')}
         </span>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {t('greeting')}
           </h1>
-          <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-            {t('role')}
-          </p>
           <p className="max-w-xl text-base leading-relaxed text-muted-foreground">
             {t('bio')}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 pt-2">
+        <div className="flex items-center gap-2 pt-1">
           {socialLinks.map(({ icon: Icon, href, key }) => (
             <a
               key={href}

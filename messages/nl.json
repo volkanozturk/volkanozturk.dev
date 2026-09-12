@@ -14,10 +14,9 @@
     "switchTo": "Wissel naar {language}"
   },
   "home": {
-    "greeting": "Hoi 👋 Ik ben Volkan",
-    "role": "Senior Java Developer · Hilversum, Nederland",
-    "status": "Beschikbaar voor werk",
-    "bio": "Senior Java Developer en minimalist gevestigd in Hilversum, Nederland. Ik bouw betrouwbare backendsystemen en hecht veel waarde aan schone, eenvoudige oplossingen. Eerder werkte ik als Software Engineer bij ING Turkije, Java Software Engineer bij Migros, Software Engineer bij ÇiçekSepeti en Software Developer bij TV8.",
+    "greeting": "Hoi, ik ben Volkan.",
+    "status": "Gevestigd in Nederland",
+    "bio": "Senior Java Developer bij LeoVegas. Ik schrijf over software, het dagelijks leven en dingen die ik de moeite waard vind om te delen.",
     "recentPosts": "Recente artikelen",
     "viewAll": "Bekijk alles",
     "sections": {

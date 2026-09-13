@@ -29,15 +29,15 @@ export function TimelineEntry({ entry, isLast }: TimelineEntryProps) {
             {/* Mobile: a dot inline with the year slot. */}
             <span className="flex items-center gap-2 sm:hidden">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-status-pulse absolute inline-flex h-full w-full rounded-full bg-emerald-500" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                <span className="animate-status-pulse absolute inline-flex h-full w-full rounded-full bg-brand-bright" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand-bright" />
               </span>
             </span>
             {/* sm+: centred on the rail so the line runs into it. */}
             <span className="absolute right-0 top-1 hidden translate-x-1/2 sm:block">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-status-pulse absolute inline-flex h-full w-full rounded-full bg-emerald-500" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                <span className="animate-status-pulse absolute inline-flex h-full w-full rounded-full bg-brand-bright" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand-bright" />
               </span>
             </span>
           </>

@@ -15,6 +15,10 @@ const config: Config = {
   safelist: ['dark'],
   theme: {
     extend: {
+      screens: {
+        // Narrow phones stack the card; everything above keeps the desktop shape.
+        xs: '400px',
+      },
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
@@ -41,8 +45,14 @@ const config: Config = {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
-        // The one accent colour: links, focus rings, hovered titles.
-        brand: 'hsl(var(--brand))',
+        card: 'hsl(var(--card))',
+        sidebar: 'hsl(var(--sidebar))',
+        // The one accent colour: links, focus rings, active nav and filters.
+        brand: {
+          DEFAULT: 'hsl(var(--brand))',
+          // Decorative only (the small dots) — never used for text.
+          bright: 'hsl(var(--brand-bright))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

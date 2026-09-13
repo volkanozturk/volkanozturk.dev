@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Navigation } from '@/components/navigation'
+import { SiteShell } from '@/components/site-shell'
 import { Footer } from '@/components/footer'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL, TWITTER_HANDLE } from '@/lib/site'
 import './globals.css'
@@ -40,12 +40,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className="flex min-h-screen flex-col">
-        <Navigation />
-        <main className="mx-auto w-full max-w-3xl flex-1 animate-fade-in px-4 py-16 md:px-6">
-          {children}
-        </main>
-        <Footer />
+      <body>
+        <SiteShell>
+          <main className="mx-auto w-full max-w-[760px] flex-1 px-4 pb-16 pt-10 sm:px-5 lg:px-8 lg:pt-20">
+            {children}
+          </main>
+          <Footer />
+        </SiteShell>
       </body>
     </html>
   )

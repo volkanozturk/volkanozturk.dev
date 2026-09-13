@@ -8,6 +8,8 @@ tags:
   - Netherlands
   - Moving Abroad
   - Family
+summary: "Why we moved to the Netherlands, and what we still miss."
+thumbnail: /images/from-istanbul-to-a-new-home/moving-day-thumb.jpg
 draft: false
 ---
 

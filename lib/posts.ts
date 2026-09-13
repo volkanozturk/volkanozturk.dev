@@ -32,6 +32,17 @@ export interface Post {
   publishedDate: string
   tags: string[]
   draft: boolean
+  /**
+   * Optional short line for the home cards. The full `excerpt` stays the
+   * canonical summary for the Writing index and for SEO metadata.
+   */
+  summary?: string
+  /**
+   * Optional card thumbnail: either a path under `public/` (starting with `/`)
+   * or a key from the drawn-thumbnail registry. Absent is fine — the card then
+   * renders without a media column.
+   */
+  thumbnail?: string
   /** Markdown body, frontmatter stripped. */
   body: string
 }
@@ -78,6 +89,8 @@ function parseFile(file: string): Post {
       publishedDate: isIsoDate(data.publishedDate) ? data.publishedDate : '',
       tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
       draft: true,
+      summary: typeof data.summary === 'string' ? data.summary : undefined,
+      thumbnail: typeof data.thumbnail === 'string' ? data.thumbnail : undefined,
       body,
     }
   }
@@ -107,6 +120,14 @@ function parseFile(file: string): Post {
     fail(file, 'tags must be a list')
   }
 
+  if (data.summary !== undefined && typeof data.summary !== 'string') {
+    fail(file, 'summary must be a string')
+  }
+
+  if (data.thumbnail !== undefined && typeof data.thumbnail !== 'string') {
+    fail(file, 'thumbnail must be a path under /public or a drawn-thumbnail key')
+  }
+
   return {
     slug,
     title: String(data.title),
@@ -115,6 +136,8 @@ function parseFile(file: string): Post {
     publishedDate: published,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     draft: false,
+    summary: typeof data.summary === 'string' ? data.summary : undefined,
+    thumbnail: typeof data.thumbnail === 'string' ? data.thumbnail : undefined,
     body,
   }
 }

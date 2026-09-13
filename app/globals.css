@@ -4,43 +4,55 @@
 
 @layer base {
   :root {
-    /* Off-white page, dark charcoal ink, one restrained indigo accent. */
-    --background: 40 12% 98%;
-    --foreground: 240 6% 13%;
-    --border: 40 8% 89%;
-    --input: 40 8% 89%;
-    --ring: 243 60% 52%;
-    --primary: 240 6% 13%;
-    --primary-foreground: 40 12% 98%;
-    --secondary: 40 8% 95%;
-    --secondary-foreground: 240 6% 13%;
-    --muted: 40 8% 95%;
-    --muted-foreground: 240 4% 42%;
-    --accent: 40 8% 95%;
-    --accent-foreground: 240 6% 13%;
+    /* White page, dark charcoal headings, neutral grey secondary text. */
+    --background: 0 0% 100%;
+    --foreground: 220 14% 13%;
+    --card: 0 0% 100%;
+    --sidebar: 220 16% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --primary: 220 14% 13%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 14% 13%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 40%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 14% 13%;
 
-    /* The single accent colour of the site: links, focus, hovered titles. */
-    --brand: 243 60% 52%;
+    /*
+     * The single accent. `--brand` is the only one used for text, links and
+     * controls, and clears 4.5:1 both on white and under white. `--brand-bright`
+     * is decorative only — the small dots beside the wordmark and copyright —
+     * so it is never asked to carry a contrast ratio.
+     */
+    --brand: 17 88% 40%;
+    --brand-bright: 21 90% 48%;
 
+    --ring: 17 88% 40%;
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 240 8% 7%;
-    --foreground: 40 10% 96%;
-    --border: 240 5% 18%;
-    --input: 240 5% 18%;
-    --ring: 243 80% 76%;
-    --primary: 40 10% 96%;
-    --primary-foreground: 240 8% 7%;
-    --secondary: 240 5% 15%;
-    --secondary-foreground: 40 10% 96%;
-    --muted: 240 5% 15%;
-    --muted-foreground: 240 5% 66%;
-    --accent: 240 5% 15%;
-    --accent-foreground: 40 10% 96%;
+    --background: 220 16% 7%;
+    --foreground: 210 20% 96%;
+    --card: 220 14% 11%;
+    --sidebar: 220 16% 9%;
+    --border: 220 12% 20%;
+    --input: 220 12% 20%;
+    --primary: 210 20% 96%;
+    --primary-foreground: 220 16% 7%;
+    --secondary: 220 12% 16%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 220 12% 16%;
+    --muted-foreground: 220 9% 68%;
+    --accent: 220 12% 16%;
+    --accent-foreground: 210 20% 96%;
 
-    --brand: 243 80% 76%;
+    --brand: 22 95% 64%;
+    --brand-bright: 22 95% 64%;
+
+    --ring: 22 95% 64%;
   }
 }
 
@@ -72,31 +84,18 @@
 }
 
 @layer components {
-  /* Underline that grows from the left on hover — used by the nav links. */
-  .nav-underline::after {
-    content: "";
-    position: absolute;
-    /* Matches the link's own horizontal padding at each breakpoint. */
-    left: 0.5rem;
-    right: 0.5rem;
-    bottom: 0.25rem;
-    height: 1px;
-    background-color: currentColor;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 200ms ease-out;
+  /*
+   * The "View all" arrow. Written by hand so that reduced motion can cancel the
+   * transform itself, not merely its transition — removing the transition alone
+   * would leave the arrow jumping 3px instantly on hover.
+   */
+  .view-all-arrow {
+    transition: transform 150ms ease-out;
   }
 
-  .nav-underline:hover::after,
-  .nav-underline[data-active="true"]::after {
-    transform: scaleX(1);
-  }
-
-  @media (min-width: 640px) {
-    .nav-underline::after {
-      left: 0.75rem;
-      right: 0.75rem;
-    }
+  .view-all:hover .view-all-arrow,
+  .view-all:focus-visible .view-all-arrow {
+    transform: translateX(3px);
   }
 
   /*
@@ -114,10 +113,14 @@
 }
 
 @layer utilities {
-  @keyframes fadeIn {
+  /*
+    Entry motion. It runs once on mount; React does not remount these wrappers
+    when the category filter changes, so filtering never replays it.
+  */
+  @keyframes enter {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(5px);
     }
     to {
       opacity: 1;
@@ -125,26 +128,25 @@
     }
   }
 
-  .animate-fade-in {
-    animation: fadeIn 400ms ease-out both;
+  .animate-enter {
+    animation: enter 300ms ease-out both;
   }
 
   /*
-    A single, barely visible indigo wash behind the hero. Static on purpose:
-    no drift, no second colour, nothing that reads as decoration. The ellipse
-    is sized to fade out inside its own box, so it needs no horizontal bleed
-    and cannot widen the page on a narrow screen.
-  */
+   * A very subtle warm tint near the hero only — one colour, static, and sized
+   * to fade out inside its own box so it can never widen the page. Deliberately
+   * not a page-wide coloured background.
+   */
   .hero-glow::before {
     content: "";
     position: absolute;
-    inset: -5rem 0 auto 0;
-    height: 16rem;
+    inset: -2rem 0 auto 0;
+    height: 19rem;
     z-index: -1;
     pointer-events: none;
     background-image: radial-gradient(
-      38% 55% at 26% 45%,
-      hsl(var(--brand) / 0.08),
+      36% 60% at 26% 42%,
+      hsl(26 92% 60% / 0.13),
       transparent 72%
     );
   }
@@ -171,12 +173,24 @@
       scroll-behavior: auto;
     }
 
-    .animate-fade-in,
+    .animate-enter,
     .animate-status-pulse {
       animation: none;
     }
 
-    .nav-underline::after {
+    /* No decorative movement; colour transitions are left alone. */
+    *,
+    *::before,
+    *::after {
+      transition-property: color, background-color, border-color,
+        text-decoration-color, fill, stroke, opacity;
+    }
+
+    /* The transform is cancelled outright, not just un-transitioned. */
+    .view-all-arrow,
+    .view-all:hover .view-all-arrow,
+    .view-all:focus-visible .view-all-arrow {
+      transform: none;
       transition: none;
     }
   }

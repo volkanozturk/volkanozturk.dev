@@ -8,6 +8,8 @@ tags:
   - Kafka
   - Consumers
   - Operations
+summary: "What consumer lag tells you, and when to investigate."
+thumbnail: kafka-lag
 draft: false
 ---
 

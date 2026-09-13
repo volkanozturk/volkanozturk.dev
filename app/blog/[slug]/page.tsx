@@ -54,7 +54,7 @@ export default function BlogPostPage({ params: { slug } }: { params: { slug: str
     <article className="space-y-10">
       <Link
         href="/blog"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-brand"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to writing

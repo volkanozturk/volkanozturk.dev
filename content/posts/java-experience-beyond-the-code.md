@@ -8,6 +8,8 @@ tags:
   - Java
   - Production
   - Architecture
+summary: "Better questions for real production problems."
+thumbnail: java-cover
 draft: false
 ---
 

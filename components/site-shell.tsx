@@ -47,16 +47,13 @@ function Identity() {
     <div>
       <Link
         href="/"
-        className="flex items-center gap-2.5 text-[15px] font-semibold tracking-tight text-foreground"
+        className="flex items-center gap-2 text-[15px] font-medium tracking-tight text-foreground"
       >
-        <LogoMark className="h-7 w-7 shrink-0" />
-        <span className="inline-flex items-center gap-1.5">
-          volkan öztürk
-          <span aria-hidden className="h-[2px] w-2.5 rounded-full bg-brand-bright" />
-        </span>
+        <LogoMark className="h-6 w-6 shrink-0" />
+        volkan öztürk
       </Link>
-      <p className="mt-1.5 text-sm text-muted-foreground">Senior Java Developer</p>
-      <p className="text-sm text-muted-foreground">volkanozturk.dev</p>
+      <p className="mt-1.5 text-[13px] text-muted-foreground">Senior Java Developer</p>
+      <p className="text-[12.5px] text-muted-foreground">volkanozturk.dev</p>
     </div>
   )
 }
@@ -127,9 +124,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
             <Link
               href="/"
-              className="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-foreground"
+              className="flex items-center gap-2 text-[14px] font-medium tracking-tight text-foreground"
             >
-              <LogoMark className="h-6 w-6 shrink-0" />
+              <LogoMark className="h-[22px] w-[22px] shrink-0" />
               volkan öztürk
             </Link>
 

@@ -2,6 +2,7 @@ import { Fragment, type ReactNode } from 'react'
 import Image from 'next/image'
 import { marked, type Token, type Tokens } from 'marked'
 import { resolveFigure } from '@/components/post-figures'
+import { cn } from '@/lib/utils'
 
 /**
  * Renders Markdown as React elements from marked's token stream.
@@ -12,30 +13,45 @@ import { resolveFigure } from '@/components/post-figures'
  */
 
 /**
- * A paragraph holding nothing but images becomes a figure. One image renders at
- * article width; several share a row on desktop and stack on mobile. The first
- * image's Markdown title is used as the shared caption.
+ * A paragraph holding nothing but images becomes a figure. Several images share
+ * a row; one renders at article width. The first image's Markdown title is used
+ * as the shared caption.
+ *
+ * A post can narrow a figure by adding `?w=` to the image path, e.g.
+ * `![alt](/images/pass.jpg?w=280 "Caption")`, which centres it at that pixel
+ * width and stays responsive below it. Sizing is therefore opt-in per figure
+ * rather than a site-wide rule.
  */
+function figureSrc(img: Tokens.Image): { src: string; maxWidth?: number } {
+  const [src, query] = img.href.split('?')
+  if (!query) return { src }
+  const w = Number(new URLSearchParams(query).get('w'))
+  return { src, maxWidth: Number.isFinite(w) && w > 0 ? w : undefined }
+}
+
 function ImageFigure({ images }: { images: Tokens.Image[] }) {
   const caption = images[0]?.title
+  const { maxWidth } = figureSrc(images[0])
 
   return (
-    <figure className="my-8 not-prose">
-      <div
-        className={
-          images.length > 1 ? 'grid gap-3 sm:grid-cols-2' : 'max-w-sm'
-        }
-      >
-        {images.map((img) => (
-          <Image
-            key={img.href}
-            src={img.href}
-            alt={img.text}
-            width={1000}
-            height={1333}
-            className="h-auto w-full rounded-lg border border-border"
-          />
-        ))}
+    <figure
+      className={cn('my-8 not-prose', maxWidth && 'mx-auto')}
+      style={maxWidth ? { maxWidth } : undefined}
+    >
+      <div className={images.length > 1 ? 'grid grid-cols-2 gap-3' : undefined}>
+        {images.map((img) => {
+          const { src } = figureSrc(img)
+          return (
+            <Image
+              key={src}
+              src={src}
+              alt={img.text}
+              width={1000}
+              height={1333}
+              className="h-auto w-full rounded-lg"
+            />
+          )
+        })}
       </div>
       {caption && (
         <figcaption className="mt-2 text-xs text-muted-foreground/80">

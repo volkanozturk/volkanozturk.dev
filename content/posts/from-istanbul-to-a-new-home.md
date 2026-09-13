@@ -2,7 +2,7 @@
 title: "From Istanbul to a New Home"
 slug: from-istanbul-to-a-new-home
 category: life
-excerpt: "Leaving Istanbul with my wife and our poodle, Java, building a life in the Netherlands, and what that decision means to us since becoming parents."
+excerpt: "Why we moved from Istanbul to the Netherlands, what we still miss, and how becoming parents changed the way we think about that decision."
 publishedDate: "2026-09-13"
 tags:
   - Netherlands
@@ -11,53 +11,41 @@ tags:
 draft: false
 ---
 
-There's a photo from our move that shows our belongings stacked outside: cardboard boxes, wrapped furniture, and two red moving trolleys. Another shows them being loaded into a truck. It's strange to see the things that filled your home packed up like that, ready to leave.
+On 12 August 2022, my wife and I moved from Istanbul to the Netherlands with our poodle, Java. We brought our belongings, left our family behind, and started getting used to life in another country.
 
-![Packed boxes and wrapped furniture outside before our move from Istanbul.](/images/from-istanbul-to-a-new-home/belongings.jpg "Packing up our home in Istanbul, August 2022.")
+People often assume we moved for a better salary. For us, money was one of the least important reasons. We wanted to feel safer in everyday life and worry less about the future.
+
+My wife didn't feel safe travelling on the metro. Traffic took up too much of our time, and the way people sometimes treated each other made ordinary days more tiring. Over time, those things became harder to accept as just part of life.
+
+We started thinking seriously about where we wanted to spend the coming years. Eventually, we chose the Netherlands.
+
+![Packed boxes and wrapped furniture outside before our move from Istanbul.](/images/from-istanbul-to-a-new-home/belongings.jpg "Moving day in Istanbul, August 2022.")
 ![Our belongings being loaded into a moving truck in Istanbul.](/images/from-istanbul-to-a-new-home/loading-truck.jpg)
 
-Then there's the photo of our boarding passes. Istanbul to Amsterdam. 12 August 2022.
+## What we left behind
 
-That was the day my wife and I moved to the Netherlands with our poodle, Java. And yes, I'm a Java developer with a dog called Java.
+We still love Istanbul. Our whole family is there, and being away from them is the hardest part of living here.
 
-![Our boarding passes from Istanbul to Amsterdam on 12 August, with personal details redacted.](/images/from-istanbul-to-a-new-home/boarding-pass.jpg "Istanbul → Amsterdam, 12 August 2022.")
+We miss the food, familiar places, and sitting down for a meal with people who know us well. When your family lives nearby, spending time together can be a simple part of the week. From another country, it takes flights, time off, and planning.
 
-Four years later, we're still here, with our son Atlas, who was born in July 2024. A lot has changed since those photos were taken.
+Those things mattered when we decided to leave, and they still matter now. There was plenty we loved about our life in Istanbul. We also knew we wanted some things to change.
 
-## Loving a city and choosing to leave
+## Settling into life here
 
-We loved Istanbul when we left, and we still do. Our whole family is there, along with familiar places, food we miss, and the comfort of knowing a city so well.
+We arrived with Java, our poodle. As a Java developer, I realise his name needs very little explanation.
 
-Being close to family is difficult to replace. Sharing a meal or simply spending time together doesn't need much planning when you live nearby. From another country, even a simple visit means arranging flights and finding the time.
+Our furniture and boxes could be moved, but feeling settled took time. There was a different language around us, unfamiliar systems, and everyday things to learn again.
 
-But everyday life in Istanbul had started to wear us down. My wife didn't feel safe travelling on the metro. Traffic took too much time and energy, and rude encounters added to the frustration. Alongside those daily things, we worried about the future.
+Gradually, we found our routines and built a life we felt happy with. We still missed our family. Some days, we wished they were closer. That feeling has stayed, even as the Netherlands has become home.
 
-Money was near the bottom of our reasons for moving. We wanted to feel safer and more at ease in our everyday lives. We wanted to make plans with a little more confidence.
+![Our boarding passes from Istanbul to Amsterdam on 12 August, with personal details redacted.](/images/from-istanbul-to-a-new-home/boarding-pass.jpg?w=280 "12 August 2022. Istanbul to Amsterdam.")
 
-You can love a place and still find it difficult to build the life you want there. That was where we found ourselves.
+## Then we became parents
 
-## Making a life here
+Atlas was born in July 2024. After that, the future we had been thinking about became much more personal.
 
-Moving meant getting used to a different language, different systems, and new ways of doing ordinary things. Bringing our belongings was one part of it. Feeling at home would take longer.
+We began thinking about where he would go to school, how he would grow up, and what opportunities he might have. We feel good about raising him in the Netherlands. His education and future are a big part of why we're happy to be here.
 
-Gradually, we built our routines. What had been unfamiliar became part of everyday life, and the Netherlands started to feel like home.
+We also want him to know Istanbul and our family there. We want him to spend time with them, enjoy the food, and get to know the city we still love.
 
-The distance from family remained. We could be happy with our life here and still wish they were closer. Missing Istanbul didn't mean we regretted moving; it meant there were people and parts of our life there that still mattered.
-
-## Then Atlas arrived
-
-In July 2024, Atlas was born.
-
-Having him made us think about our decision differently. Safety, education, and opportunities were now things we wanted for someone we were just getting to know.
-
-We feel positive about raising him in the Netherlands, especially when we think about his education and the opportunities he may have as he grows up. There's a lot we can't plan for, but we're happy with the place we've chosen to start his life.
-
-At the same time, we want him to know our family in Istanbul, spend time with them, and discover the food and places we love. That part of his life matters to us too.
-
-## Four years later
-
-Looking at those moving photos now, I think about how much has happened since we packed those boxes. Back then, it was my wife, Java, and me. Now we're raising our son here.
-
-We still love Istanbul and miss having our family nearby. We're also happy with the life we're building in the Netherlands, especially for Atlas.
-
-There are things we miss and things we're grateful for. After four years, we've learned that both can be true.
+Looking back, we're glad we made the move. Being far from family is still difficult, and there are things about Istanbul we'll always miss. But we're happy with our life here, especially when we think about Atlas growing up.

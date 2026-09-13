@@ -3,11 +3,12 @@ title: "Java Experience Beyond the Code"
 slug: java-experience-beyond-the-code
 category: engineering
 excerpt: "Eight production situations where better questions matter more than quick fixes, from slow APIs and connection pools to retries and duplicate messages."
+publishedDate: 2026-09-13T11:20:00.000Z
 tags:
   - Java
   - Production
   - Architecture
-draft: true
+draft: false
 ---
 
 After ten years of writing Java, I'm comfortable with the language. That doesn't mean the next production problem will be obvious.

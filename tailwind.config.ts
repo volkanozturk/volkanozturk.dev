@@ -5,10 +5,14 @@ const config: Config = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    // Tag pill colours are defined here.
-    './lib/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   darkMode: 'class',
+  /*
+   * `dark` is applied at runtime rather than written into any component, so
+   * without this the whole `.dark` token block in globals.css gets purged and
+   * the dark palette silently does nothing.
+   */
+  safelist: ['dark'],
   theme: {
     extend: {
       fontFamily: {
@@ -37,6 +41,8 @@ const config: Config = {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
+        // The one accent colour: links, focus rings, hovered titles.
+        brand: 'hsl(var(--brand))',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -49,9 +55,10 @@ const config: Config = {
             maxWidth: 'none',
             color: 'hsl(var(--foreground))',
             a: {
-              color: 'hsl(var(--primary))',
+              color: 'hsl(var(--brand))',
+              textUnderlineOffset: '4px',
               '&:hover': {
-                color: 'hsl(var(--primary))',
+                color: 'hsl(var(--brand))',
               },
             },
             'h1, h2, h3, h4': {

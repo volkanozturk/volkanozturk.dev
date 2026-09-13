@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, Github, Linkedin, Twitter } from 'lucide-react'
 import { getAllPosts } from '@/lib/posts'
-import { BlogCard } from '@/components/blog-card'
+import { PostListItem } from '@/components/post-list-item'
 import { SectionHeading } from '@/components/section-heading'
 import { toWritingPost, type WritingPost } from '@/lib/writing'
 
@@ -11,91 +11,74 @@ const socialLinks = [
   { icon: Linkedin, href: 'https://linkedin.com/in/volkanozturk', label: 'LinkedIn' },
 ] as const
 
-const sections = [
-  { href: '/blog', title: 'Writing', description: 'Technical and personal posts' },
-  { href: '/journey', title: 'Journey', description: 'My career and education' },
-  { href: '/bookmarks', title: 'Bookmarks', description: 'Links worth keeping' },
-] as const
-
 export default function HomePage() {
   const recentPosts: WritingPost[] = getAllPosts().slice(0, 3).map(toWritingPost)
 
   return (
     <div className="space-y-16">
       {/* Hero */}
-      <section className="hero-aurora relative isolate space-y-5">
-        <span className="inline-flex items-center rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm">
-          Based in the Netherlands
-        </span>
+      <section className="hero-glow relative isolate">
+        <h1 className="text-4xl font-bold tracking-[-0.035em] text-foreground sm:text-5xl">
+          Hi, I&rsquo;m Volkan.
+        </h1>
 
-        <div className="space-y-3">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Hi, I&rsquo;m Volkan.
-          </h1>
-          <p className="max-w-xl text-base leading-relaxed text-muted-foreground">
-            Senior Java Developer at LeoVegas. I write about software, everyday life,
-            and things I find worth sharing.
+        {/* Roughly 58 characters per line — comfortable for a short intro. */}
+        <div className="mt-6 max-w-[58ch] space-y-3">
+          <p className="text-lg leading-relaxed text-foreground">
+            Senior Java Developer at LeoVegas.
+          </p>
+          <p className="leading-relaxed text-muted-foreground">
+            I write about software, everyday life, and things I find worth sharing.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 pt-1">
-          {socialLinks.map(({ icon: Icon, href, label }) => (
-            <a
-              key={href}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              title={label}
-              className="rounded-xl border border-border/60 bg-background/60 p-3 text-muted-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/25 hover:text-foreground hover:shadow-md hover:shadow-foreground/5"
-            >
-              <Icon className="h-4 w-4" />
-            </a>
-          ))}
+        {/*
+          One row on a wide screen, wrapping on its own when it runs out of
+          space. The icon strip is pulled left by its own padding so it lines up
+          with the text above whenever it does wrap.
+        */}
+        <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-1">
+          <p className="text-sm text-muted-foreground">Based in the Netherlands</p>
+
+          <div className="-ml-2.5 flex items-center">
+            {socialLinks.map(({ icon: Icon, href, label }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-brand"
+              >
+                <Icon className="h-[1.15rem] w-[1.15rem]" />
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Recent posts */}
+      {/* Latest writing */}
       {recentPosts.length > 0 && (
-        <section className="space-y-6">
-          <div className="flex items-center justify-between gap-4">
-            <SectionHeading>Recent posts</SectionHeading>
+        <section className="space-y-4">
+          <div className="flex items-baseline justify-between gap-4">
+            <SectionHeading>Latest writing</SectionHeading>
             <Link
               href="/blog"
-              className="group flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               View all
-              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
-          <div className="space-y-4">
+          <div className="divide-y divide-border border-t border-border">
             {recentPosts.map((post) => (
-              <BlogCard key={post.slug} post={post} />
+              <PostListItem key={post.slug} post={post} showCategory={false} showTags />
             ))}
           </div>
         </section>
       )}
-
-      {/* Section links */}
-      <section className="space-y-6">
-        <SectionHeading>Sections</SectionHeading>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {sections.map(({ href, title, description }) => (
-            <Link
-              key={href}
-              href={href}
-              className="group rounded-xl border border-border bg-background/40 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-accent/50 hover:shadow-md hover:shadow-foreground/5"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="font-medium text-foreground">{title}</h3>
-                <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-foreground" />
-              </div>
-              <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
     </div>
   )
 }

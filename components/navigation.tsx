@@ -16,15 +16,22 @@ export function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-background/75 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-3xl items-center justify-between gap-4 px-4 md:px-6">
+      {/*
+        Below sm the four links plus the wordmark are wider than a phone screen,
+        so the bar stacks rather than pushing "Bookmarks" past the viewport. The
+        links also carry tighter padding there, which keeps the row inside a
+        320px screen even once a visible scrollbar takes its 15px.
+      */}
+      <div className="mx-auto flex max-w-3xl flex-col items-start gap-1 px-4 py-3 sm:h-16 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-0 md:px-6">
         <Link
           href="/"
-          className="gradient-text text-sm font-semibold tracking-tight transition-opacity hover:opacity-80"
+          className="text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-brand"
         >
           volkanozturk.dev
         </Link>
 
-        <nav aria-label="Main" className="flex items-center gap-0.5">
+        {/* Pulled left by the links' own padding so "Home" aligns with the wordmark. */}
+        <nav aria-label="Main" className="-ml-2 flex items-center gap-0.5 sm:ml-0">
           {navItems.map(({ href, label }) => {
             const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
 
@@ -35,7 +42,7 @@ export function Navigation() {
                 data-active={isActive}
                 aria-current={isActive ? 'page' : undefined}
                 className={cn(
-                  'nav-underline relative rounded-md px-3 py-2 text-sm transition-colors',
+                  'nav-underline relative rounded-md px-2 py-2 text-sm transition-colors sm:px-3',
                   isActive
                     ? 'text-foreground'
                     : 'text-muted-foreground hover:text-foreground'

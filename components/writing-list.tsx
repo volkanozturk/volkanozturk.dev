@@ -33,11 +33,11 @@ export function WritingList({ posts }: WritingListProps) {
       ) : (
         <div className="space-y-10">
           {groups.map((group) => (
-            <section key={group.year} className="space-y-1">
-              <h2 className="text-xs font-medium tabular-nums tracking-widest text-muted-foreground/70">
+            <section key={group.year} className="space-y-2">
+              <h2 className="text-xs font-semibold tabular-nums text-muted-foreground">
                 {group.year}
               </h2>
-              <div className="divide-y divide-border/60 border-t border-border/60">
+              <div className="divide-y divide-border border-t border-border">
                 {group.posts.map((post) => (
                   <PostListItem key={post.slug} post={post} />
                 ))}

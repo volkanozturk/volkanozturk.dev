@@ -1,4 +1,6 @@
-/** Section header with a thin gradient left-border accent. */
+/** Quiet section label — plain sentence case, no rule, no wide tracking. */
 export function SectionHeading({ children }: { children: React.ReactNode }) {
-  return <h2 className="section-heading">{children}</h2>
+  return (
+    <h2 className="text-sm font-semibold tracking-tight text-foreground">{children}</h2>
+  )
 }

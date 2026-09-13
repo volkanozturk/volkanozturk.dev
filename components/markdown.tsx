@@ -21,6 +21,9 @@ import { cn } from '@/lib/utils'
  * `![alt](/images/pass.jpg?w=280 "Caption")`, which centres it at that pixel
  * width and stays responsive below it. Sizing is therefore opt-in per figure
  * rather than a site-wide rule.
+ *
+ * Either way a figure is `article-wide`: it is measured against the full
+ * content column rather than the narrower text measure around it.
  */
 function figureSrc(img: Tokens.Image): { src: string; maxWidth?: number } {
   const [src, query] = img.href.split('?')
@@ -35,7 +38,7 @@ function ImageFigure({ images }: { images: Tokens.Image[] }) {
 
   return (
     <figure
-      className={cn('my-8 not-prose', maxWidth && 'mx-auto')}
+      className={cn('my-8 not-prose article-wide', maxWidth && 'mx-auto')}
       style={maxWidth ? { maxWidth } : undefined}
     >
       <div className={images.length > 1 ? 'grid grid-cols-2 gap-3' : undefined}>
@@ -102,7 +105,7 @@ function inline(tokens: Token[] | undefined, keyPrefix: string): ReactNode {
             href={t.href}
             title={t.title ?? undefined}
             {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            className="text-foreground underline underline-offset-4 transition-colors hover:text-muted-foreground"
+            className="text-brand underline decoration-brand/40 underline-offset-4 transition-colors hover:decoration-brand"
           >
             {inline(t.tokens, key)}
           </a>
@@ -197,7 +200,7 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
         return (
           <pre
             key={key}
-            className="mb-4 overflow-x-auto rounded-lg border border-border bg-muted/60 p-4 text-sm leading-relaxed"
+            className="article-wide mb-4 overflow-x-auto rounded-lg border border-border bg-muted/60 p-4 text-sm leading-relaxed"
           >
             <code className="font-mono">{(token as Tokens.Code).text}</code>
           </pre>

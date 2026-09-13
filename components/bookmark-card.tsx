@@ -21,11 +21,13 @@ export function BookmarkCard({ bookmark }: BookmarkCardProps) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col gap-2 rounded-xl border border-border bg-background/40 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-accent/40 hover:shadow-md hover:shadow-foreground/5"
+      className="group flex flex-col gap-2 rounded-lg border border-border p-4 transition-colors hover:border-foreground/25"
     >
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-sm font-medium leading-snug text-foreground">{title}</h3>
-        <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+        <h3 className="text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-brand">
+          {title}
+        </h3>
+        <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-brand" />
       </div>
 
       {description && (
@@ -34,7 +36,7 @@ export function BookmarkCard({ bookmark }: BookmarkCardProps) {
         </p>
       )}
 
-      <span className="text-xs text-muted-foreground/70">{domain}</span>
+      <span className="text-xs text-muted-foreground/80">{domain}</span>
     </a>
   )
 }

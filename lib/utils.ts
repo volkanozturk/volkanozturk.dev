@@ -32,21 +32,3 @@ export function readingTime(body?: string, fallback?: string): number {
   const words = text.trim().split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.round(words / WORDS_PER_MINUTE))
 }
-
-const TAG_STYLES = [
-  'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-200',
-  'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200',
-  'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
-  'bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-200',
-  'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-200',
-  'bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-200',
-]
-
-/** Stable pastel colour per tag, so a tag keeps the same colour across pages. */
-export function tagStyle(tag: string): string {
-  let hash = 0
-  for (let i = 0; i < tag.length; i++) {
-    hash = (hash * 31 + tag.charCodeAt(i)) >>> 0
-  }
-  return TAG_STYLES[hash % TAG_STYLES.length]
-}

@@ -10,7 +10,7 @@ export function TimelineEntry({ entry, isLast }: TimelineEntryProps) {
   const { year, title, description, isCurrent } = entry
 
   return (
-    <article className="group relative flex flex-col gap-1 rounded-lg px-3 py-4 transition-colors hover:bg-accent/40 sm:flex-row sm:gap-6">
+    <article className="relative flex flex-col gap-1 px-3 py-4 sm:flex-row sm:gap-6">
       {/*
         Year column. On sm+ the rail sits on the column's right edge and spans the
         full row height, so consecutive rows form one unbroken line; the year text

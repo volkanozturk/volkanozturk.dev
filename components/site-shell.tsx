@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { LOCATION, isActivePath, navItems } from '@/lib/nav'
 import { EmailLink } from '@/components/email-link'
+import { LogoMark } from '@/components/logo-mark'
 import { SocialIcons } from '@/components/social-icons'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
@@ -44,10 +45,16 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 function Identity() {
   return (
     <div>
-      <p className="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-foreground">
-        <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-brand-bright" />
-        Volkan Öztürk
-      </p>
+      <Link
+        href="/"
+        className="flex items-center gap-2.5 text-[15px] font-semibold tracking-tight text-foreground"
+      >
+        <LogoMark className="h-7 w-7 shrink-0" />
+        <span className="inline-flex items-center gap-1.5">
+          volkan öztürk
+          <span aria-hidden className="h-[2px] w-2.5 rounded-full bg-brand-bright" />
+        </span>
+      </Link>
       <p className="mt-1.5 text-sm text-muted-foreground">Senior Java Developer</p>
       <p className="text-sm text-muted-foreground">volkanozturk.dev</p>
     </div>
@@ -122,8 +129,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               href="/"
               className="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-foreground"
             >
-              <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-brand-bright" />
-              Volkan Öztürk
+              <LogoMark className="h-6 w-6 shrink-0" />
+              volkan öztürk
             </Link>
 
             <div className="flex items-center gap-1">

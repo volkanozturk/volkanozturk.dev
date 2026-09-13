@@ -30,10 +30,15 @@ export function PostListItem({ post }: PostListItemProps) {
         )}
 
         <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-          <time dateTime={publishedDate} className="tabular-nums">
-            {formatDate(publishedDate, 'd MMM yyyy')}
-          </time>
-          <span aria-hidden className="text-muted-foreground/40">·</span>
+          {/* An undated draft simply omits the date and its separator. */}
+          {publishedDate && (
+            <>
+              <time dateTime={publishedDate} className="tabular-nums">
+                {formatDate(publishedDate, 'd MMM yyyy')}
+              </time>
+              <span aria-hidden className="text-muted-foreground/40">·</span>
+            </>
+          )}
           <span>{CATEGORY_LABELS[category]}</span>
           <span aria-hidden className="text-muted-foreground/40">·</span>
           <span>{minutes} min read</span>

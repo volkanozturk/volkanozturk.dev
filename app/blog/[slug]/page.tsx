@@ -63,12 +63,17 @@ export default function BlogPostPage({ params: { slug } }: { params: { slug: str
         <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
 
         <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-muted-foreground">
-          <time dateTime={publishedDate} className="tabular-nums">
-            {formatDate(publishedDate, 'd MMM yyyy')}
-          </time>
-          <span aria-hidden className="text-muted-foreground/40">
-            ·
-          </span>
+          {/* An undated draft simply omits the date and its separator. */}
+          {publishedDate && (
+            <>
+              <time dateTime={publishedDate} className="tabular-nums">
+                {formatDate(publishedDate, 'd MMM yyyy')}
+              </time>
+              <span aria-hidden className="text-muted-foreground/40">
+                ·
+              </span>
+            </>
+          )}
           <span>{CATEGORY_LABELS[category]}</span>
           <span aria-hidden className="text-muted-foreground/40">
             ·

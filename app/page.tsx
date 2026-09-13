@@ -4,8 +4,14 @@ import { getAllPosts } from '@/lib/posts'
 import { PostCardList } from '@/components/post-card'
 import { toWritingPost, type WritingPost } from '@/lib/writing'
 
+/** How many of the newest posts the home page shows. */
+const HOME_POST_LIMIT = 3
+
 export default function HomePage() {
-  const recentPosts: WritingPost[] = getAllPosts().slice(0, 3).map(toWritingPost)
+  // `getAllPosts()` is already the published collection, newest first, so the
+  // count is taken from it before the limit is applied — never from the cards.
+  const published = getAllPosts()
+  const recentPosts: WritingPost[] = published.slice(0, HOME_POST_LIMIT).map(toWritingPost)
 
   return (
     <div>
@@ -22,22 +28,24 @@ export default function HomePage() {
 
       {recentPosts.length > 0 && (
         <section className="animate-enter mt-11">
-          <div className="flex items-baseline justify-between gap-4">
-            <h2 className="text-[21px] font-bold tracking-tight text-foreground">
-              Latest writing
-            </h2>
-            <Link
-              href="/blog"
-              className="view-all inline-flex items-center gap-1.5 text-sm font-medium text-brand transition-colors duration-150 hover:text-foreground"
-            >
-              View all
-              <ArrowRight aria-hidden className="view-all-arrow h-4 w-4" />
-            </Link>
-          </div>
+          <h2 className="text-[21px] font-bold tracking-tight text-foreground">
+            Latest writing
+          </h2>
 
           <div className="mt-4">
             <PostCardList posts={recentPosts} preferSummary />
           </div>
+
+          {/* Only worth offering when the archive holds more than the cards above. */}
+          {published.length > recentPosts.length && (
+            <Link
+              href="/blog/"
+              className="view-all mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-brand transition-colors duration-150 hover:text-foreground"
+            >
+              View all {published.length} posts
+              <ArrowRight aria-hidden className="view-all-arrow h-4 w-4" />
+            </Link>
+          )}
         </section>
       )}
     </div>

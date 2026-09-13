@@ -25,3 +25,6 @@ export function isActivePath(pathname: string, href: string): boolean {
 }
 
 export const LOCATION = 'Based in the Netherlands'
+
+/** The one address published anywhere on the site. */
+export const EMAIL = 'hello@volkanozturk.dev'

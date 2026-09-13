@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { socialLinks } from '@/lib/nav'
+import { EMAIL, socialLinks } from '@/lib/nav'
+import { CopyEmailButton } from '@/components/copy-email'
 
 const TITLE = 'About'
 const DESCRIPTION =
@@ -80,6 +81,14 @@ export default function AboutPage() {
             X
           </a>
           .
+        </p>
+
+        <p>
+          Have a question or something you&rsquo;d like to share? Say hello at{' '}
+          <a href={`mailto:${EMAIL}`} className={linkClass}>
+            {EMAIL}
+          </a>
+          . <CopyEmailButton />
         </p>
       </div>
     </div>

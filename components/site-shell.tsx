@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { LOCATION, isActivePath, navItems } from '@/lib/nav'
+import { EmailLink } from '@/components/email-link'
 import { SocialIcons } from '@/components/social-icons'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
@@ -105,6 +106,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
         <div className="mt-auto pt-8">
           <p className="text-xs text-muted-foreground">{LOCATION}</p>
+          <EmailLink className="mt-2" />
           <div className="-ml-2 mt-2 flex items-center justify-between gap-2">
             <SocialIcons />
             <ThemeToggle />
@@ -155,7 +157,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             </nav>
             <div className="mt-4 border-t border-border pt-4">
               <p className="text-xs text-muted-foreground">{LOCATION}</p>
-              <SocialIcons className="-ml-2 mt-1" />
+              <EmailLink className="mt-2" />
+              <SocialIcons className="-ml-2 mt-2" />
             </div>
           </div>
         </header>

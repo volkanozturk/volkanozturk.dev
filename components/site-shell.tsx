@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { LOCATION, isActivePath, navItems } from '@/lib/nav'
 import { SocialIcons } from '@/components/social-icons'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
@@ -104,7 +105,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
         <div className="mt-auto pt-8">
           <p className="text-xs text-muted-foreground">{LOCATION}</p>
-          <SocialIcons className="-ml-2 mt-2" />
+          <div className="-ml-2 mt-2 flex items-center justify-between gap-2">
+            <SocialIcons />
+            <ThemeToggle />
+          </div>
         </div>
       </aside>
 
@@ -120,21 +124,25 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               Volkan Öztürk
             </Link>
 
-            <button
-              ref={toggleRef}
-              type="button"
-              className="js-menu-toggle inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground transition-colors duration-150 hover:border-brand/40 hover:text-brand"
-              aria-expanded={open}
-              aria-controls="site-menu"
-              aria-label={open ? 'Close menu' : 'Open menu'}
-              onClick={() => setOpen((value) => !value)}
-            >
-              {open ? (
-                <X className="h-5 w-5" aria-hidden />
-              ) : (
-                <Menu className="h-5 w-5" aria-hidden />
-              )}
-            </button>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+
+              <button
+                ref={toggleRef}
+                type="button"
+                className="js-menu-toggle inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground transition-colors duration-150 hover:border-brand/40 hover:text-brand"
+                aria-expanded={open}
+                aria-controls="site-menu"
+                aria-label={open ? 'Close menu' : 'Open menu'}
+                onClick={() => setOpen((value) => !value)}
+              >
+                {open ? (
+                  <X className="h-5 w-5" aria-hidden />
+                ) : (
+                  <Menu className="h-5 w-5" aria-hidden />
+                )}
+              </button>
+            </div>
           </div>
 
           <div

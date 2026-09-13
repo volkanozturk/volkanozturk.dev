@@ -9,7 +9,7 @@ tags:
   - Production
   - Architecture
 summary: "Better questions for real production problems."
-thumbnail: java-cover
+thumbnail: /images/covers/java-experience.webp
 draft: false
 ---
 

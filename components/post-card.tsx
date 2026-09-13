@@ -32,8 +32,8 @@ function Thumbnail({ post }: { post: WritingPost }) {
         <Image
           src={thumbnail}
           alt=""
-          width={400}
-          height={400}
+          width={320}
+          height={320}
           className="h-full w-full object-cover"
         />
       ) : Drawn ? (

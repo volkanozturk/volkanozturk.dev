@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { SiteShell } from '@/components/site-shell'
+import { ThemeScript } from '@/components/theme-script'
 import { Footer } from '@/components/footer'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL, TWITTER_HANDLE } from '@/lib/site'
 import './globals.css'
@@ -40,6 +41,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body>
         <SiteShell>
           <main className="mx-auto w-full max-w-[760px] flex-1 px-4 pb-16 pt-10 sm:px-5 lg:px-8 lg:pt-20">

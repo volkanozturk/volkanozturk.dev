@@ -9,7 +9,7 @@ tags:
   - Consumers
   - Operations
 summary: "What consumer lag tells you, and when to investigate."
-thumbnail: kafka-lag
+thumbnail: /images/covers/kafka-consumer-lag.webp
 draft: false
 ---
 

@@ -18,13 +18,22 @@
 # and does not grow, so the rules stay stable.
 /en/blog        /blog/        301
 /en/journey     /journey/     301
-/en/bookmarks   /bookmarks/   301
 /tr/blog        /blog/        301
 /tr/journey     /journey/     301
-/tr/bookmarks   /bookmarks/   301
 /nl/blog        /blog/        301
 /nl/journey     /journey/     301
-/nl/bookmarks   /bookmarks/   301
+
+# /bookmarks became /about. These point at the final URL directly — sending them
+# to /bookmarks/ first would cost a second hop, and both slash shapes are listed
+# so the wildcards below never get the chance to introduce one.
+/bookmarks      /about/  301
+/bookmarks/     /about/  301
+/en/bookmarks   /about/  301
+/en/bookmarks/  /about/  301
+/tr/bookmarks   /about/  301
+/tr/bookmarks/  /about/  301
+/nl/bookmarks   /about/  301
+/nl/bookmarks/  /about/  301
 
 # Everything else, including post slugs. A post URL that already carries its
 # trailing slash — which is the only shape the site ever linked, canonicalised

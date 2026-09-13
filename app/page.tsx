@@ -13,11 +13,10 @@ export default function HomePage() {
         <h1 className="text-[32px] font-bold leading-[1.12] tracking-[-0.035em] text-foreground sm:text-[40px]">
           Hi, I&rsquo;m Volkan.
         </h1>
-        <p className="mt-2 text-[18px] font-medium leading-snug text-foreground">
-          Senior Java Developer at LeoVegas.
-        </p>
-        <p className="mt-2 max-w-[58ch] text-base leading-relaxed text-muted-foreground">
-          I write about software, everyday life, and things I find worth sharing.
+        <p className="mt-3 max-w-[58ch] text-base leading-relaxed text-muted-foreground">
+          I&rsquo;m a software engineer based in the Netherlands. I write about building
+          reliable software, the things I learn along the way, and everyday life&mdash;from
+          engineering challenges to starting a new chapter in another country.
         </p>
       </section>
 

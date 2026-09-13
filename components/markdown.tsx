@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from 'react'
+import Image from 'next/image'
 import { marked, type Token, type Tokens } from 'marked'
 import { resolveFigure } from '@/components/post-figures'
 
@@ -9,6 +10,41 @@ import { resolveFigure } from '@/components/post-figures'
  * page unless it is handled below, so raw HTML in a post is ignored rather than
  * rendered. That keeps `dangerouslySetInnerHTML` out of the codebase entirely.
  */
+
+/**
+ * A paragraph holding nothing but images becomes a figure. One image renders at
+ * article width; several share a row on desktop and stack on mobile. The first
+ * image's Markdown title is used as the shared caption.
+ */
+function ImageFigure({ images }: { images: Tokens.Image[] }) {
+  const caption = images[0]?.title
+
+  return (
+    <figure className="my-8 not-prose">
+      <div
+        className={
+          images.length > 1 ? 'grid gap-3 sm:grid-cols-2' : 'max-w-sm'
+        }
+      >
+        {images.map((img) => (
+          <Image
+            key={img.href}
+            src={img.href}
+            alt={img.text}
+            width={1000}
+            height={1333}
+            className="h-auto w-full rounded-lg border border-border"
+          />
+        ))}
+      </div>
+      {caption && (
+        <figcaption className="mt-2 text-xs text-muted-foreground/80">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
 
 function inline(tokens: Token[] | undefined, keyPrefix: string): ReactNode {
   if (!tokens) return null
@@ -98,6 +134,16 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
         // A paragraph holding only `[figure:<key>]` becomes that diagram.
         const Figure = resolveFigure(t.text)
         if (Figure) return <Figure key={key} />
+
+        // A paragraph holding only images becomes a figure.
+        const children = t.tokens ?? []
+        const images = children.filter((c) => c.type === 'image') as Tokens.Image[]
+        const onlyImages =
+          images.length > 0 &&
+          children.every(
+            (c) => c.type === 'image' || (c.type === 'text' && !c.raw.trim())
+          )
+        if (onlyImages) return <ImageFigure key={key} images={images} />
 
         return (
           <p key={key} className="mb-4 leading-relaxed">

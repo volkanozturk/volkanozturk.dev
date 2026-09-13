@@ -1,0 +1,34 @@
+# Permanent redirects for the URLs indexed while the site was multilingual.
+#
+# Cloudflare Pages evaluates these top-to-bottom, first match wins, and applies
+# them regardless of whether an asset matches the request. Listing the literal
+# paths before the wildcards therefore lets every fixed route reach its final
+# trailing-slash URL in a single hop, instead of bouncing through the
+# slash-normalising redirect that Pages would otherwise issue.
+
+# Locale roots
+/en     /  301
+/en/    /  301
+/tr     /  301
+/tr/    /  301
+/nl     /  301
+/nl/    /  301
+
+# Fixed site routes, without a trailing slash. This set is the whole navigation
+# and does not grow, so the rules stay stable.
+/en/blog        /blog/        301
+/en/journey     /journey/     301
+/en/bookmarks   /bookmarks/   301
+/tr/blog        /blog/        301
+/tr/journey     /journey/     301
+/tr/bookmarks   /bookmarks/   301
+/nl/blog        /blog/        301
+/nl/journey     /journey/     301
+/nl/bookmarks   /bookmarks/   301
+
+# Everything else, including post slugs. A post URL that already carries its
+# trailing slash — which is the only shape the site ever linked, canonicalised
+# or put in its sitemap — resolves here in one hop.
+/en/*   /:splat  301
+/tr/*   /:splat  301
+/nl/*   /:splat  301

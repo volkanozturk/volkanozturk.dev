@@ -1,16 +1,13 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { useTranslations } from 'next-intl'
 import { CategoryFilterBar } from '@/components/category-filter'
 import { PostListItem } from '@/components/post-list-item'
 import type { CategoryFilter } from '@/lib/categories'
 import { groupByYear, type WritingPost } from '@/lib/writing'
-import type { Locale } from '@/i18n'
 
 interface WritingListProps {
   posts: WritingPost[]
-  locale: Locale
 }
 
 /**
@@ -18,8 +15,7 @@ interface WritingListProps {
  * server renders every post (good for crawlers and for JS-disabled readers) and
  * the category buttons narrow the list in the browser.
  */
-export function WritingList({ posts, locale }: WritingListProps) {
-  const t = useTranslations('blog')
+export function WritingList({ posts }: WritingListProps) {
   const [active, setActive] = useState<CategoryFilter>('all')
 
   const groups = useMemo(() => {
@@ -33,7 +29,7 @@ export function WritingList({ posts, locale }: WritingListProps) {
       <CategoryFilterBar active={active} onChange={setActive} />
 
       {groups.length === 0 ? (
-        <p className="py-6 text-sm text-muted-foreground">{t('emptyCategory')}</p>
+        <p className="py-6 text-sm text-muted-foreground">Nothing in this category yet.</p>
       ) : (
         <div className="space-y-10">
           {groups.map((group) => (
@@ -43,7 +39,7 @@ export function WritingList({ posts, locale }: WritingListProps) {
               </h2>
               <div className="divide-y divide-border/60 border-t border-border/60">
                 {group.posts.map((post) => (
-                  <PostListItem key={post.slug} post={post} locale={locale} />
+                  <PostListItem key={post.slug} post={post} />
                 ))}
               </div>
             </section>

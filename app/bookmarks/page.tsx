@@ -1,44 +1,33 @@
 import type { Metadata } from 'next'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { getBookmarkCollections } from '@/content/bookmarks'
 import { BookmarkCard } from '@/components/bookmark-card'
 import { EmptyState } from '@/components/empty-state'
 import { PageHeader } from '@/components/page-header'
 import { SectionHeading } from '@/components/section-heading'
-import { locales, type Locale } from '@/i18n'
+import { getBookmarkCollections } from '@/content/bookmarks'
 import type { Bookmark } from '@/types'
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }))
+const TITLE = 'Bookmarks'
+const DESCRIPTION = 'Links I saved because I found them useful or interesting.'
+
+export const metadata: Metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: '/bookmarks' },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: '/bookmarks', type: 'website' },
 }
 
-export async function generateMetadata({
-  params: { locale },
-}: {
-  params: { locale: Locale }
-}): Promise<Metadata> {
-  const t = await getTranslations({ locale, namespace: 'bookmarks' })
-  return { title: t('title'), description: t('description') }
-}
-
-export default async function BookmarksPage({
-  params: { locale },
-}: {
-  params: { locale: Locale }
-}) {
-  setRequestLocale(locale)
-  const t = await getTranslations('bookmarks')
-
+export default function BookmarksPage() {
   const collections: Record<string, Bookmark[]> = getBookmarkCollections()
-
   const collectionNames = Object.keys(collections).sort()
 
   return (
     <div className="space-y-12">
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader title={TITLE} description={DESCRIPTION} />
 
       {collectionNames.length === 0 ? (
-        <EmptyState>{t('empty')}</EmptyState>
+        <EmptyState>
+          No bookmarks yet. Once I add some, they will show up here.
+        </EmptyState>
       ) : (
         <div className="space-y-12">
           {collectionNames.map((collection) => (

@@ -1,42 +1,40 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowLeft, Clock } from 'lucide-react'
 import { getPostBySlug, getAllPostSlugs } from '@/lib/posts'
 import { Markdown } from '@/components/markdown'
+import { CATEGORY_LABELS } from '@/lib/categories'
 import { cn, formatDate, readingTime, tagStyle } from '@/lib/utils'
-import { locales, type Locale } from '@/i18n'
 
 /**
  * `output: 'export'` rejects a dynamic route with zero params, so if every post
- * is a draft we emit a single placeholder per locale. Those pages call
- * `notFound()` below and are exported as 404s.
+ * is a draft we emit a single placeholder. That page calls `notFound()` below
+ * and is exported as a 404.
  */
 const PLACEHOLDER_SLUG = 'not-found'
 
 export function generateStaticParams() {
   const slugs = getAllPostSlugs()
-  const params = slugs.length > 0 ? slugs : [PLACEHOLDER_SLUG]
-  return locales.flatMap((locale) => params.map((slug) => ({ locale, slug })))
+  return (slugs.length > 0 ? slugs : [PLACEHOLDER_SLUG]).map((slug) => ({ slug }))
 }
 
-export async function generateMetadata({
-  params: { locale, slug },
+export function generateMetadata({
+  params: { slug },
 }: {
-  params: { locale: Locale; slug: string }
-}): Promise<Metadata> {
-  const t = await getTranslations({ locale, namespace: 'blog' })
+  params: { slug: string }
+}): Metadata {
   const post = getPostBySlug(slug)
-  if (!post) return { title: t('notFound') }
+  if (!post) return { title: 'Post not found' }
 
   return {
     title: post.title,
     description: post.excerpt,
-    alternates: { canonical: `/${locale}/blog/${slug}` },
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt,
+      url: `/blog/${slug}`,
       type: 'article',
       publishedTime: post.publishedDate,
       section: post.category,
@@ -45,14 +43,7 @@ export async function generateMetadata({
   }
 }
 
-export default async function BlogPostPage({
-  params: { locale, slug },
-}: {
-  params: { locale: Locale; slug: string }
-}) {
-  setRequestLocale(locale)
-  const t = await getTranslations('blog')
-
+export default function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
   const post = getPostBySlug(slug)
   if (!post) notFound()
 
@@ -61,11 +52,11 @@ export default async function BlogPostPage({
   return (
     <article className="space-y-10">
       <Link
-        href={`/${locale}/blog`}
+        href="/blog"
         className="group inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
-        {t('back')}
+        Back to writing
       </Link>
 
       <header className="space-y-4">
@@ -73,18 +64,18 @@ export default async function BlogPostPage({
 
         <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-muted-foreground">
           <time dateTime={publishedDate} className="tabular-nums">
-            {formatDate(publishedDate, locale, 'd MMM yyyy')}
+            {formatDate(publishedDate, 'd MMM yyyy')}
           </time>
           <span aria-hidden className="text-muted-foreground/40">
             ·
           </span>
-          <span>{t(`categories.${category}`)}</span>
+          <span>{CATEGORY_LABELS[category]}</span>
           <span aria-hidden className="text-muted-foreground/40">
             ·
           </span>
           <span className="inline-flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" />
-            {t('readingTime', { minutes: readingTime(body, excerpt) })}
+            {readingTime(body, excerpt)} min read
           </span>
         </div>
 

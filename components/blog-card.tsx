@@ -1,31 +1,27 @@
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 import { Clock } from 'lucide-react'
 import type { WritingPost } from '@/lib/writing'
-import type { Locale } from '@/i18n'
 import { cn, formatDate, tagStyle } from '@/lib/utils'
 
 interface BlogCardProps {
   post: WritingPost
-  locale: Locale
 }
 
-export function BlogCard({ post, locale }: BlogCardProps) {
-  const t = useTranslations('blog')
+export function BlogCard({ post }: BlogCardProps) {
   const { title, slug, excerpt, publishedDate, tags, minutes } = post
 
   return (
     <Link
-      href={`/${locale}/blog/${slug}`}
+      href={`/blog/${slug}`}
       className="group flex flex-col gap-3 rounded-xl border border-border bg-background/40 p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-accent/40 hover:shadow-lg hover:shadow-foreground/5"
     >
       <div className="flex items-center justify-between gap-4 text-xs text-muted-foreground">
         <time dateTime={publishedDate} className="tabular-nums">
-          {formatDate(publishedDate, locale, 'd MMM yyyy')}
+          {formatDate(publishedDate, 'd MMM yyyy')}
         </time>
         <span className="inline-flex shrink-0 items-center gap-1.5">
           <Clock className="h-3 w-3" />
-          {t('readingTime', { minutes })}
+          {minutes} min read
         </span>
       </div>
 

@@ -1,7 +1,6 @@
 /**
- * Canonical category values. These are the exact strings written in a post's
- * frontmatter — never translated there. The UI maps them to localized labels
- * via the `blog.categories.*` message keys.
+ * Canonical category values — the exact strings written in a post's
+ * frontmatter. `CATEGORY_LABELS` below maps them to what the UI shows.
  */
 export const CATEGORIES = ['engineering', 'notes', 'life'] as const
 
@@ -9,6 +8,13 @@ export type Category = (typeof CATEGORIES)[number]
 
 /** Filter state on the Writing page: a category, or everything. */
 export type CategoryFilter = Category | 'all'
+
+/** Display labels for the canonical values. */
+export const CATEGORY_LABELS: Record<Category, string> = {
+  engineering: 'Engineering',
+  notes: 'Notes',
+  life: 'Life',
+}
 
 const FALLBACK_CATEGORY: Category = 'notes'
 

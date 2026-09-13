@@ -1,44 +1,18 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { format, parseISO, type Locale as DateFnsLocale } from 'date-fns'
-import { enGB, nl, tr } from 'date-fns/locale'
-import type { Locale } from '@/i18n'
+import { format, parseISO } from 'date-fns'
+import { enGB } from 'date-fns/locale'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const dateLocales: Record<Locale, DateFnsLocale> = {
-  en: enGB,
-  tr,
-  nl,
-}
-
-export function formatDate(
-  dateString: string,
-  locale: Locale = 'en',
-  pattern = 'd MMMM yyyy'
-): string {
+export function formatDate(dateString: string, pattern = 'd MMMM yyyy'): string {
   try {
-    return format(parseISO(dateString), pattern, { locale: dateLocales[locale] })
+    return format(parseISO(dateString), pattern, { locale: enGB })
   } catch {
     return dateString
   }
-}
-
-/**
- * "Mar 2021 – Present" — the trailing label is passed in already translated,
- * because this helper is also used outside of a React render.
- */
-export function formatDateRange(
-  startDate: string,
-  endDate: string | undefined,
-  locale: Locale,
-  presentLabel: string
-): string {
-  const start = formatDate(startDate, locale, 'MMM yyyy')
-  const end = endDate ? formatDate(endDate, locale, 'MMM yyyy') : presentLabel
-  return `${start} – ${end}`
 }
 
 const WORDS_PER_MINUTE = 200

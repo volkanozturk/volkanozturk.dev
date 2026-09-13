@@ -1,12 +1,10 @@
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 import type { WritingPost } from '@/lib/writing'
-import type { Locale } from '@/i18n'
+import { CATEGORY_LABELS } from '@/lib/categories'
 import { formatDate } from '@/lib/utils'
 
 interface PostListItemProps {
   post: WritingPost
-  locale: Locale
 }
 
 /**
@@ -14,14 +12,13 @@ interface PostListItemProps {
  * Tags are deliberately left to the individual post page.
  * (The card-style `BlogCard` is still used for the short list on the home page.)
  */
-export function PostListItem({ post, locale }: PostListItemProps) {
-  const t = useTranslations('blog')
+export function PostListItem({ post }: PostListItemProps) {
   const { slug, title, excerpt, publishedDate, category, minutes } = post
 
   return (
     <article className="group -mx-3">
       <Link
-        href={`/${locale}/blog/${slug}`}
+        href={`/blog/${slug}`}
         className="block rounded-lg px-3 py-6 transition-colors hover:bg-accent/40"
       >
         <h3 className="text-lg font-semibold leading-snug text-foreground">{title}</h3>
@@ -34,12 +31,12 @@ export function PostListItem({ post, locale }: PostListItemProps) {
 
         <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <time dateTime={publishedDate} className="tabular-nums">
-            {formatDate(publishedDate, locale, 'd MMM yyyy')}
+            {formatDate(publishedDate, 'd MMM yyyy')}
           </time>
           <span aria-hidden className="text-muted-foreground/40">·</span>
-          <span>{t(`categories.${category}`)}</span>
+          <span>{CATEGORY_LABELS[category]}</span>
           <span aria-hidden className="text-muted-foreground/40">·</span>
-          <span>{t('readingTime', { minutes })}</span>
+          <span>{minutes} min read</span>
         </p>
       </Link>
     </article>

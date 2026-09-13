@@ -1,6 +1,6 @@
 # volkanozturk.dev
 
-Personal site — blog, career journey and bookmarks — in three languages.
+Personal site — blog, career journey and bookmarks.
 
 **Live:** [volkanozturk.dev](https://volkanozturk.dev)
 
@@ -15,7 +15,7 @@ exported and served from Cloudflare Pages.
 |---|---|
 | Framework | Next.js 14 (App Router, `output: 'export'`) |
 | Styling | Tailwind CSS |
-| i18n | next-intl — English (default), Turkish, Dutch |
+| Language | English only |
 | Content | Markdown files in `content/` |
 | Hosting | Cloudflare Pages (free plan) |
 
@@ -57,7 +57,7 @@ All content lives in the repository. There is no CMS and no network call at buil
 |---|---|
 | `content/posts/<slug>.md` | Blog articles — YAML frontmatter + Markdown body |
 | `content/bookmarks.ts` | Bookmarks, grouped by `collection` |
-| `messages/*.json` → `journey.timeline` | Journey entries (translated per locale) |
+| `content/journey.ts` | Journey timeline entries |
 | `lib/posts.ts` | Loading and validation for posts |
 
 ### Post frontmatter
@@ -87,7 +87,7 @@ excluded from every public page.
 1. **Add** — create `content/posts/<slug>.md` with the frontmatter above and
    `draft: true`.
 2. **Preview** — `INCLUDE_DRAFTS=1 npm run dev`, then open
-   http://localhost:3000/en/blog/<slug>.
+   http://localhost:3000/blog/<slug>.
 3. **Publish** — set `draft: false`, set `publishedDate`, commit, then build and
    deploy as below.
 
@@ -153,47 +153,31 @@ If you attach the domain to a **new** Pages project, first remove it from the ol
 one — a hostname can only be bound to one project at a time. Update the CNAME
 targets to the new project's `pages.dev` hostname afterwards.
 
-## Internationalization
+## URLs and SEO
 
-Three locales: **`en`** (default), **`tr`**, **`nl`**. Every route is prefixed —
-`/en`, `/tr`, `/nl` — and pre-rendered for all three at build time.
+The site is English-only and its routes carry no language prefix: `/`, `/blog/`,
+`/blog/<slug>/`, `/journey/`, `/bookmarks/`.
 
-| Path | Purpose |
-|---|---|
-| `messages/en.json`, `tr.json`, `nl.json` | All UI strings |
-| `i18n.ts` | Locale list, default locale, flags and labels |
-| `app/[locale]/` | Every page lives under this segment |
-| `components/language-switcher.tsx` | Locale pills in the navigation |
-| `public/index.html` | Locale detection for `/` (see below) |
+`app/sitemap.ts` and `app/robots.ts` generate `sitemap.xml` and `robots.txt` at
+build time from the same post loader the pages use, so the sitemap can never
+drift from what is published. Canonical and Open Graph URLs are set per page.
 
-### Adding a string
+### Redirects for the old multilingual URLs
 
-Add the key to **all three** message files, then read it with `useTranslations()`
-in a synchronous component or `getTranslations()` in an async Server Component.
-Never hardcode user-facing text.
-
-### Adding a language
-
-1. Create `messages/<code>.json` with the same keys as `en.json`.
-2. Add the code to `locales` and `localeDetails` in `i18n.ts`.
-3. Add the code to the `supported` array in `public/index.html`.
-
-### Why `public/index.html` exists
-
-`output: 'export'` means Next.js middleware never runs, so `middleware.ts` only
-takes effect on a server-rendered deployment. On the static site, `/` is served by
-`public/index.html`, which reads the browser language and redirects to `/en/`,
-`/tr/` or `/nl/` — falling back to `/en/` via meta refresh when JavaScript is off.
+The site previously served `/en/`, `/tr/` and `/nl/` prefixes. `public/_redirects`
+maps them to their unprefixed equivalents with permanent (301) redirects;
+Cloudflare Pages reads that file from the deployed output. The bare-prefix rules
+are listed before the wildcards so `/en/` reaches `/` in a single hop.
 
 ## Customization
 
 | What | Where |
 |---|---|
-| Site URL and Twitter handle | `app/[locale]/layout.tsx` — `SITE_URL` (line 16), `TWITTER_HANDLE` (line 17) |
-| Page titles, descriptions, author | `messages/*.json` → `meta` |
-| Name, role, status badge, bio | `messages/*.json` → `home.greeting`, `home.role`, `home.status`, `home.bio` |
-| All other UI text | `messages/*.json` |
-| Social links (home page) | `app/[locale]/page.tsx` — `socialLinks` (line 14) |
+| Site URL, title, Twitter handle | `lib/site.ts` |
+| Site title, description, author | `lib/site.ts` |
+| Hero badge, heading, bio | `app/page.tsx` |
+| All other UI text | inlined in the component that renders it |
+| Social links (home page) | `app/page.tsx` — `socialLinks` |
 | Social links (footer) | `components/footer.tsx` — `socialLinks` (line 3) |
 | Site name in the navigation | `components/navigation.tsx` |
 

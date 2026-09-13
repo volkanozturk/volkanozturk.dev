@@ -1,7 +1,6 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-import { CATEGORIES, type CategoryFilter } from '@/lib/categories'
+import { CATEGORIES, CATEGORY_LABELS, type CategoryFilter } from '@/lib/categories'
 import { cn } from '@/lib/utils'
 
 interface CategoryFilterProps {
@@ -15,12 +14,11 @@ interface CategoryFilterProps {
  * masquerades as a fourth category.
  */
 export function CategoryFilterBar({ active, onChange }: CategoryFilterProps) {
-  const t = useTranslations('blog')
 
   return (
     <div
       role="group"
-      aria-label={t('filterLabel')}
+      aria-label="Filter by category"
       className="flex flex-wrap items-center gap-1"
     >
       {CATEGORIES.map((category) => {
@@ -31,7 +29,7 @@ export function CategoryFilterBar({ active, onChange }: CategoryFilterProps) {
             key={category}
             type="button"
             aria-pressed={isActive}
-            title={isActive ? t('showAll') : undefined}
+            title={isActive ? 'Show all posts' : undefined}
             onClick={() => onChange(isActive ? 'all' : category)}
             className={cn(
               'rounded-full px-3 py-1.5 text-sm transition-colors',
@@ -40,7 +38,7 @@ export function CategoryFilterBar({ active, onChange }: CategoryFilterProps) {
                 : 'text-muted-foreground hover:bg-accent hover:text-foreground'
             )}
           >
-            {t(`categories.${category}`)}
+            {CATEGORY_LABELS[category]}
           </button>
         )
       })}

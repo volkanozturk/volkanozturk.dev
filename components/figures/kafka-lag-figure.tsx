@@ -1,5 +1,3 @@
-import { useTranslations } from 'next-intl'
-
 /** Rises during a burst, then returns to the baseline. */
 const DRAINS = 'M2,46 L18,45 L30,41 L40,18 L52,10 L64,22 L78,38 L92,44 L118,45'
 
@@ -46,17 +44,18 @@ function Sketch({ d, label }: { d: string; label: string }) {
  * Two illustrative lag shapes. Deliberately unlabelled on both axes: these are
  * shapes, not measurements, so there are no numbers to mistake for real data.
  */
-export function KafkaLagFigure() {
-  const t = useTranslations('blog.figures.lag')
+const ALT =
+  'Two sketches of consumer lag over time. On the left, lag rises during a burst and then falls back to the baseline on its own. On the right, lag climbs and never returns to the baseline.'
 
+export function KafkaLagFigure() {
   return (
-    <figure className="my-8 not-prose" role="group" aria-label={t('alt')}>
+    <figure className="my-8 not-prose" role="group" aria-label={ALT}>
       <div className="flex gap-6 rounded-lg border border-border bg-muted/30 p-5">
-        <Sketch d={DRAINS} label={t('spike')} />
-        <Sketch d={GROWS} label={t('sustained')} />
+        <Sketch d={DRAINS} label="Burst that drains" />
+        <Sketch d={GROWS} label="Lag that keeps growing" />
       </div>
       <figcaption className="mt-2 text-xs text-muted-foreground/80">
-        {t('caption')}
+        Illustrative shapes only — not measured data.
       </figcaption>
     </figure>
   )

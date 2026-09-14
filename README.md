@@ -58,6 +58,7 @@ All content lives in the repository. There is no CMS and no network call at buil
 | `content/posts/<slug>.md` | Blog articles — YAML frontmatter + Markdown body |
 | `content/bookmarks.ts` | Bookmarks, grouped by `collection` |
 | `content/journey.ts` | Journey timeline entries |
+| `content/projects.ts` | Projects shown on the home page and `/projects` |
 | `lib/posts.ts` | Loading and validation for posts |
 
 ### Post frontmatter
@@ -178,6 +179,8 @@ are listed before the wildcards so `/en/` reaches `/` in a single hop.
 | Hero heading and bio | `app/page.tsx` |
 | Navigation items | `lib/nav.ts` — `navItems` |
 | Social links | `lib/nav.ts` — `socialLinks` |
+| Projects (home page and `/projects`) | `content/projects.ts` |
+| Project card icons | `components/project-icons.tsx` |
 | Location line and contact address | `lib/nav.ts` — `LOCATION`, `EMAIL` |
 | Site name in the navigation | `components/site-shell.tsx` |
 | All other UI text | inlined in the component that renders it |

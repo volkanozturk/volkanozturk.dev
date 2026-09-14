@@ -4,7 +4,7 @@ import { SITE_URL } from '@/lib/site'
 
 /** Canonical English URLs only — the site has no other language. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPages = ['', '/blog', '/journey', '/about'].map((path) => ({
+  const staticPages = ['', '/blog', '/journey', '/projects', '/about'].map((path) => ({
     url: `${SITE_URL}${path}/`,
     lastModified: new Date(),
   }))

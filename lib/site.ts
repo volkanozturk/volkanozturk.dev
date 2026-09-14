@@ -4,4 +4,4 @@ export const SITE_URL = 'https://volkanozturk.dev'
 export const SITE_TITLE = 'Volkan Öztürk'
 export const SITE_DESCRIPTION =
   'Software engineer in the Netherlands. Writing about building reliable software and everyday life.'
-export const TWITTER_HANDLE = '@volkanozturk'
+export const TWITTER_HANDLE = '@_volkanozturk'

@@ -16,8 +16,8 @@ export const navItems: NavItem[] = [
 
 export const socialLinks = [
   { href: 'https://github.com/volkanozturk', label: 'GitHub' },
-  { href: 'https://twitter.com/volkanozturk', label: 'X (Twitter)' },
-  { href: 'https://linkedin.com/in/volkanozturk', label: 'LinkedIn' },
+  { href: 'https://x.com/_volkanozturk', label: 'X (Twitter)' },
+  { href: 'https://www.linkedin.com/in/volkan-ozturk/', label: 'LinkedIn' },
 ] as const
 
 export function isActivePath(pathname: string, href: string): boolean {

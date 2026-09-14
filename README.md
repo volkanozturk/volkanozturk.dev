@@ -173,12 +173,15 @@ are listed before the wildcards so `/en/` reaches `/` in a single hop.
 
 | What | Where |
 |---|---|
-| Site URL, title, Twitter handle | `lib/site.ts` |
-| Site title, description, author | `lib/site.ts` |
-| Hero badge, heading, bio | `app/page.tsx` |
+| Site URL, title, description, Twitter handle | `lib/site.ts` |
+| Author name, Open Graph and Twitter card metadata | `app/layout.tsx` |
+| Hero heading and bio | `app/page.tsx` |
+| Navigation items | `lib/nav.ts` — `navItems` |
+| Social links | `lib/nav.ts` — `socialLinks` |
+| Location line and contact address | `lib/nav.ts` — `LOCATION`, `EMAIL` |
+| Site name in the navigation | `components/site-shell.tsx` |
 | All other UI text | inlined in the component that renders it |
-| Social links (home page) | `app/page.tsx` — `socialLinks` |
-| Social links (footer) | `components/footer.tsx` — `socialLinks` (line 3) |
-| Site name in the navigation | `components/navigation.tsx` |
 
-Social links are defined in two places; update both.
+Social links are defined once, in `lib/nav.ts`. The sidebar and mobile menu render
+them through `components/social-icons.tsx`, and the About page reads the same list
+by label — so updating a URL there updates it everywhere.

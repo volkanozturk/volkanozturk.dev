@@ -108,60 +108,26 @@ route, listing and metadata lookup goes through.
 
 ### Article covers
 
-Every published article should carry two images, both named in its frontmatter.
-The full rule — style, palette, sizes and approval — is in
-[docs/design-standards.md](docs/design-standards.md); the short version:
+Every published article carries two images, named in its frontmatter:
 
-| Field | Shape | Where it is used |
-|---|---|---|
-| `thumbnail` | square, 768×768 WebP | the home page and the Writing index |
-| `cover` | wide 16:9, 1280×720 WebP | the top of the article page |
+| Field | Used on |
+|---|---|
+| `thumbnail` | the home page and the Writing index |
+| `cover` | the top of the article page |
 
-They are two crops of one idea, not two ideas: the same subject, concept,
-palette and visual language, so a reader who clicks a card recognises the
-article they land on. Neither is pasted into the Markdown — setting the two
-frontmatter values is the whole job.
+The two are separate compositions of the same concept, each designed for its own
+aspect ratio — never one cropped or stretched out of the other. Neither is
+pasted into the Markdown: setting the two frontmatter values is the whole job.
 
 `thumbnail` is a path under `public/` or the key of a drawn tile registered in
-`components/post-thumbnails.tsx`; `cover` is always a path. Both stay
-technically optional. The article page uses `cover` and falls back to
-`thumbnail` **only** when `cover` is absent, so an older post still opens with
-its own picture; a post with neither renders no cover and no gap where one would
-sit. The listings only ever use `thumbnail` — a `cover` never appears there.
+`components/post-thumbnails.tsx`; `cover` is always a path. Both are optional —
+the article falls back to `thumbnail` when `cover` is absent, and a post with
+neither renders no image and no gap where one would sit.
 
-On the article page the cover is rendered by `app/blog/[slug]/page.tsx`, centred
-above the opening paragraph and capped at 640px — narrower than the text column
-on purpose, so it opens the piece without becoming a banner. A square fallback
-is held to 384px instead, since the two shapes do not carry the same width.
-
-**Every cover must be about its own article.** The visual should carry the
-subject, the argument or the central idea — a browser window for a piece about
-a website's layout, a queue draining or backing up for one about consumer lag,
-two places and a route for one about moving country. Simple, concrete metaphors
-are welcome; they do not have to be abstract. What they must not be is
-interchangeable: if a cover could sit on any other post without anyone
-noticing, it is the wrong cover.
-
-Keep the established style so the listings read as one set:
-
-- Square `thumbnail` at 768×768 and wide `cover` at 1280×720, both WebP,
-  exported to `public/images/covers/`.
-- Warm off-white ground, charcoal and muted grey forms, restrained burnt-orange
-  accent.
-- Minimal flat or lightly textured illustration.
-- The `thumbnail` must still read at 64px (mobile) and 80px (desktop), which is
-  the only size it is ever shown at, so fine detail is wasted there. The `cover`
-  is shown at up to 640px and can carry more.
-- The same `thumbnail` on the home page and on Writing.
-- One cover per article — no house style applied as a formula to all of them.
-
-Covers are not theme-aware: the file is served as-is in light and dark mode, so
-do not design one that depends on being inverted or recoloured.
-
-Avoid unrelated geometric shapes, decorative objects, stock or photorealistic
-imagery, glossy 3D, neon, heavy gradients, logos, branded screenshots and
-filler text. Any text inside a cover must be short and mean something to that
-article.
+Exact dimensions, styling, loading and dark-mode behaviour are in
+**[docs/design-standards.md](docs/design-standards.md)**, which is authoritative
+for anything visual. **[docs/image-crate.txt](docs/image-crate.txt)** is the
+portable brief to hand to whoever makes the artwork.
 
 ### Markdown supported
 

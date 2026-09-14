@@ -71,9 +71,10 @@ Every published article should carry **two** images that show the same idea:
 - a square `thumbnail`, used in the listings
 - a horizontal `cover`, used at the top of the article
 
-They must share subject, concept, palette and visual language, so a reader who
-clicks a card recognises the page they land on. They are two crops of one idea,
-never two different ideas.
+The thumbnail and cover are two compositions of the same concept, each designed
+for its own aspect ratio. Keep their subject, palette, and visual language
+consistent so readers recognise the same article. Do not create one format by
+automatically cropping or stretching the other.
 
 Style: modern minimal editorial illustration built from recognisable,
 topic-specific objects — a browser window for a piece about layout, a queue

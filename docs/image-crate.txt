@@ -1,0 +1,105 @@
+IMAGE CRATE — volkanozturk.dev article artwork
+==============================================
+
+docs/design-standards.md is authoritative. It is the single source of truth for
+how this site looks and how its images are made.
+
+This file is a portable brief for article-image creation: a self-contained
+summary to hand to whoever draws the artwork, or to paste into a tool that has
+no access to the repository. It restates the standards; it does not extend them.
+Where the two disagree, docs/design-standards.md wins — check it before
+starting, and change it there first if a rule genuinely moves.
+
+
+WHAT EACH ARTICLE NEEDS
+-----------------------
+
+Two images per published article:
+
+  1. a square thumbnail
+  2. a horizontal cover
+
+They are two separate compositions of the same concept, each designed for its
+own aspect ratio around the same recognisable subject. Keep their subject,
+palette, and visual language consistent so readers recognise the same article.
+Do not create one format by automatically cropping or stretching the other.
+
+
+THUMBNAIL
+---------
+
+  Export      768x768 WebP
+  Frontmatter thumbnail: /images/covers/<name>.webp
+  Used on     Home and Writing listings
+  Displayed   80px tile on desktop, 64px tile on mobile
+              (a 1px border leaves the image itself 78px / 62px)
+  Loading     lazy
+
+Compose for the small tile. One clear subject, generous weight, no fine detail
+— at 64px it is the only size most readers ever see it at.
+
+
+COVER
+-----
+
+  Export      1280x720 WebP (16:9)
+  Frontmatter cover: /images/covers/<name>-cover.webp
+  Used on     the article page, once, between the header and the body
+  Displayed   maximum 640px wide on desktop; on mobile it uses the available
+              article-content width — there is no hard 320px cap
+              (at a 390px viewport with 16px gutters that is 358px)
+  Loading     priority / preload (the article cover keeps this behaviour)
+
+The cover keeps its own aspect ratio, stays centred, and sits with 30px of
+space above and below, a 1px border and 10px corners. The wider format has room
+for a relationship — a before and an after, a route between two places, a flow
+from one thing to another — that the square tile cannot hold.
+
+
+FALLBACK AND PLACEMENT
+----------------------
+
+- When `cover` is absent the article falls back to `thumbnail`, shown at its
+  square proportions and compact size. Keep that fallback working; do not
+  remove it.
+- With neither field the article renders no image container at all.
+- Never repeat the cover inside the Markdown body. Setting the two frontmatter
+  values is the whole job.
+- In-body photographs and technical diagrams are independent of both fields and
+  are unaffected by any of this.
+
+
+ARTWORK DIRECTION
+-----------------
+
+The image should communicate the article's actual topic through recognisable
+objects and the relationships between them — a browser window for a piece about
+layout, a queue draining beside one that does not for consumer lag, two places
+and a route for moving country.
+
+  Style      modern minimal editorial illustration
+  Ground     warm off-white
+  Forms      charcoal and muted grey
+  Accent     restrained burnt orange
+  Texture    subtle paper-like texture is fine
+
+Avoid: unrelated abstract decoration that could belong to any article, stock or
+photorealistic imagery, glossy 3D, neon, heavy gradients, logos and branded
+screenshots. No readable titles inside the artwork — the page already has a
+heading. Any text at all must be short and mean something to that article.
+
+
+FILES AND EXPORT
+----------------
+
+- Keep the full-resolution original of every approved image. Exports are
+  derived from it; the original is the master.
+- Export the optimized WebP only after the artwork is visually approved.
+- Strip EXIF/ICC/XMP metadata. Judge the result by how it looks, not against an
+  arbitrary byte target.
+- Keep the dimensions declared in code consistent with the actual files. If an
+  export size changes, update the width/height attributes in the same change.
+- Images are served as drawn: colours are preserved in dark mode, never
+  inverted, recoloured or filtered. Do not design one that depends on being
+  flipped.
+- New visuals require approval before they replace an existing approved asset.

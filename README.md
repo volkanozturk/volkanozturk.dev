@@ -101,10 +101,22 @@ route, listing and metadata lookup goes through.
 
 ### Article covers
 
-`thumbnail` is optional. It is either a path under `public/` or the key of a
-drawn tile registered in `components/post-thumbnails.tsx`. A post without one
-renders as a card with no media column, so nothing has to be invented for a
-post that has no suitable image.
+Every published article should carry one topic-specific `thumbnail`. That single
+value is the only place a cover is named: the same file is used automatically on
+the home page, on the Writing index, and as the cover at the top of the article
+itself. There is no `coverImage` field and no image to paste into the Markdown —
+setting `thumbnail` is the whole job.
+
+`thumbnail` is a path under `public/` or the key of a drawn tile registered in
+`components/post-thumbnails.tsx`. It stays technically optional: a post without
+one renders as a card with no media column and an article with no cover and no
+gap where one would sit, so nothing has to be invented for a post that has no
+suitable image.
+
+On the article page the cover is rendered by `app/blog/[slug]/page.tsx`, centred
+above the opening paragraph at 320px on phones and 384px from 640px up — smaller
+than the text column on purpose, so it opens the piece without becoming a
+banner.
 
 **Every cover must be about its own article.** The visual should carry the
 subject, the argument or the central idea — a browser window for a piece about

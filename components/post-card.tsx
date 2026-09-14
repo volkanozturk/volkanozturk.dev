@@ -32,8 +32,10 @@ function Thumbnail({ post }: { post: WritingPost }) {
         <Image
           src={thumbnail}
           alt=""
-          width={320}
-          height={320}
+          // The files' own size. Display stays 64px / 80px via the tile above;
+          // these only declare the intrinsic square so the ratio is right.
+          width={768}
+          height={768}
           className="h-full w-full object-cover"
         />
       ) : Drawn ? (

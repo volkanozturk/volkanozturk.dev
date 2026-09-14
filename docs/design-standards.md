@@ -98,13 +98,17 @@ Do not regenerate or swap an approved image without being asked.
 |---|---|---|
 | Export | 768×768 WebP | 1280×720 WebP (16:9) |
 | Used on | home page, Writing index | article detail |
+| Declared intrinsic | 768×768 | 1280×720 |
 | Rendered at | 80px desktop / 64px mobile tile | up to 640px desktop |
 | Loading | `loading="lazy"` | `priority` |
 
 Both live in `public/images/covers/`.
 
 - The listing tile is an **outer box** of 80px (desktop) / 64px (mobile); its
-  1px border leaves the image itself 78px / 62px.
+  1px border leaves the image itself 78px / 62px. The `width`/`height` on the
+  `<Image>` declare the file's own 768×768 — they are the intrinsic size, not
+  the display size, which the tile sets in CSS. Keep the two in step: if the
+  export size changes, change these attributes with it.
 - The article cover is capped at **640px** on desktop. On mobile it uses the
   **full available article-content width** — there is deliberately no fixed
   320px cap. At a 390px viewport with 16px gutters that width is **358px**.

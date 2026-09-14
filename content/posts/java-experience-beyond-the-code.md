@@ -10,6 +10,7 @@ tags:
   - Architecture
 summary: "Better questions for real production problems."
 thumbnail: /images/covers/java-experience-beyond-the-code.webp
+cover: /images/covers/java-experience-beyond-the-code-cover.webp
 draft: false
 ---
 

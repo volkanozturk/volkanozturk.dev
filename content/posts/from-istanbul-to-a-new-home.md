@@ -10,6 +10,7 @@ tags:
   - Family
 summary: "Why we moved to the Netherlands, and what we still miss."
 thumbnail: /images/covers/from-istanbul-to-a-new-home.webp
+cover: /images/covers/from-istanbul-to-a-new-home-cover.webp
 draft: false
 ---
 

@@ -101,22 +101,29 @@ route, listing and metadata lookup goes through.
 
 ### Article covers
 
-Every published article should carry one topic-specific `thumbnail`. That single
-value is the only place a cover is named: the same file is used automatically on
-the home page, on the Writing index, and as the cover at the top of the article
-itself. There is no `coverImage` field and no image to paste into the Markdown —
-setting `thumbnail` is the whole job.
+Every published article should carry two images, both named in its frontmatter:
+
+| Field | Shape | Where it is used |
+|---|---|---|
+| `thumbnail` | square, 768×768 WebP | the home page and the Writing index |
+| `cover` | wide 16:9, 1280×720 WebP | the top of the article page |
+
+They are two crops of one idea, not two ideas: the same subject, concept,
+palette and visual language, so a reader who clicks a card recognises the
+article they land on. Neither is pasted into the Markdown — setting the two
+frontmatter values is the whole job.
 
 `thumbnail` is a path under `public/` or the key of a drawn tile registered in
-`components/post-thumbnails.tsx`. It stays technically optional: a post without
-one renders as a card with no media column and an article with no cover and no
-gap where one would sit, so nothing has to be invented for a post that has no
-suitable image.
+`components/post-thumbnails.tsx`; `cover` is always a path. Both stay
+technically optional. The article page uses `cover` and falls back to
+`thumbnail` **only** when `cover` is absent, so an older post still opens with
+its own picture; a post with neither renders no cover and no gap where one would
+sit. The listings only ever use `thumbnail` — a `cover` never appears there.
 
 On the article page the cover is rendered by `app/blog/[slug]/page.tsx`, centred
-above the opening paragraph at 320px on phones and 384px from 640px up — smaller
-than the text column on purpose, so it opens the piece without becoming a
-banner.
+above the opening paragraph and capped at 640px — narrower than the text column
+on purpose, so it opens the piece without becoming a banner. A square fallback
+is held to 384px instead, since the two shapes do not carry the same width.
 
 **Every cover must be about its own article.** The visual should carry the
 subject, the argument or the central idea — a browser window for a piece about
@@ -128,13 +135,14 @@ noticing, it is the wrong cover.
 
 Keep the established style so the listings read as one set:
 
-- Square, 320×320, WebP, exported to `public/images/covers/`.
+- Square `thumbnail` at 768×768 and wide `cover` at 1280×720, both WebP,
+  exported to `public/images/covers/`.
 - Warm off-white ground, charcoal and muted grey forms, restrained burnt-orange
   accent.
 - Minimal flat or lightly textured illustration.
 - Still recognisable at 64px (mobile) and 80px (desktop), which is the only
   size most readers ever see. Fine detail is wasted here.
-- The same cover on the home page and on Writing.
+- The same `thumbnail` on the home page and on Writing.
 - One cover per article — no house style applied as a formula to all of them.
 
 Covers are not theme-aware: the file is served as-is in light and dark mode, so

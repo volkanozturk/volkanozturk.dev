@@ -43,6 +43,12 @@ export interface Post {
    * renders without a media column.
    */
   thumbnail?: string
+  /**
+   * Optional wide (16:9) cover for the article page only. The listings always
+   * use the square `thumbnail`; the article falls back to it when this is
+   * absent, so a post never has to carry both.
+   */
+  cover?: string
   /** Markdown body, frontmatter stripped. */
   body: string
 }
@@ -91,6 +97,7 @@ function parseFile(file: string): Post {
       draft: true,
       summary: typeof data.summary === 'string' ? data.summary : undefined,
       thumbnail: typeof data.thumbnail === 'string' ? data.thumbnail : undefined,
+      cover: typeof data.cover === 'string' ? data.cover : undefined,
       body,
     }
   }
@@ -128,6 +135,10 @@ function parseFile(file: string): Post {
     fail(file, 'thumbnail must be a path under /public or a drawn-thumbnail key')
   }
 
+  if (data.cover !== undefined && typeof data.cover !== 'string') {
+    fail(file, 'cover must be a path under /public')
+  }
+
   return {
     slug,
     title: String(data.title),
@@ -138,6 +149,7 @@ function parseFile(file: string): Post {
     draft: false,
     summary: typeof data.summary === 'string' ? data.summary : undefined,
     thumbnail: typeof data.thumbnail === 'string' ? data.thumbnail : undefined,
+    cover: typeof data.cover === 'string' ? data.cover : undefined,
     body,
   }
 }

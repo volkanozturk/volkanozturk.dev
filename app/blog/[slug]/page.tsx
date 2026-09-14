@@ -17,31 +17,45 @@ import { cn, formatDate, readingTime } from '@/lib/utils'
  */
 const PLACEHOLDER_SLUG = 'not-found'
 
-/** Intrinsic size of the cover files: square, re-exported at 768px for 2x screens. */
-const COVER_SOURCE_SIZE = 768
+/** Intrinsic size of the wide `cover` files: 16:9, exported at 1280x720. */
+const COVER_WIDTH = 1280
+const COVER_HEIGHT = 720
+
+/** Intrinsic size of the square `thumbnail` files, used only as the fallback. */
+const THUMBNAIL_SIZE = 768
 
 /**
- * The article's own cover: the same `thumbnail` the home and Writing cards
- * render, shown once above the body. There is no second frontmatter field and
- * no image in the Markdown, so one value drives all three places.
+ * The article's opening image.
  *
- * Deliberately smaller than the column — 320px on phones, 384px from 640px up —
- * so it reads as an opening mark rather than a banner. The square ratio is the
- * file's own: `w-full h-auto` scales it without cropping or stretching, and the
- * explicit width/height give the browser the ratio up front, so nothing shifts
- * while it loads.
+ * Prefers the wide `cover`, and falls back to the square `thumbnail` the cards
+ * already use, so a post with no cover of its own still opens with its own
+ * picture. Either way the frontmatter is the only source: nothing is added to
+ * the Markdown, and the listings keep using `thumbnail` regardless.
+ *
+ * `wide` decides both the intrinsic dimensions and the cap, because the two
+ * files have different shapes — a 16:9 cover would be distorted if it were
+ * declared square, and a square fallback would be if it were declared 16:9.
+ * Either is held below the text column so it opens the piece without becoming
+ * a banner, and `w-full h-auto` scales it on its own ratio rather than cropping
+ * or stretching it. The explicit width/height give the browser that ratio up
+ * front, so nothing shifts while it loads.
  */
-function PostCover({ thumbnail, title }: { thumbnail: string; title: string }) {
-  const Drawn = resolveThumbnail(thumbnail)
+function PostCover({ src, title, wide }: { src: string; title: string; wide: boolean }) {
+  const Drawn = resolveThumbnail(src)
 
   return (
-    <div className="mx-auto w-full max-w-[320px] overflow-hidden rounded-[10px] border border-border sm:max-w-[384px]">
-      {isImageThumbnail(thumbnail) ? (
+    <div
+      className={cn(
+        'mx-auto w-full overflow-hidden rounded-[10px] border border-border',
+        wide ? 'max-w-[640px]' : 'max-w-[320px] sm:max-w-[384px]'
+      )}
+    >
+      {isImageThumbnail(src) ? (
         <Image
-          src={thumbnail}
+          src={src}
           alt={`Cover illustration for ${title}`}
-          width={COVER_SOURCE_SIZE}
-          height={COVER_SOURCE_SIZE}
+          width={wide ? COVER_WIDTH : THUMBNAIL_SIZE}
+          height={wide ? COVER_HEIGHT : THUMBNAIL_SIZE}
           className="h-auto w-full"
           // Above the fold on every article, so it is preloaded and eagerly
           // fetched rather than lazily. Only this one: the home and Writing
@@ -91,11 +105,13 @@ export default function BlogPostPage({ params: { slug } }: { params: { slug: str
   const post = getPostBySlug(slug)
   if (!post) notFound()
 
-  const { title, excerpt, publishedDate, tags, category, body, thumbnail } = post
+  const { title, excerpt, publishedDate, tags, category, body, thumbnail, cover } = post
 
-  // A post without a thumbnail renders no cover and no gap where one would be:
-  // the header keeps its original spacing above the body.
-  const hasCover = Boolean(thumbnail && (isImageThumbnail(thumbnail) || resolveThumbnail(thumbnail)))
+  // The wide cover wins; the square thumbnail is the fallback. A post with
+  // neither renders no cover and no gap where one would be: the header keeps
+  // its original spacing above the body.
+  const coverSrc = cover ?? thumbnail
+  const hasCover = Boolean(coverSrc && (isImageThumbnail(coverSrc) || resolveThumbnail(coverSrc)))
 
   return (
     <article className="space-y-10">
@@ -140,7 +156,9 @@ export default function BlogPostPage({ params: { slug } }: { params: { slug: str
           <TagList tags={tags} />
         </header>
 
-        {hasCover && thumbnail && <PostCover thumbnail={thumbnail} title={title} />}
+        {hasCover && coverSrc && (
+          <PostCover src={coverSrc} title={title} wide={Boolean(cover)} />
+        )}
 
         <div className="article-body prose prose-neutral max-w-none text-foreground dark:prose-invert">
           <Markdown>{body}</Markdown>

@@ -10,6 +10,7 @@ tags:
   - Personal Website
 summary: "What simplifying this website taught me about the details I wanted to keep."
 thumbnail: /images/covers/when-minimal-became-too-minimal-approved.webp
+cover: /images/covers/when-minimal-became-too-minimal-cover.webp
 draft: false
 ---
 

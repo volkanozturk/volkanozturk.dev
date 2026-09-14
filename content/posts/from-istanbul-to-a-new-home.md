@@ -9,7 +9,7 @@ tags:
   - Moving Abroad
   - Family
 summary: "Why we moved to the Netherlands, and what we still miss."
-thumbnail: /images/covers/istanbul-to-new-home.webp
+thumbnail: /images/covers/from-istanbul-to-a-new-home.webp
 draft: false
 ---
 

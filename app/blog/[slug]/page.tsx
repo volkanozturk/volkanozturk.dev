@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import { getPostBySlug, getAllPostSlugs } from '@/lib/posts'
 import { Markdown } from '@/components/markdown'
-import { CATEGORY_LABELS } from '@/lib/categories'
+import { CategoryBadge } from '@/components/category-badge'
 import { TagList } from '@/components/tag-list'
 import { isImageThumbnail, resolveThumbnail } from '@/components/post-thumbnails'
 import { cn, formatDate, readingTime } from '@/lib/utils'
@@ -146,7 +146,7 @@ export default function BlogPostPage({ params: { slug } }: { params: { slug: str
                 </span>
               </>
             )}
-            <span>{CATEGORY_LABELS[category]}</span>
+            <CategoryBadge category={category} />
             <span aria-hidden className="text-muted-foreground/50">
               ·
             </span>

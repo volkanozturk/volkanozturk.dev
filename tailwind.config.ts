@@ -47,6 +47,35 @@ const config: Config = {
         },
         card: 'hsl(var(--card))',
         sidebar: 'hsl(var(--sidebar))',
+        /*
+         * Muted semantic accents for the three categories, plus a neutral
+         * fallback. Plain `var()` rather than `hsl(var())`: these tokens are
+         * literal hex (see globals.css).
+         */
+        category: {
+          notes: {
+            DEFAULT: 'var(--category-notes)',
+            foreground: 'var(--category-notes-foreground)',
+          },
+          engineering: {
+            DEFAULT: 'var(--category-engineering)',
+            foreground: 'var(--category-engineering-foreground)',
+          },
+          life: {
+            DEFAULT: 'var(--category-life)',
+            foreground: 'var(--category-life-foreground)',
+          },
+          neutral: {
+            DEFAULT: 'var(--category-neutral)',
+            foreground: 'var(--category-neutral-foreground)',
+          },
+        },
+        // Topic tags: deliberately neutral, so they stay behind the categories.
+        tag: {
+          DEFAULT: 'var(--tag)',
+          border: 'var(--tag-border)',
+          foreground: 'var(--tag-foreground)',
+        },
         // The one accent colour: links, focus rings, active nav and filters.
         brand: {
           DEFAULT: 'hsl(var(--brand))',

@@ -31,6 +31,31 @@
 
     --ring: 17 88% 40%;
     --radius: 0.75rem;
+
+    /*
+     * Category and tag surfaces.
+     *
+     * Written as literal hex rather than the HSL triplets above, because these
+     * are fixed approved values that the design standards record verbatim —
+     * keeping code and document byte-identical matters more here than the
+     * opacity modifiers the triplet form buys, which badges never use.
+     *
+     * Every pair clears 4.5:1; the measured ratios live in
+     * docs/design-standards.md.
+     */
+    --category-notes: #FFF1E8;
+    --category-notes-foreground: #9A471F;
+    --category-engineering: #EDF3F8;
+    --category-engineering-foreground: #365D7C;
+    --category-life: #EFF3EA;
+    --category-life-foreground: #526544;
+    /* Fallback for a category the UI does not know about. */
+    --category-neutral: #F1F1F2;
+    --category-neutral-foreground: #44484F;
+
+    --tag: #F4F4F5;
+    --tag-border: #DDDEE2;
+    --tag-foreground: #4B5059;
   }
 
   .dark {
@@ -53,6 +78,20 @@
     --brand-bright: 22 95% 64%;
 
     --ring: 22 95% 64%;
+
+    /* Muted tinted grounds with lighter text; same 4.5:1 floor. */
+    --category-notes: #3A2418;
+    --category-notes-foreground: #F0B48A;
+    --category-engineering: #1B2A38;
+    --category-engineering-foreground: #A9C9E8;
+    --category-life: #222C1C;
+    --category-life-foreground: #BACFA7;
+    --category-neutral: #23262C;
+    --category-neutral-foreground: #C9CDD4;
+
+    --tag: #212429;
+    --tag-border: #32363E;
+    --tag-foreground: #B6BBC4;
   }
 }
 

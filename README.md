@@ -21,6 +21,13 @@ exported and served from Cloudflare Pages.
 
 Every page is pre-rendered at build time, so the site works without JavaScript.
 
+## Design standards
+
+How the site looks, how article visuals are made, and the category and tag
+tokens all live in one place: **[docs/design-standards.md](docs/design-standards.md)**.
+That document is the source of truth — read it before changing anything visual,
+and update it in the same commit when you do.
+
 ## Prerequisites
 
 - Node.js 18 or newer
@@ -101,7 +108,9 @@ route, listing and metadata lookup goes through.
 
 ### Article covers
 
-Every published article should carry two images, both named in its frontmatter:
+Every published article should carry two images, both named in its frontmatter.
+The full rule — style, palette, sizes and approval — is in
+[docs/design-standards.md](docs/design-standards.md); the short version:
 
 | Field | Shape | Where it is used |
 |---|---|---|
@@ -140,8 +149,9 @@ Keep the established style so the listings read as one set:
 - Warm off-white ground, charcoal and muted grey forms, restrained burnt-orange
   accent.
 - Minimal flat or lightly textured illustration.
-- Still recognisable at 64px (mobile) and 80px (desktop), which is the only
-  size most readers ever see. Fine detail is wasted here.
+- The `thumbnail` must still read at 64px (mobile) and 80px (desktop), which is
+  the only size it is ever shown at, so fine detail is wasted there. The `cover`
+  is shown at up to 640px and can carry more.
 - The same `thumbnail` on the home page and on Writing.
 - One cover per article — no house style applied as a formula to all of them.
 

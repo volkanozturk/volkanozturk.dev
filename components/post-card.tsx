@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { WritingPost } from '@/lib/writing'
-import { CATEGORY_LABELS } from '@/lib/categories'
+import { CategoryBadge } from '@/components/category-badge'
 import { TagList } from '@/components/tag-list'
 import { isImageThumbnail, resolveThumbnail } from '@/components/post-thumbnails'
 import { cn, formatDate } from '@/lib/utils'
@@ -56,7 +56,7 @@ export function PostCard({ post, showTags = false, preferSummary = false }: Post
    * stray separator behind.
    */
   const meta: Array<{ key: string; node: React.ReactNode }> = [
-    { key: 'category', node: <span>{CATEGORY_LABELS[category]}</span> },
+    { key: 'category', node: <CategoryBadge category={category} /> },
   ]
   if (publishedDate) {
     meta.push({

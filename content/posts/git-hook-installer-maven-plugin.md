@@ -75,6 +75,8 @@ This was enough to prove the idea.
 
 Before a developer finished a commit, the repository could tell them that a newer dependency or parent version was available.
 
+![Illustrative terminal output showing a pre-commit dependency version check.](/images/git-hook-installer/git-hook-pre-commit-check.webp "The pre-commit check surfaces newer dependency versions before the commit is completed.")
+
 But there was a practical problem: a useful hook in one repository is not yet a useful engineering standard.
 
 ## A hook is local; the solution had to be repeatable
@@ -108,6 +110,8 @@ A project can declare the plugin in its `pom.xml`, bind its `install` goal, and 
     </configuration>
 </plugin>
 ```
+
+![Illustrative editor view of the Git Hook Installer Maven Plugin configured in a Maven pom.xml.](/images/git-hook-installer/git-hook-maven-plugin-config.webp "The hook installation became part of the Maven project configuration instead of a manual developer setup.")
 
 For teams that need a different script, the plugin also supports resource-based hooks:
 
@@ -172,6 +176,8 @@ Jenkins runs the dependency check
 ```
 
 The CI stage did not need a new dependency-analysis concept. It reused the same idea that had already worked locally and changed where the result was surfaced.
+
+![Illustrative pull-request comment showing dependency updates detected by the CI check.](/images/git-hook-installer/git-hook-pr-comment.webp "The same check runs in CI and surfaces available updates directly in the pull-request review flow.")
 
 That is an important distinction.
 

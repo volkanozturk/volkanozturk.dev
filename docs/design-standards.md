@@ -254,3 +254,42 @@ Verify on the deployment hostname first (`<id>.volkanozturk-dev.pages.dev`),
 then on `volkanozturk.dev`. Because asset URLs are stable, the apex can briefly
 serve an edge-cached copy of a replaced image; its `must-revalidate` policy
 clears that within 4 hours, or the exact paths can be purged.
+
+### Canonical domain and redirects
+
+The canonical origin is **`https://volkanozturk.dev`** (`lib/site.ts`), and it is
+the only hostname the site should be indexed under. `www.volkanozturk.dev` must
+redirect there permanently, preserving the path and the query string.
+
+That redirect lives in **Cloudflare, not in Next.js**. A static export has no
+server to run `redirects()` in, and `public/_redirects` cannot cover it either —
+Pages applies that file only to requests which reach the Pages project, and `www`
+is deliberately not attached to one. It is a zone-level Single Redirect (a
+dynamic redirect rule in the `http_request_dynamic_redirect` phase):
+
+| Field | Value |
+|---|---|
+| Rule name | `www to apex redirect` |
+| Match | `(http.host eq "www.volkanozturk.dev")` |
+| Target | `concat("https://volkanozturk.dev", http.request.uri.path)` |
+| Status | `301` |
+| `preserve_query_string` | `true` |
+
+The target expression is **path-only on purpose**. `http.request.uri.query`
+returns the query string without its `?`, so concatenating it would yield
+`/blog/foo/utm_source=x`; `preserve_query_string` reattaches the real query
+instead.
+
+Two things must stay as they are:
+
+- The `www` DNS record stays **proxied** through Cloudflare. The rule runs at the
+  edge before any origin fetch, so an unproxied record would bypass it — and,
+  with nothing else answering for `www`, return 522.
+- **Do not add `www.volkanozturk.dev` as a Pages custom domain.** That serves a
+  second indexable copy of the site at 200 instead of redirecting to the apex,
+  which is the duplicate-content problem this rule exists to prevent.
+
+Legacy locale URLs (`/en/`, `/tr/`, `/nl/`) are a separate concern and stay in
+`public/_redirects`, where every historic URL resolves in a single hop. Do not
+duplicate them as Cloudflare rules without a specific reason — two sources of
+redirect truth is how chains and loops start.

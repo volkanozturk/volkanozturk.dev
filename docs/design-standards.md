@@ -217,6 +217,7 @@ with a smaller accent badge, because one glyph alone does not carry the meaning.
 
 - **HuurCheck** — house + magnifier-with-check: housing, screened.
 - **owntown.lol** — map pin + trophy: places, ranked.
+- **OldByte** — computer + wrench: old computers, restored.
 
 Keep those concepts. Do not substitute a generic software, code, layers,
 sparkles or otherwise decorative icon, and do not give two projects the same

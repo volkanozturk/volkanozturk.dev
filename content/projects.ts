@@ -36,16 +36,27 @@ export const projects: Project[] = [
     url: 'https://www.owntown.lol/',
     icon: 'owntown',
   },
+  {
+    slug: 'oldbyte',
+    title: 'OldByte',
+    description:
+      'A small vintage-computing project where I restore classic Macintosh computers and help them find new homes.',
+    url: 'https://www.etsy.com/shop/OldByte',
+    icon: 'oldbyte',
+  },
 ]
 
 /**
  * The card's one line of metadata. Derived from `url` rather than written by
  * hand so it cannot drift from the link, and deliberately nothing more: no
- * stack, no status, no counts.
+ * stack, no status, no counts. A project that lives under a path on a shared
+ * host (a shop page, say) keeps that path, so the line names the project and
+ * not just the platform.
  */
 export function projectHost(url: string): string {
   try {
-    return new URL(url).host.replace(/^www\./, '')
+    const { host, pathname } = new URL(url)
+    return host.replace(/^www\./, '') + pathname.replace(/\/+$/, '')
   } catch {
     return url
   }

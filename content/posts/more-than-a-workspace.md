@@ -61,6 +61,14 @@ The books on the shelf are a quieter version of the same story. Some of them are
 
 ![Room overview](/images/more-than-a-workspace/room-overview.webp)
 
+Not every part of the room is about work.
+
+On the other side is a small sitting area with a sofa and a coffee table. It is where I sometimes step away from the desk, but more importantly, it is where my wife and I sit with a coffee and talk. I wanted the room to have a place for that too. A home office can easily become a room you only enter to work, and I never wanted this one to feel that way.
+
+![Sitting area](/images/more-than-a-workspace/sitting-area.webp)
+
+Sometimes the best use of the room is simply closing the laptop and sitting there for a while.
+
 That balance matters to me.
 
 I like minimal spaces, but not empty ones. For me, minimalism has never meant removing everything until the room becomes anonymous. It means being selective. It means leaving enough empty space for focus, while giving a few meaningful things room to stay. That is why the desk is simple, but the shelf is not sterile. That is why there is open floor space, but also an old Macintosh a few steps away. That is why the room can hold a quiet working day and a small restoration project without feeling crowded.

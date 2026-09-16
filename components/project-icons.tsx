@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { House, MapPin, SearchCheck, Trophy, type LucideIcon } from 'lucide-react'
+import { Computer, House, MapPin, SearchCheck, Trophy, Wrench, type LucideIcon } from 'lucide-react'
 
 /**
  * Square project tiles, drawn from the same Lucide set the navigation uses so
@@ -41,9 +41,15 @@ function OwntownIcon() {
   return <IconTile subject={MapPin} badge={Trophy} />
 }
 
+/** Old computers, restored: a computer with a wrench. */
+function OldByteIcon() {
+  return <IconTile subject={Computer} badge={Wrench} />
+}
+
 export const projectIcons: Record<string, ComponentType> = {
   huurcheck: HuurCheckIcon,
   owntown: OwntownIcon,
+  oldbyte: OldByteIcon,
 }
 
 export function resolveProjectIcon(key: string): ComponentType | null {

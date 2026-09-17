@@ -49,15 +49,46 @@ the rest are Tailwind defaults.
 
 Inter, loaded through `next/font/google` as `--font-geist-sans`.
 
+Code uses the platform's monospace face (`ui-monospace`, SF Mono, Menlo,
+Consolas, … in `tailwind.config.ts`) — no web font is downloaded for it. Code
+blocks are 14px; inline code is 0.84em at normal weight so it sits level with
+Inter body text.
+
 | Role | Size |
 |---|---|
 | Page / article h1 | 32px, 40px from 640px |
 | Home section heading | 21px |
 | Card title | 17px, 18px from 640px |
 | Body and card blurb | 16px body, 14.5px blurb |
+| Article body | 17px / 1.68 line-height, 18px / 1.72 from 640px |
+| Article lead (first paragraph) | 18.5px, 20px from 640px; 1.6 line-height; foreground at 86% |
+| Article h2 / h3 | 23px / 19px, 27px / 21px from 640px |
+| Figure caption | 13.5px / 1.5, muted grey |
 | Card metadata | 12.5px |
 | Category badge | 13px, weight 500 |
 | Topic tag | 12px, weight 500 |
+
+### Article reading layout
+
+Set once in `app/globals.css` (`.article-measure`, `.article-body`); the
+Markdown renderer adds no spacing classes of its own, and no post needs any
+special Markdown or frontmatter to get it.
+
+| Thing | Value |
+|---|---|
+| Reading measure | **640px**, centred in the 696px column. The back link, header, cover and running text all share it, so they start on one edge |
+| Wide content | figures, diagrams and code blocks (`.article-wide`) take the full column (696px beside the sidebar), centred on the same axis |
+| Mobile | measure and column coincide: 358px at a 390px viewport |
+| Paragraphs | 1.2em apart |
+| Before h2 / after h2 | 2em / 0.55em of the heading size (54px / 15px desktop) |
+| Before h3 / after h3 | 1.7em / 0.45em of the heading size |
+| Figures | 2.4em above and below; images never upscaled past their own width and capped at `min(80vh, 720px)` tall, scaled on their own ratio (a portrait photo narrows rather than filling the column) |
+| Image dimensions | read from each file's header at build time (`lib/image-size.ts`: PNG, JPEG, WebP), so every body image reserves its real ratio before it loads. Nothing is added to the Markdown. A missing or unreadable image fails the build with the path named |
+| Lead | the first paragraph written directly in the body (`> p:first-of-type`). Image-only paragraphs render as `<figure>`, so a post that opens with photos still leads with its first real paragraph |
+| Topics | tags sit at the end of the article under a small "Topics" label, not in the header |
+
+Captions come only from a Markdown image title (`![alt](src "Caption")`). Alt
+text is never shown as a caption.
 
 Corner radius token `--radius` is `0.75rem`. Cards and the article cover use a
 literal `10px` instead, which is the established card radius.
@@ -110,7 +141,8 @@ Both live in `public/images/covers/`.
   `<Image>` declare the file's own 768×768 — they are the intrinsic size, not
   the display size, which the tile sets in CSS. Keep the two in step: if the
   export size changes, change these attributes with it.
-- The article cover is capped at **640px** on desktop. On mobile it uses the
+- The article cover is capped at **640px** on desktop — the same reading
+  measure as the header and body text, so all three share a left edge. On mobile it uses the
   **full available article-content width** — there is deliberately no fixed
   320px cap. At a 390px viewport with 16px gutters that width is **358px**.
 - Aspect ratio is always the file's own. No stretching, no unintended cropping:
@@ -181,12 +213,12 @@ unknown frontmatter values, so this is a second line of defence.)
 ### Topic tags
 
 `components/tag-list.tsx`, used wherever tags already appear — the Writing cards
-and the article header. Do **not** add tags to surfaces that currently omit them;
-the home cards deliberately have none.
+and the end of the article, below the body. Do **not** add tags to surfaces
+that currently omit them; the home cards deliberately have none.
 
 Tags stay visually secondary to categories: no individual colours, no icons, no
 shadows, no hover effect and no pointer cursor of their own. Size, padding,
-radius, order and placement are unchanged.
+radius and order are shared by every surface.
 
 | | Light | Ratio | Dark | Ratio |
 |---|---|---|---|---|

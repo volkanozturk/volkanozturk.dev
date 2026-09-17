@@ -115,21 +115,26 @@ export default function BlogPostPage({ params: { slug } }: { params: { slug: str
 
   return (
     <article className="space-y-10">
-      <Link
-        href="/blog"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-brand"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to writing
-      </Link>
+      <div className="article-measure">
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-brand"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to writing
+        </Link>
+      </div>
 
       {/*
         Title, cover and body are grouped so the cover sits 30px below the
         metadata and 30px above the opening paragraph. With no cover the group
         keeps the original 40px gap between the header and the body.
+
+        The header shares the body's 640px measure (and the cover is capped at
+        the same width), so title, image and text all start on one edge.
       */}
       <div className={cn('space-y-10', hasCover && 'space-y-[30px]')}>
-        <header className="space-y-4">
+        <header className="article-measure space-y-4">
           <h1 className="text-3xl font-bold tracking-[-0.03em] text-foreground sm:text-4xl">
             {title}
           </h1>
@@ -152,8 +157,6 @@ export default function BlogPostPage({ params: { slug } }: { params: { slug: str
             </span>
             <span>{readingTime(body, excerpt)} min read</span>
           </div>
-
-          <TagList tags={tags} />
         </header>
 
         {hasCover && coverSrc && (
@@ -164,6 +167,18 @@ export default function BlogPostPage({ params: { slug } }: { params: { slug: str
           <Markdown>{body}</Markdown>
         </div>
       </div>
+
+      {/*
+        Topics close the article rather than crowding the header, so the reader
+        reaches the opening paragraph sooner. Same shared pills as the Writing
+        cards; a post without tags renders no footer at all.
+      */}
+      {tags.length > 0 && (
+        <footer className="article-measure pt-4">
+          <p className="mb-3 text-[13px] font-medium text-muted-foreground">Topics</p>
+          <TagList tags={tags} />
+        </footer>
+      )}
     </article>
   )
 }

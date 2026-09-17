@@ -138,16 +138,152 @@
   }
 
   /*
-   * Article body. Running text sits at a comfortable measure while figures,
-   * diagrams and code keep the full content width, so everything still shares
-   * one left edge and wide content is never squeezed.
+   * Article reading column.
+   *
+   * The header, cover and running text share one centred 640px measure, so
+   * title, image and paragraphs start on the same edge. Figures, diagrams and
+   * code (`.article-wide`) take the full content column instead — 696px beside
+   * the sidebar — centred on the same axis. Below 640px + gutters the measure
+   * and the column are the same width, so mobile simply fills the gutters.
    */
+  .article-measure,
   .article-body > * {
-    max-width: 65ch;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .article-body > .article-wide {
     max-width: none;
+  }
+
+  /*
+   * Article rhythm. Everything is spaced from the element above by its own
+   * bottom margin, so the values below are the whole vertical system and the
+   * prose plugin's defaults never add a second one. Heading sizes are in px
+   * because they are set against the body size, not inherited from it.
+   */
+  .article-body {
+    font-size: 17px;
+    line-height: 1.68;
+  }
+
+  .article-body > * {
+    margin-top: 0;
+    margin-bottom: 1.2em;
+  }
+
+  .article-body > :last-child {
+    margin-bottom: 0;
+  }
+
+  /*
+   * The lead: the first paragraph written directly in the body. Image-only
+   * paragraphs render as <figure>, and quotes and diagrams nest their
+   * paragraphs, so none of them can be picked up here.
+   */
+  .article-body > p:first-of-type {
+    font-size: 18.5px;
+    line-height: 1.6;
+    color: hsl(var(--foreground) / 0.86);
+  }
+
+  .article-body > h2 {
+    margin-top: 2em;
+    margin-bottom: 0.55em;
+    font-size: 23px;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  .article-body > h3 {
+    margin-top: 1.7em;
+    margin-bottom: 0.45em;
+    font-size: 19px;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  .article-body > h2 + h3 {
+    margin-top: 1em;
+  }
+
+  .article-body > :first-child {
+    margin-top: 0;
+  }
+
+  .article-body > ul,
+  .article-body > ol {
+    padding-left: 1.4em;
+  }
+
+  .article-body > ul li,
+  .article-body > ol li {
+    margin-top: 0.4em;
+    margin-bottom: 0;
+    padding-left: 0.2em;
+  }
+
+  .article-body > blockquote,
+  .article-body > pre {
+    margin-top: 1.6em;
+    margin-bottom: 1.6em;
+  }
+
+  .article-body > pre {
+    font-size: 14px;
+  }
+
+  .article-body > figure {
+    margin-top: 2.4em;
+    margin-bottom: 2.4em;
+  }
+
+  /*
+   * A figure image fills its width, but never beyond its own pixel width and
+   * never taller than the screen — in practice a portrait photo at the wide
+   * column. Both caps are widths derived from the file's size (`--img-w`,
+   * `--img-ratio`, set by the Markdown renderer), so the image narrows on its
+   * own ratio and is centred: never cropped, never stretched. Because nothing
+   * here waits for the file, the box it reserves before loading is the box it
+   * ends up in.
+   */
+  .article-body > figure img {
+    max-width: min(100%, var(--img-w), calc(min(80vh, 720px) * var(--img-ratio)));
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .article-body > hr {
+    margin-top: 2.8em;
+    margin-bottom: 2.8em;
+  }
+
+  .article-body figcaption {
+    margin-top: 0.75rem;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: hsl(var(--muted-foreground));
+  }
+
+  @media (min-width: 640px) {
+    .article-body {
+      font-size: 18px;
+      line-height: 1.72;
+    }
+
+    .article-body > p:first-of-type {
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    .article-body > h2 {
+      font-size: 27px;
+    }
+
+    .article-body > h3 {
+      font-size: 21px;
+    }
   }
 }
 

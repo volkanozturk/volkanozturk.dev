@@ -1,7 +1,8 @@
-import { Fragment, type ReactNode } from 'react'
+import { Fragment, type CSSProperties, type ReactNode } from 'react'
 import Image from 'next/image'
 import { marked, type Token, type Tokens } from 'marked'
 import { resolveFigure } from '@/components/post-figures'
+import { getImageSize } from '@/lib/image-size'
 import { cn } from '@/lib/utils'
 
 /**
@@ -15,7 +16,8 @@ import { cn } from '@/lib/utils'
 /**
  * A paragraph holding nothing but images becomes a figure. Several images share
  * a row; one renders at article width. The first image's Markdown title is used
- * as the shared caption.
+ * as the shared caption; an image without a title gets no caption, because alt
+ * text describes the image for assistive technology rather than captioning it.
  *
  * A post can narrow a figure by adding `?w=` to the image path, e.g.
  * `![alt](/images/pass.jpg?w=280 "Caption")`, which centres it at that pixel
@@ -23,7 +25,14 @@ import { cn } from '@/lib/utils'
  * rather than a site-wide rule.
  *
  * Either way a figure is `article-wide`: it is measured against the full
- * content column rather than the narrower text measure around it.
+ * content column rather than the narrower text measure around it. Its spacing
+ * and caption type live with the rest of the article rhythm in globals.css.
+ *
+ * Each image declares the intrinsic size read from its own file, so the box is
+ * reserved at the right ratio before it loads. The same size is handed to CSS
+ * as `--img-w` / `--img-ratio`, which is how globals.css caps an image at its
+ * natural width and a tall image at a screen-friendly height without either
+ * value depending on the file having arrived.
  */
 function figureSrc(img: Tokens.Image): { src: string; maxWidth?: number } {
   const [src, query] = img.href.split('?')
@@ -38,28 +47,28 @@ function ImageFigure({ images }: { images: Tokens.Image[] }) {
 
   return (
     <figure
-      className={cn('my-8 not-prose article-wide', maxWidth && 'mx-auto')}
+      className={cn('not-prose article-wide', maxWidth && 'mx-auto')}
       style={maxWidth ? { maxWidth } : undefined}
     >
       <div className={images.length > 1 ? 'grid grid-cols-2 gap-3' : undefined}>
         {images.map((img) => {
           const { src } = figureSrc(img)
+          const { width, height } = getImageSize(src)
           return (
             <Image
               key={src}
               src={src}
               alt={img.text}
-              width={1000}
-              height={1333}
+              width={width}
+              height={height}
               className="h-auto w-full rounded-lg"
+              style={{ '--img-w': `${width}px`, '--img-ratio': width / height } as CSSProperties}
             />
           )
         })}
       </div>
       {caption && (
-        <figcaption className="mt-2 text-xs text-muted-foreground/80">
-          {caption}
-        </figcaption>
+        <figcaption>{caption}</figcaption>
       )}
     </figure>
   )
@@ -128,20 +137,20 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
         const children = inline(t.tokens, key)
         if (t.depth <= 1) {
           return (
-            <h1 key={key} className="mb-4 mt-8 text-3xl font-bold">
+            <h1 key={key} className="font-bold">
               {children}
             </h1>
           )
         }
         if (t.depth === 2) {
           return (
-            <h2 key={key} className="mb-3 mt-8 text-2xl font-semibold">
+            <h2 key={key} className="font-semibold">
               {children}
             </h2>
           )
         }
         return (
-          <h3 key={key} className="mb-2 mt-6 text-xl font-semibold">
+          <h3 key={key} className="font-semibold">
             {children}
           </h3>
         )
@@ -165,9 +174,7 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
         if (onlyImages) return <ImageFigure key={key} images={images} />
 
         return (
-          <p key={key} className="mb-4 leading-relaxed">
-            {inline(t.tokens, key)}
-          </p>
+          <p key={key}>{inline(t.tokens, key)}</p>
         )
       }
 
@@ -179,11 +186,11 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
           </li>
         ))
         return t.ordered ? (
-          <ol key={key} className="mb-4 list-decimal space-y-1 pl-6">
+          <ol key={key} className="list-decimal">
             {items}
           </ol>
         ) : (
-          <ul key={key} className="mb-4 list-disc space-y-1 pl-6">
+          <ul key={key} className="list-disc">
             {items}
           </ul>
         )
@@ -200,7 +207,7 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
         return (
           <pre
             key={key}
-            className="article-wide mb-4 overflow-x-auto rounded-lg border border-border bg-muted/60 p-4 text-sm leading-relaxed"
+            className="article-wide overflow-x-auto rounded-lg border border-border bg-muted/60 p-4 text-sm leading-relaxed"
           >
             <code className="font-mono">{(token as Tokens.Code).text}</code>
           </pre>
@@ -210,14 +217,14 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
         return (
           <blockquote
             key={key}
-            className="my-4 border-l-2 border-border pl-4 italic text-muted-foreground"
+            className="border-l-2 border-border pl-4 italic text-muted-foreground"
           >
             {block((token as Tokens.Blockquote).tokens, key)}
           </blockquote>
         )
 
       case 'hr':
-        return <hr key={key} className="my-8 border-border" />
+        return <hr key={key} className="border-border" />
 
       case 'space':
         return null

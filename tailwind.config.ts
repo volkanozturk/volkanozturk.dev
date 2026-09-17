@@ -21,7 +21,22 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-geist-mono)', 'monospace'],
+        /*
+         * No web font for code: the platform's own monospace face, so code
+         * blocks cost no download. (An undefined font variable used to lead
+         * this list, which invalidated the whole declaration and let code
+         * inherit Inter.)
+         */
+        mono: [
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Monaco',
+          'Consolas',
+          '"Liberation Mono"',
+          '"Courier New"',
+          'monospace',
+        ],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -103,11 +118,18 @@ const config: Config = {
             'h1, h2, h3, h4': {
               color: 'hsl(var(--foreground))',
             },
+            /*
+             * Inline code is a monospace face beside Inter, which reads larger
+             * and heavier at the same size and weight, so it is set a step
+             * smaller and at normal weight to sit level with the sentence.
+             */
             code: {
               color: 'hsl(var(--foreground))',
               backgroundColor: 'hsl(var(--muted))',
               borderRadius: '4px',
-              padding: '2px 6px',
+              padding: '2px 5px',
+              fontSize: '0.84em',
+              fontWeight: '400',
             },
             'code::before': { content: '""' },
             'code::after': { content: '""' },

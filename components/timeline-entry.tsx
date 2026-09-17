@@ -42,7 +42,7 @@ export function TimelineEntry({ entry, isLast }: TimelineEntryProps) {
             </span>
           </>
         ) : (
-          <time className="block pt-px font-mono text-xs tabular-nums text-muted-foreground sm:pr-5 sm:text-right">
+          <time className="block pt-px text-xs tabular-nums text-muted-foreground sm:pr-5 sm:text-right">
             {year}
           </time>
         )}

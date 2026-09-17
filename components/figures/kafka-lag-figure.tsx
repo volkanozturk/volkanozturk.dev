@@ -49,14 +49,12 @@ const ALT =
 
 export function KafkaLagFigure() {
   return (
-    <figure className="article-wide my-8 not-prose" role="group" aria-label={ALT}>
+    <figure className="article-wide not-prose" role="group" aria-label={ALT}>
       <div className="flex gap-6 rounded-lg border border-border bg-muted/30 p-5">
         <Sketch d={DRAINS} label="Burst that drains" />
         <Sketch d={GROWS} label="Lag that keeps growing" />
       </div>
-      <figcaption className="mt-2 text-xs text-muted-foreground/80">
-        Illustrative shapes only — not measured data.
-      </figcaption>
+      <figcaption>Illustrative shapes only — not measured data.</figcaption>
     </figure>
   )
 }

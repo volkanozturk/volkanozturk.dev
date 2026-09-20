@@ -188,6 +188,24 @@
     color: hsl(var(--foreground) / 0.86);
   }
 
+  /*
+   * Consecutive paragraphs sit closer than the rest of the rhythm.
+   *
+   * Written on the first paragraph of the pair rather than as
+   * `p + p { margin-top }`, because adjacent siblings collapse to the larger of
+   * the two margins: an 8px top margin would be swallowed whole by the 1.2em
+   * bottom margin above it and nothing would move. Overriding that bottom
+   * margin is what actually closes the gap, and `:has(+ p)` is the only way to
+   * reach it — a paragraph is only shortened when another paragraph follows it.
+   *
+   * So a paragraph before a heading, list, quote, figure or code block keeps
+   * the full 1.2em, and the lead is excluded: it is not one of a pair of
+   * normal paragraphs, and the air after it is part of how it reads as a lead.
+   */
+  .article-body > p:not(:first-of-type):has(+ p) {
+    margin-bottom: 8px;
+  }
+
   .article-body > h2 {
     margin-top: 2em;
     margin-bottom: 0.55em;

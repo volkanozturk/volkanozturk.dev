@@ -79,7 +79,7 @@ special Markdown or frontmatter to get it.
 | Reading measure | **640px**, centred in the 696px column. The back link, header, cover and running text all share it, so they start on one edge |
 | Wide content | figures, diagrams and code blocks (`.article-wide`) take the full column (696px beside the sidebar), centred on the same axis |
 | Mobile | measure and column coincide: 358px at a 390px viewport |
-| Paragraphs | 1.2em apart |
+| Paragraphs | **8px** between consecutive paragraphs; 1.2em before any other element, and after the lead |
 | Before h2 / after h2 | 2em / 0.55em of the heading size (54px / 15px desktop) |
 | Before h3 / after h3 | 1.7em / 0.45em of the heading size |
 | Figures | 2.4em above and below; images never upscaled past their own width and capped at `min(80vh, 720px)` tall, scaled on their own ratio (a portrait photo narrows rather than filling the column) |

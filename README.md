@@ -146,28 +146,29 @@ SVG, so they follow the theme and their labels are translated.
 
 ## Cloudflare Pages Deployment
 
-Deployment uses Cloudflare Pages' **native Git integration** — Cloudflare builds
-and deploys on every push. No GitHub Actions workflow is involved.
+Production is the existing **Direct Upload** Pages project **`volkanozturk-dev`**
+(production branch `main`, custom domain `volkanozturk.dev`). It is **not**
+connected to Git: pushing to GitHub does not build or deploy anything, and no
+GitHub Actions workflow is involved. Deploying is a separate, manual step that
+uploads a local build with Wrangler:
 
-1. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**.
-2. Select the repository **`volkanozturk/volkanozturk.dev`**.
-3. Build settings:
+```bash
+npm ci
+npm run build
+wrangler pages deploy out --project-name volkanozturk-dev --branch main
+```
 
-   | Setting | Value |
-   |---|---|
-   | Production branch | `main` |
-   | Framework preset | Next.js (Static HTML Export) |
-   | Build command | `npm run build` |
-   | Build output directory | `out` |
+- Build from a clean checkout of the pushed `main` commit, so the deployment
+  matches what is on GitHub. Wrangler records that commit with the deployment.
+- Wrangler is not a project dependency; install it separately and run
+  `wrangler login` once.
+- No environment variables are required — content ships with the repository.
+- `public/_headers` (security headers) and `public/_redirects` are copied into
+  `out/` by the build and applied by Pages.
 
-4. No environment variables are required — content ships with the repository.
-
-5. Click **Save and Deploy**. Every push to `main` now builds and deploys
-   automatically; pull requests get preview deployments.
-
-> **Note:** Cloudflare cannot convert an existing Direct Upload project to Git
-> integration — you have to create a new project with Git connected, then move the
-> custom domain over to it.
+> **Note:** Cloudflare cannot convert a Direct Upload project to Git
+> integration. Switching would mean creating a new, Git-connected project and
+> moving the custom domain over to it.
 
 ## Custom Domain
 

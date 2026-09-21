@@ -40,7 +40,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={inter.variable}
+      // `globals.css` sets smooth scrolling; this keeps route changes jumping
+      // straight to the top, which Next.js 16 no longer does on its own.
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <head>
         <ThemeScript />
       </head>

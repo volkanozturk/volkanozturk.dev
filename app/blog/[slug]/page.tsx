@@ -65,6 +65,7 @@ function PostCover({ src, title, wide }: { src: string; title: string; wide: boo
       ) : Drawn ? (
         // A drawn tile fills its box, so the square has to come from the box.
         <div className="aspect-square">
+          {/* eslint-disable-next-line react-hooks/static-components -- `Drawn` is looked up from the module-level `postThumbnails` map, not created per render. */}
           <Drawn />
         </div>
       ) : null}
@@ -77,11 +78,12 @@ export function generateStaticParams() {
   return (slugs.length > 0 ? slugs : [PLACEHOLDER_SLUG]).map((slug) => ({ slug }))
 }
 
-export function generateMetadata({
-  params: { slug },
+export async function generateMetadata({
+  params,
 }: {
-  params: { slug: string }
-}): Metadata {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
   const post = getPostBySlug(slug)
   if (!post) return { title: 'Post not found' }
 
@@ -101,7 +103,12 @@ export function generateMetadata({
   }
 }
 
-export default function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
   const post = getPostBySlug(slug)
   if (!post) notFound()
 

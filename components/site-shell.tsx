@@ -88,6 +88,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   }, [open])
 
   // A navigation always leaves the menu closed.
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset on route change; a no-op when the menu is already closed.
   useEffect(() => setOpen(false), [pathname])
 
   return (

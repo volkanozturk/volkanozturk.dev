@@ -13,7 +13,7 @@ exported and served from Cloudflare Pages.
 
 | | |
 |---|---|
-| Framework | Next.js 14 (App Router, `output: 'export'`) |
+| Framework | Next.js 16 (App Router, `output: 'export'`) |
 | Styling | Tailwind CSS |
 | Language | English only |
 | Content | Markdown files in `content/` |
@@ -30,7 +30,7 @@ and update it in the same commit when you do.
 
 ## Prerequisites
 
-- Node.js 18 or newer
+- Node.js 20.9.0 or newer (required by Next.js 16)
 - npm
 - A Cloudflare account (free plan is enough)
 

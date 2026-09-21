@@ -20,6 +20,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   // button ships with a neutral label and names its action once it is hydrated.
   const [theme, setTheme] = useState<Theme | undefined>(undefined)
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- the theme lives on <html> and is only readable after hydration.
   useEffect(() => setTheme(currentTheme()), [])
 
   function toggle() {

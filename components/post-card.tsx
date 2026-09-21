@@ -39,6 +39,7 @@ function Thumbnail({ post }: { post: WritingPost }) {
           className="h-full w-full object-cover"
         />
       ) : Drawn ? (
+        // eslint-disable-next-line react-hooks/static-components -- `Drawn` is looked up from the module-level `postThumbnails` map, not created per render.
         <Drawn />
       ) : (
         <div className="h-full w-full bg-muted" aria-hidden />

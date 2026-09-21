@@ -20,6 +20,7 @@ export function ProjectCard({ project }: { project: Project }) {
     <article className="group relative rounded-[10px] border border-border bg-card transition-colors duration-150 hover:border-foreground/25">
       <div className="flex items-start gap-4 p-4 sm:gap-5">
         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border sm:h-20 sm:w-20">
+          {/* eslint-disable-next-line react-hooks/static-components -- `Icon` is looked up from the module-level `projectIcons` map, not created per render. */}
           {Icon ? <Icon /> : <div className="h-full w-full bg-muted" aria-hidden />}
         </div>
 

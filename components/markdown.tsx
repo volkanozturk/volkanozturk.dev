@@ -2,6 +2,7 @@ import { Fragment, type CSSProperties, type ReactNode } from 'react'
 import Image from 'next/image'
 import { marked, type Token, type Tokens } from 'marked'
 import { resolveFigure } from '@/components/post-figures'
+import { highlight } from '@/lib/highlight'
 import { getImageSize } from '@/lib/image-size'
 import { cn } from '@/lib/utils'
 
@@ -203,15 +204,39 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
         return <Fragment key={key}>{inline(t.tokens ?? [], key)}</Fragment>
       }
 
-      case 'code':
+      case 'code': {
+        const t = token as Tokens.Code
+        // The info string is the language plus optional flags, e.g. ```text wrap.
+        const [lang, ...flags] = (t.lang ?? '').trim().toLowerCase().split(/\s+/)
+        // Highlighted at build time into plain spans; unknown languages stay as text.
+        const tokens = highlight(t.text, lang)
+        // Opt-in for prose-like pseudo-code: wrap long lines instead of scrolling.
+        // ASCII diagrams stay plain `text`, where wrapping would break them.
+        const wraps = lang === 'text' && flags.includes('wrap')
         return (
           <pre
             key={key}
-            className="article-wide overflow-x-auto rounded-lg border border-border bg-muted/60 p-4 text-sm leading-relaxed"
+            className={cn(
+              'article-wide overflow-x-auto rounded-lg border border-border bg-muted/60 p-4 text-sm leading-relaxed',
+              wraps && 'code-wrap'
+            )}
           >
-            <code className="font-mono">{(token as Tokens.Code).text}</code>
+            <code className="font-mono">
+              {tokens
+                ? tokens.map((tok, j) =>
+                    tok.kind === 'plain' ? (
+                      <Fragment key={j}>{tok.text}</Fragment>
+                    ) : (
+                      <span key={j} className={`code-${tok.kind}`}>
+                        {tok.text}
+                      </span>
+                    )
+                  )
+                : t.text}
+            </code>
           </pre>
         )
+      }
 
       case 'blockquote':
         return (

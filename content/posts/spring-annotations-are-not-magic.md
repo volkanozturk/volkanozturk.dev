@@ -20,7 +20,7 @@ Like many Java developers, I learned Spring partly by learning its annotations.
 
 `@Service` means this is a service.
 
-`@Repository` means this talks to the database.
+`@Repository` means this belongs to the persistence layer.
 
 `@Transactional` means this method runs in a transaction.
 
@@ -407,7 +407,7 @@ Spring Boot auto-configuration makes heavy use of annotations such as:
 
 An auto-configuration can effectively say:
 
-```text
+```text wrap
 If this class exists,
 and this property has the right value,
 and the application has not already provided this bean,

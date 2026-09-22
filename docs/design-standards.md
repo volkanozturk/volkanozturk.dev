@@ -93,6 +93,33 @@ text is never shown as a caption.
 Corner radius token `--radius` is `0.75rem`. Cards and the article cover use a
 literal `10px` instead, which is the established card radius.
 
+### Code blocks
+
+Fenced blocks are rendered by `components/markdown.tsx`; the styles live in
+`app/globals.css`.
+
+- **Java highlighting.** ` ```java ` blocks are highlighted at build time by
+  `lib/highlight.ts`, a small lexer with no dependency. It ships no client-side
+  JavaScript, and it never injects HTML: tokens render as plain text spans.
+  Other languages render unhighlighted.
+- **Restrained palette.** Annotations use the brand orange accent, Java
+  keywords are semibold, comments use the muted grey, and everything else
+  stays the normal code colour.
+- **Real code never wraps.** Whitespace and indentation are preserved. A line
+  too long for a narrow screen scrolls horizontally inside the block, never the
+  page.
+- **Opt-in wrapping for prose.** Pseudo-code written as prose can wrap by
+  opting in on the fence. Explicit line breaks are kept:
+
+  ````text
+  ```text wrap
+  If this class exists,
+  then register this configuration.
+  ```
+  ````
+
+  Plain ` ```text ` does not wrap, so ASCII diagrams keep their alignment.
+
 ---
 
 ## B. Article visuals

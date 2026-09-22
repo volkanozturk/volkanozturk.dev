@@ -252,6 +252,29 @@
     font-size: 14px;
   }
 
+  /* ```text wrap fences: keep the author's line breaks, but wrap long lines. */
+  .article-body > pre.code-wrap {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  /*
+   * Build-time Java highlighting (lib/highlight.ts). Restrained on purpose:
+   * annotations take the one brand accent, keywords only gain weight, comments
+   * recede to the muted grey. Everything else keeps the block's own colour.
+   */
+  .article-body > pre .code-annotation {
+    color: hsl(var(--brand));
+  }
+
+  .article-body > pre .code-keyword {
+    font-weight: 600;
+  }
+
+  .article-body > pre .code-comment {
+    color: hsl(var(--muted-foreground));
+  }
+
   .article-body > figure {
     margin-top: 2.4em;
     margin-bottom: 2.4em;

@@ -10,7 +10,7 @@ import path from 'node:path'
  * declares its own shape — a screenshot, a portrait photo and a square all
  * reserve their real ratio — without anyone adding sizes to the Markdown.
  *
- * Only the formats the site publishes are understood (PNG, JPEG, WebP). Anything
+ * Only the formats the site publishes are understood (PNG, JPEG, WebP, SVG). Anything
  * else, or a path that does not exist, fails the build with the file named,
  * the same way `lib/posts.ts` rejects bad frontmatter: a guessed ratio would
  * only move the layout shift somewhere harder to notice.
@@ -71,6 +71,23 @@ function webpSize(buf: Buffer): ImageSize | null {
   }
 }
 
+function svgSize(buf: Buffer): ImageSize | null {
+  // The root element's own width/height in pixels, else its viewBox.
+  const root = /<svg\b[^>]*>/i.exec(buf.toString('utf8'))?.[0]
+  if (!root) return null
+  const attr = (name: string) => new RegExp(`\\s${name}\\s*=\\s*["']([^"']*)["']`, 'i').exec(root)?.[1]
+
+  const width = Number(attr('width')?.replace(/px$/, ''))
+  const height = Number(attr('height')?.replace(/px$/, ''))
+  if (width > 0 && height > 0) return { width, height }
+
+  const viewBox = attr('viewBox')?.trim().split(/[\s,]+/).map(Number)
+  if (viewBox?.length === 4 && viewBox[2] > 0 && viewBox[3] > 0) {
+    return { width: viewBox[2], height: viewBox[3] }
+  }
+  return null
+}
+
 /** Size of a site-relative image path such as `/images/foo.webp`. */
 export function getImageSize(src: string): ImageSize {
   const cached = cache.get(src)
@@ -88,9 +105,9 @@ export function getImageSize(src: string): ImageSize {
   // Whole file rather than a fixed prefix: a JPEG's EXIF block can push its
   // frame header arbitrarily far in. Build-time only, and cached per path.
   const buf = fs.readFileSync(file)
-  const size = pngSize(buf) ?? jpegSize(buf) ?? webpSize(buf)
+  const size = pngSize(buf) ?? jpegSize(buf) ?? webpSize(buf) ?? svgSize(buf)
   if (!size || size.width <= 0 || size.height <= 0) {
-    throw new Error(`[content] image "${src}" is not a PNG, JPEG or WebP file whose size can be read`)
+    throw new Error(`[content] image "${src}" is not a PNG, JPEG, WebP or SVG file whose size can be read`)
   }
 
   cache.set(src, size)

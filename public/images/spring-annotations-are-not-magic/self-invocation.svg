@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="340" viewBox="0 0 640 340">
+<rect width="640" height="340" fill="#f5efe3"/>
+<g font-family="Arial, Helvetica, sans-serif" fill="#292827" text-anchor="middle">
+<text x="320" y="56" font-size="28" font-weight="700">Self-invocation skips the proxy</text>
+<rect x="20" y="150" width="130" height="100" rx="12" fill="#ded9cf" stroke="#292827" stroke-width="3"/>
+<text x="85" y="209" font-size="26">Caller</text>
+<rect x="200" y="150" width="130" height="100" rx="12" fill="#292827"/>
+<text x="265" y="209" font-size="26" fill="#f5efe3">Proxy</text>
+<rect x="380" y="100" width="240" height="200" rx="12" fill="#ded9cf" stroke="#292827" stroke-width="3"/>
+<text x="500" y="143" font-size="24" font-weight="700">PaymentService</text>
+<text x="500" y="193" font-size="24">processOrder()</text>
+<path d="M500 206 V238" stroke="#5d5a55" stroke-width="4"/>
+<polygon points="500,254 490,236 510,236" fill="#5d5a55"/>
+<text x="500" y="281" font-size="24">savePayment()</text>
+<path d="M150 200 H183" stroke="#d96725" stroke-width="5" fill="none"/>
+<polygon points="198,200 180,190 180,210" fill="#d96725"/>
+<path d="M330 200 H363" stroke="#d96725" stroke-width="5" fill="none"/>
+<polygon points="378,200 360,190 360,210" fill="#d96725"/>
+</g></svg>

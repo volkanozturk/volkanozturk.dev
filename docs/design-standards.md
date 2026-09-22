@@ -83,7 +83,7 @@ special Markdown or frontmatter to get it.
 | Before h2 / after h2 | 2em / 0.55em of the heading size (54px / 15px desktop) |
 | Before h3 / after h3 | 1.7em / 0.45em of the heading size |
 | Figures | 2.4em above and below; images never upscaled past their own width and capped at `min(80vh, 720px)` tall, scaled on their own ratio (a portrait photo narrows rather than filling the column) |
-| Image dimensions | read from each file's header at build time (`lib/image-size.ts`: PNG, JPEG, WebP), so every body image reserves its real ratio before it loads. Nothing is added to the Markdown. A missing or unreadable image fails the build with the path named |
+| Image dimensions | read from each file's header at build time (`lib/image-size.ts`: PNG, JPEG, WebP, SVG), so every body image reserves its real ratio before it loads. Nothing is added to the Markdown. A missing or unreadable image fails the build with the path named |
 | Lead | the first paragraph written directly in the body (`> p:first-of-type`). Image-only paragraphs render as `<figure>`, so a post that opens with photos still leads with its first real paragraph |
 | Topics | tags sit at the end of the article under a small "Topics" label, not in the header |
 

@@ -32,7 +32,7 @@ The more consequential production changes sit elsewhere:
 - compact object headers are now the default;
 - G1 is now the default garbage collector in every environment;
 - TLS 1.3 gains a post-quantum hybrid key exchange, enabled by default;
-- JFR now redacts sensitive process data by default, before it leaves the JVM;
+- JFR now redacts likely secrets in command-line arguments, environment variables, and system properties by default, before they leave the JVM;
 - structured concurrency continues to mature;
 - mutation of `final` fields through deep reflection keeps producing the warnings introduced in JDK 26, as Java moves toward stronger integrity guarantees.
 
@@ -120,7 +120,7 @@ Instead of betting immediately on only a new post-quantum algorithm, the TLS key
 
 JDK 27 adds hybrid named groups and enables one of them, `X25519MLKEM768`, by default. It sits at the front of the default named-groups list, so it is the group the JDK now prefers.
 
-So most application developers do not need to change TLS configuration to start using it. What they do need to test is the complete connection path. The JDK only controls its own end of the handshake. Proxies, gateways, load balancers, service meshes, JDK distributions, security policy, and remote endpoints all participate in it, and the hybrid exchange only protects the hops where both ends support it.
+So most application developers do not need to change TLS configuration to start using it, provided their connections go through the JDK's own TLS implementation (`javax.net.ssl`) and do not already pin specific named groups. What they do need to test is the complete connection path. The JDK only controls its own end of the handshake. Proxies, gateways, load balancers, service meshes, JDK distributions, security policy, and remote endpoints all participate in it, and the hybrid exchange only protects the hops where both ends support it.
 
 The architectural significance is different: post-quantum migration is moving into the platform layer.
 

@@ -238,6 +238,37 @@ function block(tokens: Token[], keyPrefix = 'b'): ReactNode {
         )
       }
 
+      // GFM tables: plain elements, styled by the prose plugin like lists and quotes.
+      case 'table': {
+        const t = token as Tokens.Table
+        const cellStyle = (align: Tokens.TableCell['align']) =>
+          align ? { textAlign: align } : undefined
+        return (
+          <table key={key}>
+            <thead>
+              <tr>
+                {t.header.map((cell, j) => (
+                  <th key={`${key}-h-${j}`} style={cellStyle(cell.align)}>
+                    {inline(cell.tokens, `${key}-h-${j}`)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {t.rows.map((row, r) => (
+                <tr key={`${key}-r-${r}`}>
+                  {row.map((cell, j) => (
+                    <td key={`${key}-r-${r}-${j}`} style={cellStyle(cell.align)}>
+                      {inline(cell.tokens, `${key}-r-${r}-${j}`)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
+      }
+
       case 'blockquote':
         return (
           <blockquote

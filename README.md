@@ -132,8 +132,8 @@ portable brief to hand to whoever makes the artwork.
 ### Markdown supported
 
 Headings, ordered and unordered lists, links, emphasis, inline code, fenced code
-blocks, blockquotes and horizontal rules. Raw HTML in a post is ignored rather
-than rendered.
+blocks, tables, blockquotes and horizontal rules. Raw HTML in a post is ignored
+rather than rendered.
 
 A paragraph containing only a figure marker is replaced by a diagram component:
 

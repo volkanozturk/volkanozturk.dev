@@ -192,12 +192,48 @@ Let the agent inspect your TV and build a plan around the apps and features you 
 
 ### Setup
 
-1. **Turn on Developer Options.** Open `Settings -> System -> About` and press **Build** seven times.
-2. **Turn on debugging.** Enable `Settings -> System -> Developer options -> USB debugging`. If the TV exposes a separate **Wireless debugging** option, enable that too.
-3. **Find the TV's local IP address.** Open `Settings -> Network & Internet -> Status` and note it. Your computer and TV need to be on the same local network for the ADB connection to work.
-4. **Open Claude Code or Codex.** Copy the prompt below, replace the `[FILL THIS IN]` fields, and give it to the coding agent.
+1. **Turn on Developer Options**
 
-The exact wording can vary slightly by manufacturer and Android version.
+   Open:
+
+   ```text
+   Settings
+   → System
+   → About
+   ```
+
+   Select **Build** and press the remote's **OK** button seven times.
+
+2. **Turn on debugging**
+
+   Open:
+
+   ```text
+   Settings
+   → System
+   → Developer options
+   → USB debugging
+   ```
+
+   Enable it. If your TV also has **Wireless debugging**, enable that too.
+
+3. **Find the TV's local IP address**
+
+   Open:
+
+   ```text
+   Settings
+   → Network & Internet
+   → Status
+   ```
+
+   Note the TV's local IP address. Your computer and TV need to be on the same local network for the ADB connection to work.
+
+4. **Open Claude Code or Codex**
+
+   Copy the prompt below, replace the `[FILL THIS IN]` fields with your own TV details, and paste it into the coding agent.
+
+The exact menu names can vary slightly by manufacturer and Android version.
 
 ## The Prompt
 

@@ -120,9 +120,9 @@ aspect ratio — never one cropped or stretched out of the other. Neither is
 pasted into the Markdown: setting the two frontmatter values is the whole job.
 
 `thumbnail` is a path under `public/` or the key of a drawn tile registered in
-`components/post-thumbnails.tsx`; `cover` is always a path. Both are optional —
-the article falls back to `thumbnail` when `cover` is absent, and a post with
-neither renders no image and no gap where one would sit.
+`components/post-thumbnails.tsx`; `cover` is always a path. Both are optional.
+The article shows only `cover`, never `thumbnail`: a post without a cover
+renders no image and no gap where one would sit.
 
 Exact dimensions, styling, loading and dark-mode behaviour are in
 **[docs/design-standards.md](docs/design-standards.md)**, which is authoritative

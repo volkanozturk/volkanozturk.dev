@@ -197,10 +197,9 @@ Both fields are optional and live in a post's frontmatter
 | `thumbnail` | the home and Writing images |
 | `cover` | the article-detail cover |
 
-- The article page uses `cover`. When `cover` is absent it falls back to
-  `thumbnail`, keeping that image's **square proportions and compact sizing**
-  (up to 384px) rather than stretching it into the wide slot.
-- With neither field, the article renders **no image container and no empty
+- The article page uses `cover` only. `thumbnail` is for the listings and is
+  never reused as the article image.
+- Without a `cover`, the article renders **no image container and no empty
   gap** — the header keeps its normal spacing above the body.
 - Never paste the header cover into the Markdown. Setting the frontmatter is
   the whole job; the template does the rest.

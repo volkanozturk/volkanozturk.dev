@@ -45,8 +45,8 @@ export interface Post {
   thumbnail?: string
   /**
    * Optional wide (16:9) cover for the article page only. The listings always
-   * use the square `thumbnail`; the article falls back to it when this is
-   * absent, so a post never has to carry both.
+   * use the square `thumbnail`, and the article never falls back to it: a post
+   * without a cover opens straight into its text.
    */
   cover?: string
   /** Markdown body, frontmatter stripped. */

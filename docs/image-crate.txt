@@ -56,13 +56,12 @@ for a relationship — a before and an after, a route between two places, a flow
 from one thing to another — that the square tile cannot hold.
 
 
-FALLBACK AND PLACEMENT
-----------------------
+PLACEMENT
+---------
 
-- When `cover` is absent the article falls back to `thumbnail`, shown at its
-  square proportions and compact size. Keep that fallback working; do not
-  remove it.
-- With neither field the article renders no image container at all.
+- The article page shows `cover` only; it never falls back to `thumbnail`,
+  which belongs to the listings.
+- Without a `cover` the article renders no image container at all.
 - Never repeat the cover inside the Markdown body. Setting the two frontmatter
   values is the whole job.
 - In-body photographs and technical diagrams are independent of both fields and

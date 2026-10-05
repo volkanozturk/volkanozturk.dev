@@ -7,7 +7,7 @@ import { getPostBySlug, getAllPostSlugs } from '@/lib/posts'
 import { Markdown } from '@/components/markdown'
 import { CategoryBadge } from '@/components/category-badge'
 import { TagList } from '@/components/tag-list'
-import { isImageThumbnail, resolveThumbnail } from '@/components/post-thumbnails'
+import { isImageThumbnail } from '@/components/post-thumbnails'
 import { cn, formatDate, readingTime } from '@/lib/utils'
 
 /**
@@ -21,54 +21,32 @@ const PLACEHOLDER_SLUG = 'not-found'
 const COVER_WIDTH = 1280
 const COVER_HEIGHT = 720
 
-/** Intrinsic size of the square `thumbnail` files, used only as the fallback. */
-const THUMBNAIL_SIZE = 768
-
 /**
- * The article's opening image.
+ * The article's opening image: the post's own wide `cover`, and nothing else.
  *
- * Prefers the wide `cover`, and falls back to the square `thumbnail` the cards
- * already use, so a post with no cover of its own still opens with its own
- * picture. Either way the frontmatter is the only source: nothing is added to
- * the Markdown, and the listings keep using `thumbnail` regardless.
+ * The square `thumbnail` belongs to the listings and is never reused here, so
+ * a post without a cover opens straight into its text. The frontmatter is the
+ * only source: nothing is added to the Markdown.
  *
- * `wide` decides both the intrinsic dimensions and the cap, because the two
- * files have different shapes — a 16:9 cover would be distorted if it were
- * declared square, and a square fallback would be if it were declared 16:9.
- * Either is held below the text column so it opens the piece without becoming
+ * The cover is held to the text column so it opens the piece without becoming
  * a banner, and `w-full h-auto` scales it on its own ratio rather than cropping
  * or stretching it. The explicit width/height give the browser that ratio up
  * front, so nothing shifts while it loads.
  */
-function PostCover({ src, title, wide }: { src: string; title: string; wide: boolean }) {
-  const Drawn = resolveThumbnail(src)
-
+function PostCover({ src, title }: { src: string; title: string }) {
   return (
-    <div
-      className={cn(
-        'mx-auto w-full overflow-hidden rounded-[10px] border border-border',
-        wide ? 'max-w-[640px]' : 'max-w-[320px] sm:max-w-[384px]'
-      )}
-    >
-      {isImageThumbnail(src) ? (
-        <Image
-          src={src}
-          alt={`Cover illustration for ${title}`}
-          width={wide ? COVER_WIDTH : THUMBNAIL_SIZE}
-          height={wide ? COVER_HEIGHT : THUMBNAIL_SIZE}
-          className="h-auto w-full"
-          // Above the fold on every article, so it is preloaded and eagerly
-          // fetched rather than lazily. Only this one: the home and Writing
-          // thumbnails sit further down their lists and stay lazy.
-          priority
-        />
-      ) : Drawn ? (
-        // A drawn tile fills its box, so the square has to come from the box.
-        <div className="aspect-square">
-          {/* eslint-disable-next-line react-hooks/static-components -- `Drawn` is looked up from the module-level `postThumbnails` map, not created per render. */}
-          <Drawn />
-        </div>
-      ) : null}
+    <div className="mx-auto w-full overflow-hidden rounded-[10px] border border-border max-w-[640px]">
+      <Image
+        src={src}
+        alt={`Cover illustration for ${title}`}
+        width={COVER_WIDTH}
+        height={COVER_HEIGHT}
+        className="h-auto w-full"
+        // Above the fold on every article, so it is preloaded and eagerly
+        // fetched rather than lazily. Only this one: the home and Writing
+        // thumbnails sit further down their lists and stay lazy.
+        priority
+      />
     </div>
   )
 }
@@ -112,13 +90,12 @@ export default async function BlogPostPage({
   const post = getPostBySlug(slug)
   if (!post) notFound()
 
-  const { title, excerpt, publishedDate, tags, category, body, thumbnail, cover } = post
+  const { title, excerpt, publishedDate, tags, category, body, cover } = post
 
-  // The wide cover wins; the square thumbnail is the fallback. A post with
-  // neither renders no cover and no gap where one would be: the header keeps
-  // its original spacing above the body.
-  const coverSrc = cover ?? thumbnail
-  const hasCover = Boolean(coverSrc && (isImageThumbnail(coverSrc) || resolveThumbnail(coverSrc)))
+  // Only a dedicated cover opens the article; the square thumbnail is for the
+  // listings. Without a cover there is no image and no gap where one would be:
+  // the header keeps its original spacing above the body.
+  const hasCover = Boolean(cover && isImageThumbnail(cover))
 
   return (
     <article className="space-y-10">
@@ -166,9 +143,7 @@ export default async function BlogPostPage({
           </div>
         </header>
 
-        {hasCover && coverSrc && (
-          <PostCover src={coverSrc} title={title} wide={Boolean(cover)} />
-        )}
+        {hasCover && cover && <PostCover src={cover} title={title} />}
 
         <div className="article-body prose prose-neutral max-w-none text-foreground dark:prose-invert">
           <Markdown>{body}</Markdown>

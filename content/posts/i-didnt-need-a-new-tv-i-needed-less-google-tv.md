@@ -182,7 +182,7 @@ This wasn't calibration.
 
 It was simply removing processing I didn't want.
 
-## How to do this safely on your own TV
+## Try It on Your Own TV
 
 You don't need my scripts, package list, model, firmware, or configuration.
 
@@ -190,150 +190,43 @@ In fact, I recommend not copying them.
 
 Let the agent inspect your TV and build a plan around the apps and features you actually use.
 
-### 1. Turn on Developer Options
+### Setup
 
-On the TV, open:
-
-`Settings -> System -> About`
-
-Press the remote's **OK** button on the **Build** row seven times.
+1. **Turn on Developer Options.** Open `Settings -> System -> About` and press **Build** seven times.
+2. **Turn on debugging.** Enable `Settings -> System -> Developer options -> USB debugging`. If the TV exposes a separate **Wireless debugging** option, enable that too.
+3. **Find the TV's local IP address.** Open `Settings -> Network & Internet -> Status` and note it. Your computer and TV need to be on the same local network for the ADB connection to work.
+4. **Open Claude Code or Codex.** Copy the prompt below, replace the `[FILL THIS IN]` fields, and give it to the coding agent.
 
 The exact wording can vary slightly by manufacturer and Android version.
 
-### 2. Turn on debugging
-
-Open:
-
-`Settings -> System -> Developer options -> USB debugging`
-
-Enable it.
-
-If the TV exposes a separate **Wireless debugging** option, enable that too.
-
-### 3. Find the TV's local IP address
-
-Open:
-
-`Settings -> Network & Internet -> Status`
-
-Note the local IP address.
-
-Your computer and TV need to be reachable on the same local network. The address is only needed for the local ADB connection; there is no reason to publish it.
-
-### 4. Open Claude Code or Codex
-
-Open a coding agent that can execute commands on your computer.
-
-You don't need to prepare a collection of scripts first. Tell the agent to check for ADB, install the appropriate tooling if it is missing, connect to the TV, take measurements, keep logs, and generate its own restore helpers.
-
-### 5. Tell the agent what matters to you
-
-Before it disables anything, list the apps and features you actually use.
-
-For example:
-
-```text
-Apps I use:
-- YouTube
-- Netflix
-- my IPTV application
-
-Features I use:
-- HDMI inputs
-- Bluetooth
-- casting
-- voice search
-
-I don't use:
-- gaming features
-- USB media playback
-- manufacturer content recommendations
-```
-
-Your list should be different from mine.
-
-That's the point.
-
-### 6. Let it inspect before it changes
-
-The first phase should be read-only.
-
-Let the agent identify the device, collect the baseline, inspect packages and services, and explain its proposed cleanup.
-
-Don't approve something it cannot explain.
-
-### 7. Change things in small batches
-
-A batch of five to ten changes is much easier to recover from than thirty changes at once.
-
-After every batch, test the actual television.
-
-Home. Remote. Inputs. HDMI. Apps. Video. Audio. Keyboard. Settings.
-
-Also test casting, voice, Bluetooth, or anything else you said you need.
-
-Only continue when the batch passes.
-
-### 8. Replace the launcher last
-
-If you want a cleaner home screen, do this after the package cleanup is stable.
-
-Install and open the replacement first. Make sure Android recognizes it as a HOME application. Prepare the recovery command before disabling the stock launcher.
-
-Test the Home button before rebooting.
-
-Never deliberately leave the TV without a working HOME application.
-
-### 9. Reboot and verify again
-
-A reboot is part of the test.
-
-Some manufacturer services behave differently during startup. A package may even be re-enabled automatically.
-
-If that happens, investigate why before trying to disable it again.
-
-A stable TV with two small vendor services running is better than a broken TV with a more impressive disabled-package count.
-
-### 10. Measure the result
-
-Repeat the baseline measurements and compare them carefully.
-
-Memory, swap, caches, uptime, and post-boot background activity all affect the numbers.
-
-The better question is not "How many megabytes did I win?"
-
-It is:
-
-> Does the TV now do less unnecessary work while everything I care about still works?
-
-## Optional: clean up the picture too
-
-Only do this after the software side is stable.
-
-Start with a read-only inventory of the normal Picture menu. Stay away from service menus, panel configuration, white-balance calibration, RGB gain/offset, and undocumented vendor settings.
-
-A useful sequence is:
-
-**Read -> choose the natural Movie/Film-style preset -> read again -> change only what still needs changing.**
-
-Don't copy somebody else's calibration numbers.
-
-And keep SDR, HDR, and Dolby Vision separate.
-
-## A prompt you can adapt
+## The Prompt
 
 The prompt below intentionally contains no package list or model-specific assumptions. It makes the coding agent discover your device and stop for physical verification at the points where automation alone isn't enough.
 
 ```text wrap
+MY TV
+
+Brand / model:
+[FILL THIS IN]
+
+TV IP address:
+[FILL THIS IN]
+
+Apps and features I need to keep:
+[FILL THIS IN]
+
+Optional features I know I do not use:
+[FILL THIS IN]
+
 I want you to safely inspect, clean up and optimize my Android TV / Google TV over ADB.
 
-Run the commands yourself from my computer and explain what you are doing in plain language as you go. Do not assume my TV matches another model or firmware. Inspect this device first.
+Run the commands yourself from my computer and explain what you are doing in plain language as you go. Treat everything under MY TV as hints from me, not verified facts: inspect the connected device before changing anything, and do not assume it matches another model or firmware.
 
 BEFORE YOU START
 - Check whether ADB and the required tooling are installed. If not, install the appropriate tooling for my operating system.
-- Ask me for the TV's local IP address if you cannot determine it safely.
-- Connect over ADB. If the TV requires an authorization dialog or wireless-debugging pairing code, stop and tell me exactly what I need to approve.
-- Before changing anything, ask me which apps and TV features I actually use and which ones I do not want to lose.
+- Connect over ADB to the TV IP address under MY TV. If it is missing or the connection fails, ask me for it. If the TV requires an authorization dialog or wireless-debugging pairing code, stop and tell me exactly what I need to approve.
+- Read the actual brand, model and Android version from the device. If they do not match MY TV, tell me before continuing.
+- If the apps and features under MY TV are missing or unclear, ask me before changing anything.
 
 SAFETY RULES
 1. Do not root the TV, unlock the bootloader, flash firmware, enter a service menu, or modify system/vendor files.
@@ -351,7 +244,7 @@ SAFETY RULES
    Save the baseline locally.
 4. Discover what packages do before proposing that they be disabled. Do not rely on package names alone. Use package metadata, services, activities and dependencies where useful.
 5. Classify candidates into:
-   - safe candidates based on my actual usage;
+   - safe candidates based on what I listed under MY TV;
    - depends on whether I use the feature;
    - critical, uncertain or system-level: do not touch.
 6. Never disable an unidentified or uncertain package merely because it looks unnecessary.
@@ -361,12 +254,11 @@ SAFETY RULES
    - remote control;
    - Inputs / Source;
    - HDMI switching;
-   - important streaming apps;
    - video playback;
    - audio;
    - on-screen keyboard;
    - Settings;
-   - casting, voice, Bluetooth or other features I told you I use.
+   - every app and feature I listed under MY TV as needed.
    Do not continue until I confirm the batch works.
 9. Keep a local log of every modification, its original state, why it was changed and exactly how to undo it. Generate any measurement and restore scripts you need yourself.
 10. If something breaks, restore the entire most recent batch first. Only then isolate the problematic package one at a time.

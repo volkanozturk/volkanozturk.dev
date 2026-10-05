@@ -8,6 +8,7 @@ import { Markdown } from '@/components/markdown'
 import { CategoryBadge } from '@/components/category-badge'
 import { TagList } from '@/components/tag-list'
 import { isImageThumbnail } from '@/components/post-thumbnails'
+import { getImageSize } from '@/lib/image-size'
 import { cn, formatDate, readingTime } from '@/lib/utils'
 
 /**
@@ -17,30 +18,35 @@ import { cn, formatDate, readingTime } from '@/lib/utils'
  */
 const PLACEHOLDER_SLUG = 'not-found'
 
-/** Intrinsic size of the wide `cover` files: 16:9, exported at 1280x720. */
-const COVER_WIDTH = 1280
-const COVER_HEIGHT = 720
-
 /**
- * The article's opening image: the post's own wide `cover`, and nothing else.
+ * The article's opening image: the post's own `cover`, and nothing else.
  *
  * The square `thumbnail` belongs to the listings and is never reused here, so
  * a post without a cover opens straight into its text. The frontmatter is the
  * only source: nothing is added to the Markdown.
  *
- * The cover is held to the text column so it opens the piece without becoming
- * a banner, and `w-full h-auto` scales it on its own ratio rather than cropping
- * or stretching it. The explicit width/height give the browser that ratio up
- * front, so nothing shifts while it loads.
+ * The declared width/height are read from the file itself, so the browser
+ * reserves the cover's real ratio before it loads and nothing shifts. A wide
+ * (16:9) cover is held to the 640px text column; a square one keeps compact
+ * sizing (up to 384px) instead of being blown up to the full column. Either
+ * way `w-full h-auto` scales it on its own ratio, never cropping or stretching.
  */
 function PostCover({ src, title }: { src: string; title: string }) {
+  const { width, height } = getImageSize(src)
+  const wide = width > height
+
   return (
-    <div className="mx-auto w-full overflow-hidden rounded-[10px] border border-border max-w-[640px]">
+    <div
+      className={cn(
+        'mx-auto w-full overflow-hidden rounded-[10px] border border-border',
+        wide ? 'max-w-[640px]' : 'max-w-[320px] sm:max-w-[384px]'
+      )}
+    >
       <Image
         src={src}
         alt={`Cover illustration for ${title}`}
-        width={COVER_WIDTH}
-        height={COVER_HEIGHT}
+        width={width}
+        height={height}
         className="h-auto w-full"
         // Above the fold on every article, so it is preloaded and eagerly
         // fetched rather than lazily. Only this one: the home and Writing

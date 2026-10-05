@@ -172,9 +172,14 @@ Both live in `public/images/covers/`.
   measure as the header and body text, so all three share a left edge. On mobile it uses the
   **full available article-content width** — there is deliberately no fixed
   320px cap. At a 390px viewport with 16px gutters that width is **358px**.
+- **Square cover.** When an article's approved art exists only as a square,
+  its `cover` may be a 768×768 WebP of that art (never a crop of it). It keeps
+  compact sizing: up to **384px** on desktop and **320px** on mobile, rather
+  than filling the 640px column. The cover's shape is read from the file.
 - Aspect ratio is always the file's own. No stretching, no unintended cropping:
-  `w-full h-auto` scales it, and the declared width/height give the browser the
-  ratio up front so nothing shifts while it loads.
+  `w-full h-auto` scales it, and the declared width/height (read from the
+  file at build time) give the browser the ratio up front so nothing shifts
+  while it loads.
 - The cover is centred with **30px** clear above and below, a subtle 1px border
   and a 10px radius. No shadow, gradient or extra background.
 - Preload comes from Next.js 14's `priority` prop, which emits

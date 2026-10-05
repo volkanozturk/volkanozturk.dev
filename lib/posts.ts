@@ -44,10 +44,9 @@ export interface Post {
    */
   thumbnail?: string
   /**
-   * Optional cover for the article page only: normally wide (16:9), or square
-   * when the approved art exists only as a square. The listings always use the
-   * `thumbnail`, and the article never falls back to it: a post without a
-   * cover opens straight into its text.
+   * Optional wide (16:9) cover for the article page only. The listings always
+   * use the square `thumbnail`, and the article never falls back to it: a post
+   * without a cover opens straight into its text.
    */
   cover?: string
   /** Markdown body, frontmatter stripped. */

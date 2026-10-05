@@ -9,7 +9,7 @@ tags:
   - Google TV
   - ADB
 thumbnail: /images/covers/google-tv-cleanup.webp
-cover: /images/covers/google-tv-cleanup-cover.webp
+cover: /images/covers/google-tv-cleanup-wide.webp
 draft: false
 ---
 

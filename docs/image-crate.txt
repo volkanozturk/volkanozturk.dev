@@ -61,8 +61,6 @@ PLACEMENT
 
 - The article page shows `cover` only; it never falls back to `thumbnail`,
   which belongs to the listings.
-- When the approved art exists only as a square, the cover may be a 768x768
-  export of it (never a crop), shown at up to 384px desktop / 320px mobile.
 - Without a `cover` the article renders no image container at all.
 - Never repeat the cover inside the Markdown body. Setting the two frontmatter
   values is the whole job.

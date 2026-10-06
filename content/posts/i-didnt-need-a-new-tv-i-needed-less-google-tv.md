@@ -243,7 +243,7 @@ Copy the prompt below, replace the `[FILL THIS IN]` fields with your own TV deta
 
 *Menu names can vary slightly by manufacturer and Android version.*
 
-## The Prompt
+## A Prompt You Can Adapt
 
 The prompt below intentionally contains no package list or model-specific assumptions. It makes the coding agent discover your device and stop for physical verification at the points where automation alone isn't enough.
 

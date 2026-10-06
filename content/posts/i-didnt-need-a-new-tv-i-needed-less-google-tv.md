@@ -183,6 +183,46 @@ This wasn't calibration.
 
 It was simply removing processing I didn't want.
 
+## Three Warnings
+
+### Never disable a package you can't identify
+
+I learned this the hard way. I disabled a package I couldn't confidently identify and the **Inputs** action on the remote stopped working, which meant I could no longer switch to HDMI.
+
+The package name gave me very little indication that it controlled source selection.
+
+That is why the workflow above is deliberately conservative: identify first, change second, and test after every small batch.
+
+### Don't disable the home screen before the replacement works
+
+If you want to replace the stock launcher, install the new launcher first, open it, make sure it works, and confirm that it can act as Home.
+
+Only then should the original launcher be disabled.
+
+Doing those steps in the opposite order is an easy way to end up staring at a black or unusable home screen.
+
+### Don't root it
+
+There was no reason to root the TV for what I wanted to achieve.
+
+Disabling packages for the current user is reversible and was enough for the cleanup. Rooting or unlocking the bootloader adds considerably more risk for very little benefit here.
+
+For this kind of cleanup, I would stay with reversible ADB changes.
+
+## Undoing It
+
+Nothing in this process needs to be permanently uninstalled.
+
+The agent should keep a record of every package it disables, so the easiest recovery path is usually to tell it to restore the changes it made.
+
+A single disabled package can also be restored manually:
+
+```sh
+adb shell pm enable <package-name>
+```
+
+That reversibility is one of the main reasons I prefer `disable-user` over uninstalling or modifying the system.
+
 ## Try It on Your Own TV
 
 You don't need my scripts, package list, model, firmware, or configuration.

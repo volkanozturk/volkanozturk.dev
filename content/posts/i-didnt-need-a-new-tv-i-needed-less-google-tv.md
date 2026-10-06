@@ -209,20 +209,6 @@ Disabling packages for the current user is reversible and was enough for the cle
 
 For this kind of cleanup, I would stay with reversible ADB changes.
 
-## Undoing It
-
-Nothing in this process needs to be permanently uninstalled.
-
-The agent should keep a record of every package it disables, so the easiest recovery path is usually to tell it to restore the changes it made.
-
-A single disabled package can also be restored manually:
-
-```sh
-adb shell pm enable <package-name>
-```
-
-That reversibility is one of the main reasons I prefer `disable-user` over uninstalling or modifying the system.
-
 ## Try It on Your Own TV
 
 You don't need my scripts, package list, model, firmware, or configuration.
@@ -387,6 +373,20 @@ Stop before picture adjustment turns into fake calibration.
 An autonomous coding agent is very good at continuing.
 
 For this kind of job, knowing when it should **not** continue is more valuable.
+
+## Undoing It
+
+Nothing in this process needs to be permanently uninstalled.
+
+The agent should keep a record of every package it disables, so the easiest recovery path is usually to tell it to restore the changes it made.
+
+A single disabled package can also be restored manually:
+
+```sh
+adb shell pm enable <package-name>
+```
+
+That reversibility is one of the main reasons I prefer `disable-user` over uninstalling or modifying the system.
 
 ## Less TV software is surprisingly nice
 

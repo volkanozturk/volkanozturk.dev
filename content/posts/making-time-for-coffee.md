@@ -29,9 +29,13 @@ Choosing the pieces was part of the fun. I wanted something I would enjoy using 
 
 Once it arrived, there was a different kind of interest: finding out what I could make with it.
 
+![Black KINTO SCS-S04 four-cup brewer stand set with dripper, glass server, paper filter and holder](/images/posts/making-time-for-coffee/kinto-scs-s04.webp "KINTO SCS-S04 brewer set and TIMEMORE Chestnut S3. Manufacturer product photographs.") ![Black TIMEMORE Chestnut S3 hand grinder](/images/posts/making-time-for-coffee/timemore-chestnut-s3.webp)
+
 ## Enjoying the preparation
 
 Making coffee this way gives me something physical to do. I measure the beans, turn the grinder handle, put the filter in place and pour the water over the grounds. I can watch the coffee collect in the server as I go.
+
+![Black HARIO Polaris coffee scale](/images/posts/making-time-for-coffee/hario-polaris.webp "HARIO Polaris scale and CHiATO flowPLAY kettle. Manufacturer product photographs.") ![Black CHiATO flowPLAY 0.6-litre gooseneck kettle with wooden handle and electric base](/images/posts/making-time-for-coffee/chiato-flowplay.webp)
 
 The extra steps have turned out to be part of the appeal. I like being involved in making the cup, from the beans at the beginning to the coffee I finally pour.
 
@@ -50,3 +54,5 @@ For now, I am happy to start with that. Enjoying the process makes me want to tr
 Coffee already has a place in our home. In an earlier post, I wrote about the [small sitting area in my office](/blog/more-than-a-workspace/), where my wife and I sometimes sit with a coffee and talk. Making it by hand gives me another part of that experience to enjoy.
 
 I bought a few things to make coffee. What I have enjoyed most so far is actually using them.
+
+*Product photographs: [KINTO](https://kinto-europe.com/products/27573), [TIMEMORE](https://www.timemore.com/products/timemore-manual-coffee-grinder-chestnut-s3), [HARIO](https://www.hario-europe.com/products/coffee-scale-polaris) and [CHiATO](https://chiato.com/nl/products/electric-kettle-chiato-flowplay-gooseneck-0-6-l-black).*

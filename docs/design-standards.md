@@ -58,6 +58,7 @@ Inter body text.
 |---|---|
 | Page / article h1 | 32px, 40px from 640px |
 | Home section heading | 21px |
+| Informational page section heading (`components/legal-page.tsx`) | 21px, weight 600 |
 | Card title | 17px, 18px from 640px |
 | Body and card blurb | 16px body, 14.5px blurb |
 | Article body | 17px / 1.68 line-height, 18px / 1.72 from 640px |

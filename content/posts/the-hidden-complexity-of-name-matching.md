@@ -205,37 +205,25 @@ Precision here is `TP / (TP + FP)`; recall is `TP / (TP + FN)`. Increasing the t
 
 A real system may use **MATCH**, **REVIEW**, and **NO MATCH**, measuring the review rate and what happens after review as well as precision and recall. The useful threshold depends on observed costs, the population, how candidate pairs were selected, and how reliable the labels are. If you change normalization or scoring, you must re-evaluate the thresholds.
 
-## One matching algorithm, different rules
+## Separating matching logic from decision policies
 
-As a system expands across countries, a common question emerges: should every market have its own name matching implementation?
+As an application expands internationally, the challenge is not always choosing a new matching algorithm. Often, it is deciding how the same comparison evidence should be interpreted in different contexts.
 
-Not necessarily.
+This is where separating the **matching engine** from the **decision policy** becomes valuable.
 
-The underlying algorithms can often remain the same. Levenshtein distance still measures character differences, regardless of where a name comes from. What changes is how names are interpreted and how comparison results influence business decisions.
+The matching engine handles name representation and comparison. It may apply normalization, evaluate individual name components, recognize known aliases, and calculate similarity scores. These techniques can be reused across multiple workflows, even when the input data requires different language-aware processing strategies.
 
-Consider an international platform handling identity information from multiple sources.
+The decision policy answers a different question: **What should the system do with the available evidence?**
 
-Turkish names may require locale-aware character handling. Dutch surnames can include prefixes such as *van der*. Spanish naming conventions may involve multiple family names, while Chinese names may follow a different component order. Arabic names can have several valid Latin-script transliterations.
+Consider two hypothetical workflows using the same comparison engine. One may permit an automatic name match when defined criteria are satisfied. Another may require additional independent evidence or route uncertain comparisons to manual review.
 
-These challenges belong primarily to name representation and comparison. They do not automatically justify different acceptance thresholds for each country.
+The comparison mechanism remains reusable, while the decision requirements can evolve independently.
 
-A useful architectural distinction is to separate the **matching engine** from the **matching policy**.
+This separation also makes changes easier to evaluate. Policies can be explicitly configured, versioned, and tested against representative datasets before rollout. Their impact on false positives, false negatives, and manual review rates can be measured without unnecessarily changing the underlying algorithms.
 
-The matching engine is responsible for producing evidence: normalized values, component-level similarities, recognized aliases, and fuzzy matching scores.
+The goal is not to build a separate matching system for every country or workflow.
 
-The matching policy determines what to do with that evidence.
-
-For example, imagine two hypothetical workflows using exactly the same comparison engine. One might accept a sufficiently strong name match automatically, while another requires additional independent evidence before making a decision. Uncertain results could be routed to manual review.
-
-The algorithms remain reusable. The decision requirements differ.
-
-This separation becomes especially valuable as systems evolve. Policies can be configured, versioned, tested against representative datasets, and evaluated without constantly modifying the core comparison algorithms.
-
-However, configurability introduces its own responsibility. Every policy change can affect false positives, false negatives, and manual review volumes. Those effects need to be measured before rollout.
-
-Country or nationality alone should never be used to assume someone's naming convention. Language, script, available data, and individual naming preferences also matter.
-
-**The goal is not to build a different matching engine for every market. It is to build a reusable comparison mechanism with explicit, explainable, and testable decision policies.**
+**It is to keep comparison logic reusable and decision policies explicit, testable, and explainable.**
 
 ## What changes when you have a million records?
 

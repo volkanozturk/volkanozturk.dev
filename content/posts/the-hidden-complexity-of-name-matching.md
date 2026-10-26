@@ -13,6 +13,8 @@ thumbnail: /images/covers/name-matching.webp
 draft: false
 ---
 
+![Two silhouettes facing each other across name cards such as JOHN and JON, José and Jose, and Mehmet Ali and Mehmetali, with a magnifying glass comparing JON and JOHN](/images/covers/name-matching.webp?w=360)
+
 *Why a simple string comparison becomes a difficult engineering problem when names cross languages, cultures, and systems.*
 
 Imagine you're building an identity verification system. A customer registers as **José García**, but a document provider returns **Jose Garcia**. A basic string comparison says the names differ, even though a human would recognize a familiar accent variation.

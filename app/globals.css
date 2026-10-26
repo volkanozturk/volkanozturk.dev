@@ -252,6 +252,39 @@
     font-size: 14px;
   }
 
+  /*
+   * Tables (components/markdown.tsx wraps each in .table-scroll). The wrapper
+   * takes the table's place in the rhythm, so the table itself sheds the prose
+   * margins it would otherwise pick up inside a div. On a phone, a table with
+   * more columns than fit keeps readable column widths and scrolls sideways
+   * inside its own box instead of squeezing every cell or widening the page.
+   * From 640px up nothing changes: tables fill the measure as before.
+   */
+  .article-body > .table-scroll {
+    overflow-x: auto;
+  }
+
+  /* The rhythm's 1.2em, measured at the table's 0.875em text as it was before. */
+  .article-body > .table-scroll:not(:last-child) {
+    margin-bottom: 1.05em;
+  }
+
+  .article-body > .table-scroll > table {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 639px) {
+    .article-body > .table-scroll > table {
+      width: max-content;
+      min-width: 100%;
+    }
+
+    .article-body > .table-scroll :is(th, td) {
+      max-width: 12rem;
+    }
+  }
+
   /* ```text wrap fences: keep the author's line breaks, but wrap long lines. */
   .article-body > pre.code-wrap {
     white-space: pre-wrap;

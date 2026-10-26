@@ -10,10 +10,9 @@ tags:
   - Data Quality
   - Identity Matching
 thumbnail: /images/covers/name-matching.webp
+cover: /images/covers/name-matching-wide.webp
 draft: false
 ---
-
-![Two silhouettes facing each other across name cards such as JOHN and JON, José and Jose, and Mehmet Ali and Mehmetali, with a magnifying glass comparing JON and JOHN](/images/covers/name-matching.webp?w=360)
 
 *Why a simple string comparison becomes a difficult engineering problem when names cross languages, cultures, and systems.*
 

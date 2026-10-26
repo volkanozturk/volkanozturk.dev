@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="528" viewBox="0 0 640 528" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect width="640" height="528" fill="#f5f1e8"/>
+<text x="32" y="48" font-size="30" font-weight="700" fill="#30312e">One name, different structures</text>
+<text x="32" y="80" font-size="21" fill="#5c5a54">How name components may be represented</text>
+<rect x="32" y="104" width="576" height="122" rx="14" fill="#e6e1d7"/>
+<text x="56" y="136" font-size="20" font-weight="700" letter-spacing="1.5" fill="#5c5a54">NETHERLANDS</text>
+<text x="56" y="176" font-size="34" font-weight="700" fill="#30312e">Jan <tspan fill="#9e4c27">van der Meer</tspan></text>
+<text x="56" y="208" font-size="21" fill="#5c5a54">The surname may include a prefix</text>
+<rect x="32" y="240" width="576" height="122" rx="14" fill="#e6e1d7"/>
+<text x="56" y="272" font-size="20" font-weight="700" letter-spacing="1.5" fill="#5c5a54">SPAIN</text>
+<text x="56" y="312" font-size="34" font-weight="700" fill="#30312e">María <tspan fill="#9e4c27">García López</tspan></text>
+<text x="56" y="344" font-size="21" fill="#5c5a54">Two family names are common</text>
+<rect x="32" y="376" width="576" height="122" rx="14" fill="#e6e1d7"/>
+<text x="56" y="408" font-size="20" font-weight="700" letter-spacing="1.5" fill="#5c5a54">CHINA</text>
+<text x="56" y="448" font-size="34" font-weight="700" fill="#30312e"><tspan fill="#9e4c27">Zhang</tspan> Wei</text>
+<text x="56" y="480" font-size="21" fill="#5c5a54">The family name may come first</text>
+</svg>

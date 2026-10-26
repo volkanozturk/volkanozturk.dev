@@ -91,6 +91,8 @@ public static String comparisonKey(String name) {
 
 NFD applies canonical decomposition, so a precomposed `é` and an `e` followed by a combining accent become the same sequence. **Removing combining marks is a separate, lossy operation.** The `(?U)` flag makes Java's `\s` recognize Unicode whitespace, including non-breaking spaces; it does not remove zero-width characters. This example maps `José` to `JOSE`, but it does not turn `Müller` into `Mueller` or `Łukasz` into `Lukasz`. Nor does it implement Turkish-specific casing or transliteration across scripts. It assumes non-null input, and it is not a production name parser.
 
+In fact, this pipeline collapses Turkish distinctions: `i`, `İ`, `ı`, and `I` all produce `I`. NFD separates the dot from `İ`, mark removal discards it, and root-locale uppercasing maps `ı` to `I`. That is not a Java bug; it is lossy normalization doing exactly what it was asked to do. A key like this is a comparison aid, not a universal or identity-safe representation of a name, which is one more reason to keep the original.
+
 There is a less obvious implementation detail: **a Java `String` is a sequence of UTF-16 code units**, not necessarily a sequence of user-perceived characters. A character outside the Basic Multilingual Plane occupies two code units; a displayed grapheme can contain multiple Unicode code points. Consequently, edit distance based on `charAt()` is not automatically a linguistically meaningful character distance. For multilingual matching, the unit of comparison—code units, code points, or grapheme clusters—must be defined and tested. [Unicode UAX #29](https://www.unicode.org/reports/tr29/) describes grapheme segmentation.
 
 Preserve original names and version the comparison strategy. Do not silently change historic evidence when a normalization rule is updated.
@@ -175,7 +177,7 @@ static double editSimilarity(String left, String right) {
 }
 ```
 
-This is an **educational implementation**, not a complete matching service. It requires caller-side input validation, has quadratic time in the input lengths, and does not segment grapheme clusters. Real systems also need field parsing, versioned normalization, known aliases, explainable evidence, and a separate decision policy. Libraries such as [Apache Commons Text](https://commons.apache.org/proper/commons-text/apidocs/org/apache/commons/text/similarity/LevenshteinDistance.html) provide established algorithms when their semantics fit the requirement.
+This is an **educational implementation**, not a complete matching service. It requires caller-side input validation, has quadratic time in the input lengths, and does not segment grapheme clusters. Real systems also need field parsing, versioned normalization, known aliases, explainable evidence, and a separate decision policy. Libraries such as [Apache Commons Text](https://commons.apache.org/proper/commons-text/apidocs/org/apache/commons/text/similarity/LevenshteinDistance.html) provide established algorithms when their semantics fit the requirement. When using a library, verify its comparison units and Unicode behavior before assuming it produces the same scores as a code-point-based implementation.
 
 ## Why a single score hides important differences
 
@@ -201,7 +203,7 @@ To choose thresholds, test a policy on labeled examples whose true match/non-mat
 | 0.90 | 80 | 5 | 94.1% | 80.0% |
 | 0.95 | 70 | 1 | 98.6% | 70.0% |
 
-Precision here is `TP / (TP + FP)`; recall is `TP / (TP + FN)`. Increasing the threshold improves precision *in this invented example*, but misses more true matches. And even 98.6% precision could be insufficient if the consequences of a false automatic match are severe.
+Precision here is `TP / (TP + FP)`; recall is `TP / (TP + FN)`. Increasing the threshold improves precision *in this invented example*, but misses more true matches. And even 98.6% precision could be insufficient if the consequences of a false automatic match are severe. Precision also depends on the prevalence of true matches in the evaluated candidate population, so results from one dataset may not transfer to another.
 
 A real system may use **MATCH**, **REVIEW**, and **NO MATCH**, measuring the review rate and what happens after review as well as precision and recall. The useful threshold depends on observed costs, the population, how candidate pairs were selected, and how reliable the labels are. If you change normalization or scoring, you must re-evaluate the thresholds.
 

@@ -1,5 +1,15 @@
 import type { ComponentType } from 'react'
-import { Computer, House, MapPin, SearchCheck, Trophy, Wrench, type LucideIcon } from 'lucide-react'
+import {
+  Computer,
+  House,
+  Map as MapIcon,
+  MapPin,
+  SearchCheck,
+  Trophy,
+  UtensilsCrossed,
+  Wrench,
+  type LucideIcon,
+} from 'lucide-react'
 
 /**
  * Square project tiles, drawn from the same Lucide set the navigation uses so
@@ -31,6 +41,11 @@ function IconTile({ subject: Subject, badge: Badge }: { subject: LucideIcon; bad
   )
 }
 
+/** Provinces, tasted: a folded map with a fork and knife. */
+function NeyimizMeshurIcon() {
+  return <IconTile subject={MapIcon} badge={UtensilsCrossed} />
+}
+
 /** Housing, screened: a house with a magnifier that carries a check. */
 function HuurCheckIcon() {
   return <IconTile subject={House} badge={SearchCheck} />
@@ -47,6 +62,7 @@ function OldByteIcon() {
 }
 
 export const projectIcons: Record<string, ComponentType> = {
+  neyimizmeshur: NeyimizMeshurIcon,
   huurcheck: HuurCheckIcon,
   owntown: OwntownIcon,
   oldbyte: OldByteIcon,

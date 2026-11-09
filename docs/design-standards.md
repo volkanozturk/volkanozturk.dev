@@ -274,6 +274,7 @@ Project icons must say what the product actually is. They are composed from the
 existing Lucide set in `components/project-icons.tsx`, pairing a subject glyph
 with a smaller accent badge, because one glyph alone does not carry the meaning.
 
+- **Neyimiz Meşhur** — folded map + fork and knife: provinces, tasted.
 - **HuurCheck** — house + magnifier-with-check: housing, screened.
 - **owntown.lol** — map pin + trophy: places, ranked.
 - **OldByte** — computer + wrench: old computers, restored.

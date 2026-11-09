@@ -44,6 +44,14 @@ export const projects: Project[] = [
     url: 'https://www.etsy.com/shop/OldByte',
     icon: 'oldbyte',
   },
+  {
+    slug: 'neyimizmeshur',
+    title: 'Neyimiz Meşhur',
+    description:
+      "A Turkish travel and food guide to what each of Turkey's 81 provinces is famous for.",
+    url: 'https://neyimizmeshur.com/',
+    icon: 'neyimizmeshur',
+  },
 ]
 
 /**

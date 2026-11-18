@@ -11,6 +11,7 @@ tags:
   - Java
   - System Design
 thumbnail: /images/covers/unknown-is-not-zero.webp
+cover: /images/covers/unknown-is-not-zero-cover.webp
 draft: false
 ---
 

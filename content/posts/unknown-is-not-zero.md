@@ -42,8 +42,8 @@ A third case is easy to overlook: we might receive some readings for a day but n
 These distinctions affect what we can say about an interval:
 
 - **Complete:** all expected measurements are present and considered valid.
-- **Partial:** at least one, but not all, expected measurements are present.
-- **Missing:** none of the expected measurements is available.
+- **Partial:** some, but not all, of the expected measurements are present and valid.
+- **Missing:** no valid measurement is available for the interval.
 
 The classification should be based on what the source actually guarantees. For instance, a smart meter might report cumulative readings rather than one independent usage measurement per minute. A delayed reading can still allow an accurate difference across a larger interval. Completeness therefore cannot always be measured by simply counting messages.
 
@@ -68,6 +68,8 @@ Not the total usage for the four-day period. We do not know Wednesday's usage. R
 
 What we actually know is more limited: **44 kWh observed across three of four expected daily buckets; one day is missing.** With non-negative consumption values, this is also a lower bound on the complete period's usage, not a complete total.
 
+Three of four buckets is 75% day coverage. That describes how much of the calendar we observed, not how much of the energy. It does not mean 44 kWh is 75% of the real total, and it does not justify scaling 44 up to a four-day figure.
+
 ![A four-day usage chart shows 12, 18, a missing value, and 14 kilowatt-hours; the 44 kilowatt-hour subtotal has 75 percent day coverage.](/images/articles/unknown-is-not-zero/aggregation-trap.webp "Both summaries show 44 kWh. Only the second tells the reader what that number means.")
 
 The trap becomes worse when we calculate averages. Dividing 44 by four creates an apparent daily average of 11 kWh by treating Wednesday as zero. Dividing by three gives an average of about 14.7 kWh **for observed days**. Neither figure proves what happened on Wednesday.
@@ -76,7 +78,7 @@ You can estimate missing periods, but an estimate should be labelled as an estim
 
 ## Historical readings have their own level of precision
 
-Suppose a gas meter reads 820 m³ on one date and 880 m³ roughly three months later. We know that the cumulative reading increased by 60 m³ during that interval, assuming the meter readings are comparable and valid.
+Suppose a gas meter reads 820 m³ on one date and 880 m³ roughly three months later. We know that the cumulative reading increased by 60 m³ during that interval, assuming both are actual readings (not estimates) from the same meter, with no replacement or rollover in between.
 
 We do not know the exact daily distribution of that 60 m³.
 
@@ -98,6 +100,7 @@ In Java, a small model can make the distinction explicit:
 
 ```java
 import java.math.BigDecimal;
+import java.util.Optional;
 
 enum CoverageStatus {
     COMPLETE, PARTIAL, MISSING
@@ -113,6 +116,9 @@ record UsageWindow(
                 expectedBuckets <= 0 || observedBuckets > expectedBuckets) {
             throw new IllegalArgumentException("Invalid usage window");
         }
+        if (observedBuckets == 0 && observedTotal.signum() != 0) {
+            throw new IllegalArgumentException("A window without observations cannot have a total");
+        }
     }
 
     CoverageStatus status() {
@@ -120,12 +126,18 @@ record UsageWindow(
         if (observedBuckets < expectedBuckets) return CoverageStatus.PARTIAL;
         return CoverageStatus.COMPLETE;
     }
+
+    Optional<BigDecimal> completeTotal() {
+        return status() == CoverageStatus.COMPLETE
+                ? Optional.of(observedTotal)
+                : Optional.empty();
+    }
 }
 ```
 
-Here, `observedTotal` means exactly what it says: the sum of the available observations. An internal sum of zero for a missing window is not a claim that consumption was zero. The status distinguishes those cases.
+Here, `observedTotal` means exactly what it says: the sum of the available observations. An internal sum of zero for a missing window is not a claim that consumption was zero. The status distinguishes those cases, and `completeTotal()` only returns a value when every expected bucket was observed, so a caller cannot quietly present a subtotal as the total.
 
-This sample assumes each bucket represents one expected, independently valid observation. Real systems might track timestamp coverage, source freshness, overlapping intervals, estimated values, or quality flags instead. The representation should follow the measurement semantics rather than the other way around.
+This sample assumes each bucket represents one expected, independently valid observation. Real systems might track timestamp coverage, source freshness, overlapping intervals, estimated values, or quality flags instead. The representation should follow the measurement semantics rather than the other way around. Treat it as an illustration of the idea (it needs Java 16 or later for records), not as a production model.
 
 ![Readings pass through validation and aggregation into a dashboard while complete, partial and missing coverage statuses remain attached.](/images/articles/unknown-is-not-zero/coverage-through-the-pipeline.webp "Coverage should survive the entire pipeline, not be reconstructed from an empty-looking chart.")
 
@@ -139,15 +151,17 @@ For cumulative meters, the model may need a separate state for the difference be
 
 ## The same mistake appears in production monitoring
 
-Think about an HTTP request-rate graph for a microservice. A flat line at zero could mean the service has received no traffic. A gap or an empty panel could mean the metric endpoint stopped responding, the collector could not scrape it, or the query matched no time series. And if the query or the panel fills gaps with zero, those failures look exactly like a quiet service.
+Think about an HTTP request-rate graph for a microservice. A flat line at zero means the counter was scraped and did not increase: no requests were recorded. A gap means something else. In Prometheus, when a scrape fails or a target disappears, its series are marked stale and queries stop returning values for them ([staleness](https://prometheus.io/docs/prometheus/latest/querying/basics/#staleness)), while the target's `up` series drops to `0` ([jobs and instances](https://prometheus.io/docs/concepts/jobs_instances/)). A query that matches no series returns an empty result, not zero.
 
-Those are very different operational situations.
+Those are very different operational situations. They only look the same when something turns the gap into a zero. A common way is appending `or vector(0)` to a PromQL query. That is reasonable when no data genuinely means nothing happened, and [Grafana's missing-data guide](https://grafana.com/docs/grafana/latest/alerting/guides/missing-data/) suggests it for that case. On a request-rate panel, it makes a failed scrape look like a quiet service.
 
-Likewise, an empty error-rate chart is not proof that error rates are healthy. A missing series might be due to missing labels, a deployment change, or a gap in telemetry. Without a separate signal for availability, the monitoring system may confuse “nothing failed” with “nothing was observed.”
+Likewise, an empty error-rate chart is not proof that error rates are healthy. A labelled error counter may not exist at all until the first error is recorded, which is why the Prometheus instrumentation guide recommends exporting a default `0` for series you know may exist ([avoid missing metrics](https://prometheus.io/docs/practices/instrumentation/#avoid-missing-metrics)). That zero is a real observation: the counter exists and was scraped. A series can also go missing after a metric or label is renamed in a deployment, or because of a gap in telemetry. Without a separate signal for availability, the monitoring system may confuse “nothing failed” with “nothing was observed.”
 
 This is why a reliable monitoring setup looks at both **the behaviour being measured** and **whether the measurement process is working**. Data freshness, scrape success, ingestion lag, and missing-series alerts can provide that second layer of context.
 
-Tools such as Prometheus and Grafana have explicit ways to reason about absent data and no-data states. Those capabilities matter, but they do not replace choosing correct semantics for each metric. A request counter, cumulative meter reading, and sampled temperature signal do not all behave the same way.
+Both tools can make that second layer explicit, at different levels. In Prometheus, `absent()` and `absent_over_time()` return `1` when the series you expect is not there ([query functions](https://prometheus.io/docs/prometheus/latest/querying/functions/#absent)), so “this metric stopped arriving” becomes something you can alert on. In Grafana-managed alert rules, a query that succeeds but returns nothing leads to a No Data state, and a query that fails leads to an Error state. Each is configured per rule ([missing data](https://grafana.com/docs/grafana/latest/alerting/guides/missing-data/), [connectivity errors](https://grafana.com/docs/grafana/latest/alerting/guides/connectivity-errors/)), and the available options depend on the Grafana version.
+
+None of this replaces choosing correct semantics for each metric. A request counter, a cumulative meter reading, and a sampled temperature signal do not behave the same way.
 
 ## A dashboard should be allowed to say “I don't know”
 

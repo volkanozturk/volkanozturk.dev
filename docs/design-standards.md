@@ -354,3 +354,39 @@ Legacy locale URLs (`/en/`, `/tr/`, `/nl/`) are a separate concern and stay in
 `public/_redirects`, where every historic URL resolves in a single hop. Do not
 duplicate them as Cloudflare rules without a specific reason — two sources of
 redirect truth is how chains and loops start.
+
+---
+
+## H. Books
+
+`/books/` is a personal library, documented in full in
+[docs/books.md](books.md). The approved design is "Concept D — The Personal
+Library": spines on light natural oak floating shelves, in one continuous
+collection with a thin oak divider at the start of each category.
+
+It is the **one deliberate exception** to "no glossy or 3D effects" (§A). The
+oak planks, contact shadows, leaning books and the extraction turn are the
+design, and they stay on this page. Do not reuse them elsewhere.
+
+| Thing | Value | Where |
+|---|---|---|
+| Page header | the shared `PageHeader`: "Books" / "A personal library." | `app/books/page.tsx` |
+| Scale | 1 mm = 1 px; 0.86 below 640px, 0.74 below 420px | `lib/bookshelf.ts` |
+| Plank | 24px (21px when scaled), oak gradient + SVG grain | `app/books/books.css` |
+| Oak, light | `#f7eedf` highlight, `#e4d2b5` → `#cfba98` face | same |
+| Oak, dark | `#93836b` highlight, `#6e604c` → `#584c3b` face | same |
+| Divider | 2px oak plate as tall as the first book, 5px `--brand-bright` dot on top, 20px gap before it; label beside it 12.5px / 600 (11.5px scaled), `#2f2a24` / dark `#ece4d6`, bottom to top, up to two lines | same |
+| Continuation divider | identical to the divider, at 80% of the book height | same |
+| Spine type | Inter, EB Garamond, Oswald (the last two only on `/books`) | `app/books/layout.tsx` |
+| Leaning book | 3–5°, last book of a shelf with room, otherwise a bookend | `lib/bookshelf.ts` |
+| Dialog | 800px max, cover 220px (150px below 700px), 14px radius | `app/books/books.css` |
+
+Rules:
+
+- Spines and covers keep their own colours in both themes: never filter,
+  recolour or invert them for dark mode. Only the oak, labels and shadows
+  change with the theme.
+- No filters, search, statistics, badges or cards on the shelf.
+- Covers are publisher artwork for the edition on the shelf; spines are
+  photographs where available, otherwise reconstructed in CSS. Every image is
+  recorded in `docs/book-provenance.md`.

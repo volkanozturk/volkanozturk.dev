@@ -55,6 +55,7 @@ No credentials are required: all content lives in this repository.
 | `npm run dev` | Dev server |
 | `npm run build` | Static export into `out/` |
 | `npm run lint` | ESLint |
+| `npm test` | Unit tests (Node 22.15 or newer; no extra dependencies) |
 
 ## Content
 
@@ -66,6 +67,7 @@ All content lives in the repository. There is no CMS and no network call at buil
 | `content/bookmarks.ts` | Bookmarks, grouped by `collection` |
 | `content/journey.ts` | Journey timeline entries |
 | `content/projects.ts` | Projects shown on the home page and `/projects` |
+| `content/books.ts` | Books on the `/books` shelf — see [docs/books.md](docs/books.md) |
 | `lib/posts.ts` | Loading and validation for posts |
 
 ### Post frontmatter

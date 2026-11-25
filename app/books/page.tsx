@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function BooksPage() {
   return (
-    <div className="space-y-12">
+    <div className="bk-library space-y-12">
       <PageHeader title={TITLE} description={DESCRIPTION} />
       <Bookshelf />
     </div>

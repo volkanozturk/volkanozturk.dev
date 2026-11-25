@@ -19,11 +19,9 @@ export const SHELF_BUCKETS = [720, 696, 640, 580, 520, 460, 420, 380, 358, 328, 
 
 /**
  * Category dividers. Each category starts with a thin oak divider, its name
- * lettered beside it; a shelf that opens in the middle of a category starts
- * with a shorter continuation divider. Sizes are at full scale.
+ * lettered beside it. Books continue in reading order across shelf breaks.
  */
 const DIVIDER = { gap: 20, after: 8 }
-const CONTINUATION = { after: 6 }
 const FIRST_BOOK_GAP = DIVIDER.after
 
 /**
@@ -33,9 +31,8 @@ const FIRST_BOOK_GAP = DIVIDER.after
  * width with one line (label, gap and the 2px plate).
  */
 export const LABEL_TYPE = {
-  divider: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 21 } },
-  // Continuation dividers are lettered exactly like the divider they repeat.
-  continuation: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 21 } },
+  full: { char: 7.0, line: 15, base: 22 },
+  scaled: { char: 6.45, line: 14, base: 21 },
 } as const
 
 /**
@@ -60,9 +57,9 @@ export function labelLines(label: string, room: number, charWidth: number): stri
 
 /**
  * Room beside a divider for its label: the divider's height less the dot
- * and the insets. Divider and continuation dividers share both.
+ * and the insets.
  */
-export function labelRoom(height: number, continued: boolean, k: number): number {
+export function labelRoom(height: number, k: number): number {
   return height - 14 * k
 }
 
@@ -74,17 +71,9 @@ export interface CategoryCard {
 
 /** The divider that opens a category, as tall as its first book. */
 export function dividerCard(category: string, bookHeight: number, k: number): CategoryCard {
-  const t = LABEL_TYPE.divider[k < 1 ? 'scaled' : 'full']
+  const t = LABEL_TYPE[k < 1 ? 'scaled' : 'full']
   const height = Math.round(bookHeight)
-  const lines = labelLines(category, labelRoom(height, false, k), t.char)
-  return { lines, height, width: t.base + (lines.length - 1) * t.line }
-}
-
-/** The shorter divider that marks a category carried over from the shelf above. */
-export function continuationCard(category: string, bookHeight: number, k: number): CategoryCard {
-  const t = LABEL_TYPE.continuation[k < 1 ? 'scaled' : 'full']
-  const height = Math.round(bookHeight * 0.8)
-  const lines = labelLines(category, labelRoom(height, true, k), t.char)
+  const lines = labelLines(category, labelRoom(height, k), t.char)
   return { lines, height, width: t.base + (lines.length - 1) * t.line }
 }
 
@@ -165,15 +154,11 @@ export function spineGeometry(book: Book, k: number): SpineGeometry {
 
 export type ShelfItem =
   | { kind: 'divider'; category: BookCategory; card: CategoryCard; width: number; gap: number; keepWithNext: true }
-  | { kind: 'book'; book: Book; width: number; gap: number; lead: number }
+  | { kind: 'book'; book: Book; width: number; gap: number }
 
-type Packable = { width: number; gap: number; lead?: number; keepWithNext?: boolean }
+type Packable = { width: number; gap: number; keepWithNext?: boolean }
 
-/**
- * Greedy packing into rows no wider than `width`. An item's `lead` is extra
- * room it needs when it opens a row (a book opening a shelf mid-category is
- * preceded by a continuation card).
- */
+/** Greedy packing into rows no wider than `width`. */
 export function pack<T extends Packable>(items: T[], width: number): T[][] {
   const rows: T[][] = []
   let row: T[] = []
@@ -188,7 +173,7 @@ export function pack<T extends Packable>(items: T[], width: number): T[][] {
       row = []
       used = 0
     }
-    used += row.length ? item.gap + item.width : (item.lead ?? 0) + item.width
+    used += row.length ? item.gap + item.width : item.width
     row.push(item)
   })
   if (row.length) rows.push(row)
@@ -212,7 +197,7 @@ export function packBalanced<T extends Packable>(items: T[], width: number): T[]
 }
 
 export function rowWidth(row: Packable[]): number {
-  return row.reduce((sum, it, i) => sum + it.width + (i ? it.gap : (it.lead ?? 0)), 0)
+  return row.reduce((sum, it, i) => sum + it.width + (i ? it.gap : 0), 0)
 }
 
 /** A stable small number from a slug, so the same book always leans the same way. */
@@ -236,11 +221,8 @@ export interface ShelfDivider {
   /** The label, broken into lines when it is longer than the divider. */
   lines: string[]
   width: number
-  /** The divider stands as tall as the book after it (80% for a continuation). */
+  /** The divider stands as tall as the book after it. */
   height: number
-  first: boolean
-  /** A continuation divider: the category carries over from the shelf above. */
-  continued: boolean
   /** Space before and after the divider, in pixels. */
   before: number
   after: number
@@ -275,7 +257,6 @@ export function layoutShelves(books: Book[], categories: readonly BookCategory[]
   const geometry = new Map(books.map((b) => [b.slug, spineGeometry(b, k)]))
 
   const items: ShelfItem[] = []
-  const continuation = new Map<string, CategoryCard>()
   for (const category of categories) {
     const inCategory = books.filter((b) => b.category === category)
     if (!inCategory.length) continue
@@ -283,14 +264,11 @@ export function layoutShelves(books: Book[], categories: readonly BookCategory[]
     items.push({ kind: 'divider', category, card, width: card.width, gap: Math.round(DIVIDER.gap * k), keepWithNext: true })
     inCategory.forEach((book, i) => {
       const g = geometry.get(book.slug)!
-      const cont = continuationCard(category, g.height, k)
-      continuation.set(book.slug, cont)
       items.push({
         kind: 'book',
         book,
         width: g.width,
         gap: i ? 0 : Math.round(FIRST_BOOK_GAP * k),
-        lead: i ? cont.width + Math.round(CONTINUATION.after * k) : 0,
       })
     })
   }
@@ -340,29 +318,10 @@ export function layoutShelves(books: Book[], categories: readonly BookCategory[]
         lines,
         width,
         height,
-        first: i === 0,
-        continued: false,
         before: i === 0 ? 0 : it.gap,
         after: Math.round(FIRST_BOOK_GAP * k),
       }
     })
-    // A shelf that opens mid-category starts with a continuation card.
-    const opener = row[0]
-    if (opener.kind === 'book' && opener.lead) {
-      const { lines, width, height } = continuation.get(opener.book.slug)!
-      items.unshift({
-        kind: 'divider',
-        category: opener.book.category,
-        lines,
-        width,
-        height,
-        first: true,
-        continued: true,
-        before: 0,
-        after: Math.round(CONTINUATION.after * k),
-      })
-    }
-
     return {
       items,
       height: Math.round(tallest + 12 * k),

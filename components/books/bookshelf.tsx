@@ -48,19 +48,12 @@ function Layout({ layout }: { layout: ShelfLayout }) {
               ) : (
                 <div
                   className="bk-div"
-                  data-continued={item.continued || undefined}
                   style={{ height: item.height, width: item.width, marginLeft: item.before, marginRight: item.after }}
-                  key={`${item.continued ? 'cont-' : ''}${item.category}`}
+                  key={item.category}
                 >
-                  {item.continued ? (
-                    <span className="bk-div-label" aria-hidden="true">
-                      <Lines lines={item.lines} />
-                    </span>
-                  ) : (
-                    <h2 className="bk-div-label">
-                      <Lines lines={item.lines} />
-                    </h2>
-                  )}
+                  <h2 className="bk-div-label">
+                    <Lines lines={item.lines} />
+                  </h2>
                 </div>
               )
             )}

@@ -33,6 +33,14 @@
   --bk-spine-line: rgba(255, 255, 255, 0.06);
 }
 
+/* The wall fills the content column on the library index only. */
+div:has(> main > .bk > .bk-library) {
+  background-color: #f3f2ef;
+}
+.dark div:has(> main > .bk > .bk-library) {
+  background-color: #1b1c1e;
+}
+
 /* ---------- the shelf, one layout per column width ---------- */
 .bk-shelf {
   container-type: inline-size;
@@ -249,7 +257,7 @@
 }
 /* Category divider: a thin oak plate, as tall as the books beside it, with a
    small burnt-orange dot on top and the category name lettered beside it like
-   library signage. Continuation dividers are the same, only shorter. */
+   library signage. */
 .bk-div::before {
   content: '';
   position: absolute;

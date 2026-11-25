@@ -108,16 +108,8 @@ for (const width of SHELF_BUCKETS) {
     const expected = BOOK_CATEGORIES.flatMap((c) => books.filter((b) => b.category === c).map((b) => b.slug))
     assert.deepEqual(shelved, expected)
 
-    const dividers = layout.shelves.flatMap((s) => s.items.filter((i) => i.kind === 'divider' && !i.continued).map((i) => i.category))
+    const dividers = layout.shelves.flatMap((s) => s.items.filter((i) => i.kind === 'divider').map((i) => i.category))
     assert.deepEqual(dividers, [...BOOK_CATEGORIES])
-
-    // Every shelf names the category it opens with: a divider, or a continuation card.
-    for (const shelf of layout.shelves) assert.equal(shelf.items[0].kind, 'divider')
-    for (const shelf of layout.shelves) {
-      const first = shelf.items[0]
-      const firstBook = shelf.items.find((x) => x.kind === 'book')
-      assert.equal(first.category, firstBook.book.category)
-    }
 
     const inner = width - 2 * layout.padding
     for (const [i, shelf] of layout.shelves.entries()) {
@@ -148,8 +140,8 @@ test('category labels fit their cards without clipping', () => {
       for (const it of shelf.items)
         if (it.kind === 'divider') {
           assert.ok(it.lines.length <= 2, `${width}: "${it.category}" needs ${it.lines.length} lines`)
-          const perChar = LABEL_TYPE[it.continued ? 'continuation' : 'divider'][k < 1 ? 'scaled' : 'full'].char
-          const room = labelRoom(it.height, it.continued, k)
+          const perChar = LABEL_TYPE[k < 1 ? 'scaled' : 'full'].char
+          const room = labelRoom(it.height, k)
           for (const line of it.lines) assert.ok(line.length * perChar <= room, `${width}: "${line}" in ${Math.round(room)}px`)
         }
   }

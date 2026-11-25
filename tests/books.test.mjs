@@ -5,7 +5,7 @@ import path from 'node:path'
 import { books } from '../content/books.ts'
 import { BOOK_CATEGORIES } from '../lib/book-types.ts'
 import { isValidIsbn13, validateBooks } from '../lib/book-validation.ts'
-import { SHELF_BUCKETS, layoutShelves, pack, packBalanced, rowWidth, spineGeometry } from '../lib/bookshelf.ts'
+import { LABEL_TYPE, SHELF_BUCKETS, labelRoom, layoutShelves, pack, packBalanced, rowWidth, spineGeometry } from '../lib/bookshelf.ts'
 
 const root = path.resolve(import.meta.dirname, '..')
 const postSlugs = new Set(fs.readdirSync(path.join(root, 'content/posts')).map((f) => f.replace(/\.md$/, '')))
@@ -108,15 +108,24 @@ for (const width of SHELF_BUCKETS) {
     const expected = BOOK_CATEGORIES.flatMap((c) => books.filter((b) => b.category === c).map((b) => b.slug))
     assert.deepEqual(shelved, expected)
 
-    const dividers = layout.shelves.flatMap((s) => s.items.filter((i) => i.kind === 'divider').map((i) => i.category))
+    const dividers = layout.shelves.flatMap((s) => s.items.filter((i) => i.kind === 'divider' && !i.continued).map((i) => i.category))
     assert.deepEqual(dividers, [...BOOK_CATEGORIES])
+
+    // Every shelf names the category it opens with: a divider, or a continuation card.
+    for (const shelf of layout.shelves) assert.equal(shelf.items[0].kind, 'divider')
+    for (const shelf of layout.shelves) {
+      const first = shelf.items[0]
+      const firstBook = shelf.items.find((x) => x.kind === 'book')
+      assert.equal(first.category, firstBook.book.category)
+    }
 
     const inner = width - 2 * layout.padding
     for (const [i, shelf] of layout.shelves.entries()) {
       const last = shelf.items[shelf.items.length - 1]
       assert.notEqual(last.kind, 'divider', `shelf ${i} ends in a divider`)
+      for (const it of shelf.items) if (it.kind === 'divider') assert.ok(it.height <= shelf.height, `card taller than shelf ${i}`)
       const used = shelf.items.reduce((sum, it) => {
-        if (it.kind === 'divider') return sum + it.width + 6 + (it.first ? 0 : 12)
+        if (it.kind === 'divider') return sum + it.before + it.width + it.after
         return sum + it.geometry.width + (it.lean ? it.lean.offset : 0)
       }, 0)
       assert.ok(used <= inner + 1, `shelf ${i} is ${used}px in a ${inner}px column`)
@@ -131,14 +140,18 @@ for (const width of SHELF_BUCKETS) {
   })
 }
 
-test('a divider label never stands taller than its divider', () => {
+test('category labels fit their cards without clipping', () => {
   for (const width of SHELF_BUCKETS) {
     const layout = layoutShelves(books, BOOK_CATEGORIES, width)
-    const perChar = layout.scale < 1 ? 5.9 : 6.4
+    const k = layout.scale
     for (const shelf of layout.shelves)
       for (const it of shelf.items)
-        if (it.kind === 'divider')
-          for (const line of it.lines) assert.ok(line.length * perChar <= it.height * 0.9 + 1, `${width}: "${line}" in ${it.height}px`)
+        if (it.kind === 'divider') {
+          assert.ok(it.lines.length <= 2, `${width}: "${it.category}" needs ${it.lines.length} lines`)
+          const perChar = LABEL_TYPE[it.continued ? 'continuation' : 'divider'][k < 1 ? 'scaled' : 'full'].char
+          const room = labelRoom(it.height, it.continued, k)
+          for (const line of it.lines) assert.ok(line.length * perChar <= room, `${width}: "${line}" in ${Math.round(room)}px`)
+        }
   }
 })
 

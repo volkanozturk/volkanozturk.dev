@@ -276,8 +276,7 @@ export const books: Book[] = [
     cover: {
       src: `${COVERS}/java-coding-problems.webp`,
       provenance: 'publisher-cover',
-      source: OREILLY,
-      note: 'The catalogue image carries an “Early Access” badge that the printed cover does not.',
+      source: 'Packt Publishing catalogue cover (static.packt-cdn.com, ISBN 9781837633944)',
     },
     spine: {
       background: '#0a1b2a', color: '#ffffff', font: 'sans', weight: 600,
@@ -573,7 +572,7 @@ export const books: Book[] = [
       src: `${COVERS}/modern-operating-systems.webp`,
       provenance: 'publisher-cover',
       source: 'Open Library cover scan of the US third edition (ISBN 9780136006633)',
-      note: 'Same artwork as the International Edition; the International Edition’s cover banner is not shown.',
+      note: 'Placeholder until the cover is taken from a photograph of the owned copy: no clean image of the orange Pearson International Edition (ISBN 9780138134594) could be found online.',
     },
     spine: {
       background: '#c62b2b', color: '#ffffff', font: 'serif', weight: 600,
@@ -722,8 +721,7 @@ export const books: Book[] = [
     cover: {
       src: `${COVERS}/steve-jobs.webp`,
       provenance: 'publisher-cover',
-      source: OPEN_LIBRARY,
-      note: 'The scan shows a “with a new afterword” sticker from a later printing.',
+      source: 'Simon & Schuster catalogue cover (ISBN 9781451648539)',
     },
     spine: {
       background: '#f7f7f7', color: '#1a1a1a', font: 'sans', weight: 400,

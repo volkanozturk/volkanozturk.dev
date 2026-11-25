@@ -17,19 +17,31 @@ import type { Book, BookCategory } from './book-types'
  */
 export const SHELF_BUCKETS = [720, 696, 640, 580, 520, 460, 420, 380, 358, 328, 300, 288, 240] as const
 
-/** Gap before a category divider, and between a divider and its first book. */
-const DIVIDER_WIDTH = 24
-const DIVIDER_LINE = 14
-const DIVIDER_GAP = 12
-const FIRST_BOOK_GAP = 6
+/**
+ * Category dividers. Each category starts with a divider card standing among
+ * the books; a shelf that opens in the middle of a category starts with a
+ * smaller continuation card. Sizes are at full scale.
+ */
+const DIVIDER = { gap: 14, after: 8 }
+const CONTINUATION = { after: 6 }
+const FIRST_BOOK_GAP = DIVIDER.after
 
 /**
- * A divider's label, in as many lines as it needs to stand no taller than the
- * book beside it. Lines break between words, as evenly as possible.
+ * Card label type, which stays readable rather than scaling with the shelf:
+ * divider 12.5px / 600 (11.5px on scaled shelves), continuation 10.5px / 500
+ * (10px). `char` is the average advance per character; `line` the width each
+ * line of text adds to the card; `base` the card's width with one line.
  */
-export function dividerLines(label: string, height: number, k: number): string[] {
-  const charWidth = k < 1 ? 5.9 : 6.4 // 11px / 12px Inter, measured average
-  const room = height * 0.9
+export const LABEL_TYPE = {
+  divider: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 20 } },
+  continuation: { full: { size: 10.5, char: 5.7, line: 12, base: 15 }, scaled: { size: 10, char: 5.4, line: 11, base: 14 } },
+} as const
+
+/**
+ * A label in as many lines as it needs to fit `room` pixels along the card.
+ * Lines break between words, as evenly as possible.
+ */
+export function labelLines(label: string, room: number, charWidth: number): string[] {
   if (label.length * charWidth <= room) return [label]
   const words = label.split(' ')
   let best: string[] = [label]
@@ -45,6 +57,33 @@ export function dividerLines(label: string, height: number, k: number): string[]
   return best
 }
 
+/** Room along a card for its label: the card's height less its top and bottom insets. */
+export function labelRoom(height: number, continued: boolean, k: number): number {
+  return height - (continued ? 12 : 24) * k
+}
+
+export interface CategoryCard {
+  lines: string[]
+  width: number
+  height: number
+}
+
+/** The divider card that opens a category, beside a first book `bookHeight` tall. */
+export function dividerCard(category: string, bookHeight: number, k: number): CategoryCard {
+  const t = LABEL_TYPE.divider[k < 1 ? 'scaled' : 'full']
+  const height = Math.round(bookHeight + 6 * k)
+  const lines = labelLines(category, labelRoom(height, false, k), t.char)
+  return { lines, height, width: t.base + (lines.length - 1) * t.line }
+}
+
+/** The smaller card that marks a category carried over from the shelf above. */
+export function continuationCard(category: string, bookHeight: number, k: number): CategoryCard {
+  const t = LABEL_TYPE.continuation[k < 1 ? 'scaled' : 'full']
+  const height = Math.round(bookHeight * 0.72)
+  const lines = labelLines(category, labelRoom(height, true, k), t.char)
+  return { lines, height, width: t.base + (lines.length - 1) * t.line }
+}
+
 /** Shelves scale with the column so a phone still shows several books per shelf. */
 export function shelfScale(width: number): number {
   return width < 420 ? 0.74 : width < 640 ? 0.86 : 1
@@ -57,64 +96,97 @@ export interface SpineGeometry {
   fontSize: number
   paddingTop: number
   paddingBottom: number
+  /** Whether the author and the publisher mark have room to be printed. */
+  showAuthor: boolean
+  showMark: boolean
 }
 
 /** Approximate advance width of one character, as a fraction of the font size. */
 const CHAR_WIDTH = { sans: 0.56, serif: 0.5, condensed: 0.44 } as const
+/** Below this a title is not worth squeezing; the smaller lines give way first. */
+const READABLE = 8
 
 /**
  * Size of a spine and the type on it. 1mm of the real book is 1px at full
- * scale. The title size is chosen so the title fits along the spine; on the
- * client the shelf only ever shrinks it further if a font measures wider.
+ * scale, and the spine is never widened for its text. The title is set as
+ * large as the spine allows, across and along; when the title would fall
+ * below a readable size, the publisher mark gives way first and then the
+ * author, as on real narrow spines. On the client the shelf only ever
+ * shrinks a title further if a font measures wider.
  */
 export function spineGeometry(book: Book, k: number): SpineGeometry {
   const s = book.spine
   const width = Math.max(9, Math.round(book.dimensions.thickness * k))
   const height = Math.round(book.dimensions.height * k)
-  const lines = s.title.length
   const band = height * 0.11
   const paddingTop = s.accent && s.accentPosition === 'top' ? band + width * 0.3 : width * 0.5
   const paddingBottom = s.accent && s.accentPosition === 'bottom' ? band + width * 0.3 : width * 0.42
+  const markInBand = Boolean(s.accent && s.accentPosition === 'bottom')
 
-  // Across the spine: the title (or its lines) must fit the spine's width.
-  let fontSize = Math.min(lines > 1 ? width * 0.3 : width * 0.42, 15)
-  // Along the spine: title, author and mark share the length.
+  // Across the spine: every line of the title, plus a subtitle line, must fit.
+  const across = (width * 0.8) / ((s.title.length + (s.subtitle ? 0.62 : 0)) * 1.04)
   const longest = Math.max(...s.title.map((line) => line.length))
-  const authorShare = s.author.length * 0.7
-  const markShare = s.mark && !(s.accent && s.accentPosition === 'bottom') ? s.mark.length * 0.48 : 0
-  const gaps = width * 0.22 * (1 + (s.mark ? 1 : 0))
-  const available = height - paddingTop - paddingBottom - gaps
-  const along = available / ((longest + authorShare + markShare) * CHAR_WIDTH[s.font])
-  fontSize = Math.max(5.5, Math.min(fontSize, along))
+  const cw = CHAR_WIDTH[s.font]
+
+  const sizeWith = (author: boolean, mark: boolean) => {
+    const authorShare = author ? s.author.length * 0.7 : 0
+    const markShare = mark && !markInBand && s.mark ? s.mark.length * 0.48 : 0
+    const parts = 1 + (author ? 1 : 0) + (markShare ? 1 : 0)
+    const available = height - paddingTop - paddingBottom - width * 0.22 * (parts - 1)
+    return Math.min(across, 15, available / ((longest + authorShare + markShare) * cw))
+  }
+
+  let showAuthor = true
+  let showMark = Boolean(s.mark)
+  let fontSize = sizeWith(showAuthor, showMark)
+  if (fontSize < READABLE && showMark && !markInBand) {
+    showMark = false
+    fontSize = sizeWith(showAuthor, showMark)
+  }
+  if (fontSize < READABLE - 1 && sizeWith(false, showMark) > fontSize + 1) {
+    showAuthor = false
+    fontSize = sizeWith(showAuthor, showMark)
+  }
 
   return {
     width,
     height,
-    fontSize: round1(fontSize),
+    fontSize: round1(Math.max(5.5, fontSize)),
     paddingTop: round1(paddingTop),
     paddingBottom: round1(paddingBottom),
+    showAuthor,
+    showMark,
   }
 }
 
 export type ShelfItem =
-  | { kind: 'divider'; category: BookCategory; lines: string[]; height: number; width: number; gap: number }
-  | { kind: 'book'; book: Book; width: number; gap: number }
+  | { kind: 'divider'; category: BookCategory; card: CategoryCard; width: number; gap: number; keepWithNext: true }
+  | { kind: 'book'; book: Book; width: number; gap: number; lead: number }
 
-/** Greedy packing into rows no wider than `width`. */
-export function pack<T extends { width: number; gap: number }>(items: T[], width: number): T[][] {
+type Packable = { width: number; gap: number; lead?: number; keepWithNext?: boolean }
+
+/**
+ * Greedy packing into rows no wider than `width`. An item's `lead` is extra
+ * room it needs when it opens a row (a book opening a shelf mid-category is
+ * preceded by a continuation card).
+ */
+export function pack<T extends Packable>(items: T[], width: number): T[][] {
   const rows: T[][] = []
   let row: T[] = []
   let used = 0
-  for (const item of items) {
-    const add = (row.length ? item.gap : 0) + item.width
+  items.forEach((item, i) => {
+    let add = (row.length ? item.gap : 0) + item.width
+    // A divider only starts where its first book fits beside it.
+    const next = items[i + 1]
+    if (item.keepWithNext && next) add += next.gap + next.width
     if (row.length && used + add > width) {
       rows.push(row)
       row = []
       used = 0
     }
-    used += (row.length ? item.gap : 0) + item.width
+    used += row.length ? item.gap + item.width : (item.lead ?? 0) + item.width
     row.push(item)
-  }
+  })
   if (row.length) rows.push(row)
   return rows
 }
@@ -123,7 +195,7 @@ export function pack<T extends { width: number; gap: number }>(items: T[], width
  * The fewest shelves the width allows, each filled to a similar length, so no
  * shelf ends in a long empty run while the next one is crowded.
  */
-export function packBalanced<T extends { width: number; gap: number }>(items: T[], width: number): T[][] {
+export function packBalanced<T extends Packable>(items: T[], width: number): T[][] {
   const first = pack(items, width)
   const n = first.length
   if (n < 2) return first
@@ -135,8 +207,8 @@ export function packBalanced<T extends { width: number; gap: number }>(items: T[
   return first
 }
 
-export function rowWidth(row: { width: number; gap: number }[]): number {
-  return row.reduce((sum, it, i) => sum + it.width + (i ? it.gap : 0), 0)
+export function rowWidth(row: Packable[]): number {
+  return row.reduce((sum, it, i) => sum + it.width + (i ? it.gap : (it.lead ?? 0)), 0)
 }
 
 /** A stable small number from a slug, so the same book always leans the same way. */
@@ -157,12 +229,17 @@ export interface ShelfBook {
 export interface ShelfDivider {
   kind: 'divider'
   category: BookCategory
-  /** The label, broken into lines when it is longer than the divider. */
+  /** The label, broken into lines when it is longer than the card. */
   lines: string[]
   width: number
-  /** The divider stands as tall as the book after it. */
+  /** The card stands a little taller than the book after it. */
   height: number
   first: boolean
+  /** A continuation card: the category carries over from the shelf above. */
+  continued: boolean
+  /** Space before and after the card, in pixels. */
+  before: number
+  after: number
 }
 
 export interface Shelf {
@@ -194,33 +271,43 @@ export function layoutShelves(books: Book[], categories: readonly BookCategory[]
   const geometry = new Map(books.map((b) => [b.slug, spineGeometry(b, k)]))
 
   const items: ShelfItem[] = []
+  const continuation = new Map<string, CategoryCard>()
   for (const category of categories) {
     const inCategory = books.filter((b) => b.category === category)
     if (!inCategory.length) continue
-    const height = geometry.get(inCategory[0].slug)!.height
-    const lines = dividerLines(category, height, k)
-    const width = DIVIDER_WIDTH + (lines.length - 1) * DIVIDER_LINE
-    items.push({ kind: 'divider', category, lines, height, width, gap: DIVIDER_GAP })
-    inCategory.forEach((book, i) =>
-      items.push({ kind: 'book', book, width: geometry.get(book.slug)!.width, gap: i ? 0 : FIRST_BOOK_GAP })
-    )
+    const card = dividerCard(category, geometry.get(inCategory[0].slug)!.height, k)
+    items.push({ kind: 'divider', category, card, width: card.width, gap: Math.round(DIVIDER.gap * k), keepWithNext: true })
+    inCategory.forEach((book, i) => {
+      const g = geometry.get(book.slug)!
+      const cont = continuationCard(category, g.height, k)
+      continuation.set(book.slug, cont)
+      items.push({
+        kind: 'book',
+        book,
+        width: g.width,
+        gap: i ? 0 : Math.round(FIRST_BOOK_GAP * k),
+        lead: i ? cont.width + Math.round(CONTINUATION.after * k) : 0,
+      })
+    })
   }
 
   const rows = packBalanced(items, inner)
+  const fits = (row: ShelfItem[]) => rowWidth(row) <= inner
   for (let i = 0; i < rows.length - 1; i++) {
     const row = rows[i]
     const next = rows[i + 1]
-    // A divider never ends a shelf.
-    if (row[row.length - 1].kind === 'divider') next.unshift(row.pop()!)
     // No single book stranded before the next category's divider.
     if (next.length > 1 && next[0].kind === 'book' && next[1].kind === 'divider' && row.length > 2) {
-      next.unshift(row.pop()!)
+      const moved = row.pop()!
+      if (fits([moved, ...next])) next.unshift(moved)
+      else row.push(moved)
     }
   }
 
   const shelves: Shelf[] = rows.map((row, ri) => {
     const heights = row.flatMap((it) => (it.kind === 'book' ? [geometry.get(it.book.slug)!.height] : []))
-    const tallest = Math.max(...heights, Math.round(200 * k))
+    const cards = row.flatMap((it) => (it.kind === 'divider' ? [it.card.height] : []))
+    const tallest = Math.max(...heights, ...cards, Math.round(200 * k))
     const isLast = ri === rows.length - 1
 
     // Where a shelf has room at its end, its last book leans on its neighbour
@@ -242,8 +329,35 @@ export function layoutShelves(books: Book[], categories: readonly BookCategory[]
           ? { kind: 'book', book: it.book, geometry: g, lean: { degrees: lean.degrees, offset: lean.offset } }
           : { kind: 'book', book: it.book, geometry: g }
       }
-      return { kind: 'divider', category: it.category, lines: it.lines, width: it.width, height: it.height, first: i === 0 }
+      const { lines, width, height } = it.card
+      return {
+        kind: 'divider',
+        category: it.category,
+        lines,
+        width,
+        height,
+        first: i === 0,
+        continued: false,
+        before: i === 0 ? 0 : it.gap,
+        after: Math.round(FIRST_BOOK_GAP * k),
+      }
     })
+    // A shelf that opens mid-category starts with a continuation card.
+    const opener = row[0]
+    if (opener.kind === 'book' && opener.lead) {
+      const { lines, width, height } = continuation.get(opener.book.slug)!
+      items.unshift({
+        kind: 'divider',
+        category: opener.book.category,
+        lines,
+        width,
+        height,
+        first: true,
+        continued: true,
+        before: 0,
+        after: Math.round(CONTINUATION.after * k),
+      })
+    }
 
     return {
       items,

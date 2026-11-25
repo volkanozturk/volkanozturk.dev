@@ -59,10 +59,12 @@ export function BookSpine({ item }: { item: ShelfBook }) {
             </span>
           )}
         </span>
-        <span className="bk-sa" style={{ color: s.authorColor }}>
-          {s.author}
-        </span>
-        {s.mark && !bandMark && (
+        {g.showAuthor && (
+          <span className="bk-sa" style={{ color: s.authorColor }}>
+            {s.author}
+          </span>
+        )}
+        {s.mark && !bandMark && g.showMark && (
           <span className="bk-pm" style={{ color: s.markColor }}>
             {s.mark}
           </span>

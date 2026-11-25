@@ -19,6 +19,17 @@ function bucketCss(): string {
   }).join('\n')
 }
 
+function Lines({ lines }: { lines: string[] }) {
+  // The space keeps the heading's text whole ("Culture & Communication");
+  // in the flex column it takes no room.
+  return lines.map((line, i) => (
+    <span key={i}>
+      {i > 0 ? ' ' : ''}
+      {line}
+    </span>
+  ))
+}
+
 function Layout({ layout }: { layout: ShelfLayout }) {
   return (
     <div className="bk-layout" data-w={layout.width}>
@@ -26,8 +37,9 @@ function Layout({ layout }: { layout: ShelfLayout }) {
         <div
           className="bk-row"
           data-row={ri}
+          data-scaled={layout.scale < 1 || undefined}
           key={ri}
-          style={{ '--plank': `${layout.plank}px`, '--div-fs': layout.scale < 1 ? '11px' : '12px' } as React.CSSProperties}
+          style={{ '--plank': `${layout.plank}px`, '--k': layout.scale } as React.CSSProperties}
         >
           <div className="bk-stand" style={{ height: shelf.height, padding: `0 ${layout.padding}px` }}>
             {shelf.items.map((item) =>
@@ -36,18 +48,19 @@ function Layout({ layout }: { layout: ShelfLayout }) {
               ) : (
                 <div
                   className="bk-div"
-                  data-first={item.first}
-                  style={{ height: item.height, width: item.width }}
-                  key={item.category}
+                  data-continued={item.continued || undefined}
+                  style={{ height: item.height, width: item.width, marginLeft: item.before, marginRight: item.after }}
+                  key={`${item.continued ? 'cont-' : ''}${item.category}`}
                 >
-                  <h2 className="bk-div-label">
-                    {item.lines.map((line, i) => (
-                      <span key={i}>
-                        {i > 0 && <br />}
-                        {line}
-                      </span>
-                    ))}
-                  </h2>
+                  {item.continued ? (
+                    <span className="bk-div-label" aria-hidden="true">
+                      <Lines lines={item.lines} />
+                    </span>
+                  ) : (
+                    <h2 className="bk-div-label">
+                      <Lines lines={item.lines} />
+                    </h2>
+                  )}
                 </div>
               )
             )}

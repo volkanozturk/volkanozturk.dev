@@ -362,7 +362,7 @@ redirect truth is how chains and loops start.
 `/books/` is a personal library, documented in full in
 [docs/books.md](books.md). The approved design is "Concept D — The Personal
 Library": spines on light natural oak floating shelves, in one continuous
-collection with thin oak category dividers.
+collection with a paper divider card at the start of each category.
 
 It is the **one deliberate exception** to "no glossy or 3D effects" (§A). The
 oak planks, contact shadows, leaning books and the extraction turn are the
@@ -375,7 +375,8 @@ design, and they stay on this page. Do not reuse them elsewhere.
 | Plank | 24px (21px when scaled), oak gradient + SVG grain | `app/books/books.css` |
 | Oak, light | `#f7eedf` highlight, `#e4d2b5` → `#cfba98` face | same |
 | Oak, dark | `#93836b` highlight, `#6e604c` → `#584c3b` face | same |
-| Divider | 2px oak plate, label 12px / 500 (11px when scaled), reads bottom to top | same |
+| Divider card | paper `#f6f1e7` / dark `#2c2822`, 1px edge, 14px `--brand-bright` tab; label 12.5px / 600 (11.5px scaled), bottom to top, up to two lines | same |
+| Continuation card | 72% of the book height, 3px tab, muted ink, 10.5px / 500 | same |
 | Spine type | Inter, EB Garamond, Oswald (the last two only on `/books`) | `app/books/layout.tsx` |
 | Leaning book | 3–5°, last book of a shelf with room, otherwise a bookend | `lib/bookshelf.ts` |
 | Dialog | 800px max, cover 220px (150px below 700px), 14px radius | `app/books/books.css` |
@@ -385,7 +386,8 @@ Rules:
 - Spines and covers keep their own colours in both themes: never filter,
   recolour or invert them for dark mode. Only the oak, labels and shadows
   change with the theme.
-- No filters, search, statistics, badges or cards on the shelf.
+- No filters, search, statistics or badges on the shelf, and no cards other
+  than the category divider cards.
 - Covers are publisher artwork for the edition on the shelf; spines are
   photographs where available, otherwise reconstructed in CSS. Every image is
   recorded in `docs/book-provenance.md`.

@@ -218,42 +218,96 @@
 }
 
 /* ---------- category dividers ---------- */
+/* Shared: a card standing among the books, its label reading bottom to top. */
 .bk-div {
   flex: none;
   position: relative;
-  width: 24px;
-  margin-right: 6px;
+  align-self: flex-end;
 }
-.bk-div[data-first='false'] {
-  margin-left: 12px;
+.bk-div-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(10px * var(--k, 1));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 15px;
+  text-align: start;
+}
+.bk-row[data-scaled] .bk-div-label {
+  font-size: 11.5px;
+  line-height: 14px;
+}
+.bk-div[data-continued] .bk-div-label {
+  bottom: calc(6px * var(--k, 1));
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 12px;
+}
+.bk-row[data-scaled] .bk-div[data-continued] .bk-div-label {
+  font-size: 10px;
+  line-height: 11px;
+}
+
+/* Category divider: a library guide card with a paper face and a burnt-orange tab.
+   Continuation cards are shorter, with a thin tab and muted ink. */
+.bk {
+  --bk-card: #f6f1e7;
+  --bk-card-edge: #d9cdb8;
+  --bk-card-ink: #2a251e;
+  --bk-card-muted: #6c6152;
+}
+.dark .bk {
+  --bk-card: #2c2822;
+  --bk-card-edge: #463e33;
+  --bk-card-ink: #f1ebe0;
+  --bk-card-muted: #b9ad9a;
+}
+.bk-div {
+  border-radius: 2px 2px 1px 1px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.07)), var(--bk-card);
+  box-shadow: inset 0 0 0 1px var(--bk-card-edge), 1px 0 2px rgba(0, 0, 0, 0.18);
 }
 .bk-div::before {
   content: '';
   position: absolute;
+  left: 0;
   right: 0;
-  bottom: 0;
-  width: 2px;
-  height: 90%;
-  border-radius: 1px 1px 0 0;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--bk-plate) 85%, #fff), color-mix(in srgb, var(--bk-plate) 75%, #000));
-  box-shadow: 1px 0 1.5px rgba(0, 0, 0, 0.16);
+  top: 0;
+  height: calc(14px * var(--k, 1));
+  border-radius: 2px 2px 0 0;
+  background: hsl(var(--brand-bright));
+}
+.bk-div::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  right: -2px;
+  top: 100%;
+  height: 6px;
+  background: radial-gradient(70% 100% at 45% 0, color-mix(in srgb, var(--bk-contact) 55%, transparent), transparent 80%);
 }
 .bk-div-label {
-  position: absolute;
-  right: 6px;
-  bottom: 2px;
-  max-height: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  margin: 0;
-  font-size: var(--div-fs, 12px);
-  font-weight: 500;
-  letter-spacing: 0.005em;
-  line-height: 1.15;
-  text-align: end;
-  color: var(--bk-label);
-  transform: rotate(180deg);
-  writing-mode: vertical-rl;
+  color: var(--bk-card-ink);
+}
+.bk-div[data-continued] {
+  background: var(--bk-card);
+  box-shadow: inset 0 0 0 1px var(--bk-card-edge), 1px 0 2px rgba(0, 0, 0, 0.12);
+}
+.bk-div[data-continued]::before {
+  height: 3px;
+}
+.bk-div[data-continued] .bk-div-label {
+  color: var(--bk-card-muted);
 }
 
 /* ---------- bookend, plank, caption ---------- */
@@ -332,9 +386,9 @@
 .bk-back {
   position: absolute;
   inset: 0;
-  background: hsl(var(--background) / 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: hsl(var(--background) / 0.64);
+  backdrop-filter: blur(2.5px);
+  -webkit-backdrop-filter: blur(2.5px);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -397,7 +451,7 @@
   width: 100%;
   height: auto;
   border-radius: 1px 3px 3px 1px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14), 0 26px 40px -22px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 14px 28px -18px rgba(0, 0, 0, 0.32);
 }
 /* the hinge of the binding, drawn over the cover rather than baked into it */
 .bk-covw::after,
@@ -434,8 +488,9 @@
   align-items: center;
   gap: 6px;
   min-height: 40px;
-  max-width: 48%;
-  padding: 0 10px;
+  max-width: 49%;
+  padding: 6px 10px;
+  line-height: 1.35;
   border-radius: 8px;
   font-size: 13.5px;
   color: hsl(var(--muted-foreground));
@@ -444,8 +499,11 @@
 .bk-btn span {
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  text-wrap: balance;
 }
 .bk-btn:hover {
   background: hsl(var(--muted));

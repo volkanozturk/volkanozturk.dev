@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, List, Library, X } from 'lucide-react'
 import type { BookView } from '@/lib/books'
 import { BookCover, BookInfo, formatAuthors } from '@/components/books/book-info'
 
 const TITLE_ID = 'bk-dialog-title'
 const SHELF_PATH = '/books/'
+const VIEW_KEY = 'books-view'
+type LibraryView = 'shelf' | 'list'
 
 function slugFromPath(pathname: string): string | null {
   const m = /^\/books\/([a-z0-9-]+)\/?$/.exec(pathname)
@@ -108,11 +110,16 @@ function flyBook(
  * and taking a book out to show its cover. The shelf markup itself is rendered
  * on the server and arrives as `children`.
  */
-export function ShelfController({ books, children }: { books: BookView[]; children: ReactNode }) {
+export function ShelfController({ books, shelf, list }: {
+  books: BookView[]
+  shelf: ReactNode
+  list: ReactNode
+}) {
   const rootRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
   const coverRef = useRef<HTMLSpanElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const [view, setView] = useState<LibraryView>('shelf')
   const [open, setOpen] = useState<BookView | null>(null)
   const [mounted, setMounted] = useState(false)
   const [rootClass, setRootClass] = useState('bk')
@@ -128,12 +135,12 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
 
   /** The layout CSS is currently showing. */
   const visibleLayout = useCallback((): HTMLElement | null => {
-    const layouts = rootRef.current?.querySelectorAll<HTMLElement>('.bk-layout') ?? []
+    const layouts = rootRef.current?.querySelectorAll<HTMLElement>('.bk-layout, .bk-list') ?? []
     return [...layouts].find((l) => l.offsetParent !== null) ?? null
   }, [])
 
-  const spineFor = useCallback(
-    (slug: string) => visibleLayout()?.querySelector<HTMLElement>(`.bk-book[data-slug="${slug}"]`) ?? null,
+  const entryFor = useCallback(
+    (slug: string) => visibleLayout()?.querySelector<HTMLElement>(`[data-slug="${slug}"]`) ?? null,
     [visibleLayout]
   )
 
@@ -170,7 +177,25 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
     if (!root) return
     setRootClass(root.closest('.bk')?.className ?? 'bk')
     setMounted(true)
+    try {
+      if (localStorage.getItem(VIEW_KEY) === 'list') setView('list')
+    } catch {
+      // Storage may be disabled. The switch still works for this visit.
+    }
+  }, [])
 
+  const chooseView = (next: LibraryView) => {
+    setView(next)
+    try {
+      localStorage.setItem(VIEW_KEY, next)
+    } catch {
+      // The current selection is already reflected in the page.
+    }
+  }
+
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return
     let lastLayout: HTMLElement | null = null
     const sync = () => {
       const layout = visibleLayout()
@@ -182,9 +207,9 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
       if (state.current.spine && layout) {
         const slug = state.current.spine.dataset.slug!
         state.current.spine.classList.remove('is-out')
-        const replacement = layout.querySelector<HTMLElement>(`.bk-book[data-slug="${slug}"]`)
+        const replacement = layout.querySelector<HTMLElement>(`[data-slug="${slug}"]`)
         if (replacement) {
-          replacement.classList.add('is-out')
+          replacement.classList.toggle('is-out', replacement.matches('.bk-book'))
           state.current.spine = replacement
         }
       }
@@ -197,7 +222,7 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
     const ro = new ResizeObserver(sync)
     ro.observe(root)
     return () => ro.disconnect()
-  }, [visibleLayout, setRoving, fitTitles])
+  }, [view, visibleLayout, setRoving, fitTitles])
 
   // ── captions under the shelf ──────────────────────────────────────────
   const caption = useCallback(
@@ -229,14 +254,14 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
     (slug: string, animate: boolean) => {
       const book = bySlug.get(slug)
       if (!book || state.current.busy) return
-      const spine = spineFor(slug)
+      const spine = entryFor(slug)
       state.current.spine = spine
-      state.current.animateOpen = animate && !!spine && !reducedMotion()
+      state.current.animateOpen = animate && !!spine?.matches('.bk-book') && !reducedMotion()
       state.current.busy = true
       document.querySelectorAll('.bk-cap span').forEach((c) => ((c as HTMLElement).style.opacity = '0'))
       setOpen(book)
     },
-    [bySlug, spineFor]
+    [bySlug, entryFor]
   )
 
   // Runs once the dialog for a newly opened book is in the DOM.
@@ -249,11 +274,12 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
     modal.classList.add('is-on')
     void panel.offsetWidth
     panel.style.transition = ''
+    closeRef.current?.focus({ preventScroll: true })
 
     const spine = state.current.spine
     if (!state.current.animateOpen || !spine) {
       cover.style.opacity = '1'
-      spine?.classList.add('is-out')
+      spine?.classList.toggle('is-out', spine.matches('.bk-book'))
       closeRef.current?.focus({ preventScroll: true })
       state.current.busy = false
       return
@@ -272,8 +298,16 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
         state.current.busy = false
       })
     }
-    if (img.complete) go()
-    else img.addEventListener('load', go, { once: true })
+    if (img.complete) {
+      go()
+    } else {
+      img.addEventListener('load', go, { once: true })
+      img.addEventListener('error', go, { once: true })
+      return () => {
+        img.removeEventListener('load', go)
+        img.removeEventListener('error', go)
+      }
+    }
     // Only when a different book is opened, not on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open?.slug])
@@ -294,7 +328,7 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
     }
     const cover = coverRef.current
     const book = spine ? bySlug.get(spine.dataset.slug!) : undefined
-    if (!spine || !cover || !book || !spine.isConnected || reducedMotion() || spine.offsetParent === null) {
+    if (!spine?.matches('.bk-book') || !cover || !book || !spine.isConnected || reducedMotion() || spine.offsetParent === null) {
       window.setTimeout(done, reducedMotion() ? 0 : 250)
       return
     }
@@ -326,8 +360,8 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
       if (!slug) return
       const next = bySlug.get(slug)!
       state.current.spine?.classList.remove('is-out')
-      const spine = spineFor(slug)
-      spine?.classList.add('is-out')
+      const spine = entryFor(slug)
+      spine?.classList.toggle('is-out', spine.matches('.bk-book'))
       state.current.spine = spine
       window.history.replaceState(null, '', `/books/${slug}/`)
       const cover = coverRef.current
@@ -341,7 +375,7 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
         reducedMotion() ? 0 : 160
       )
     },
-    [bySlug, order, open, spineFor]
+    [bySlug, order, open, entryFor]
   )
 
   // Keep focus on the button that was used to step, or on close if it vanished.
@@ -369,7 +403,7 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
 
   // ── events on the shelf ───────────────────────────────────────────────
   const onClick = (e: React.MouseEvent) => {
-    const spine = (e.target as HTMLElement).closest<HTMLElement>('.bk-book')
+    const spine = (e.target as HTMLElement).closest<HTMLElement>('.bk-book, .bk-entry')
     if (!spine || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
     e.preventDefault()
     if (open || state.current.busy) return
@@ -473,7 +507,18 @@ export function ShelfController({ books, children }: { books: BookView[]; childr
       onFocus={onFocus}
       onBlur={onBlur}
     >
-      {children}
+      <div className="bk-view-switch" role="group" aria-label="Books view">
+        <button type="button" aria-pressed={view === 'shelf'} onClick={() => chooseView('shelf')}>
+          <Library aria-hidden="true" />
+          Shelf
+        </button>
+        <button type="button" aria-pressed={view === 'list'} onClick={() => chooseView('list')}>
+          <List aria-hidden="true" />
+          List
+        </button>
+      </div>
+      <div hidden={view !== 'shelf'}>{shelf}</div>
+      <div hidden={view !== 'list'}>{list}</div>
       {mounted &&
         createPortal(
           <div

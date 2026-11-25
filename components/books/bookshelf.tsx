@@ -1,89 +1,93 @@
+import Image from 'next/image'
 import { BOOK_CATEGORIES, getAllBooks, toBookView } from '@/lib/books'
-import { SHELF_BUCKETS, layoutShelves, type ShelfLayout } from '@/lib/bookshelf'
+import { SHELF_BUCKETS, layoutShelves, type ShelfBook, type ShelfLayout } from '@/lib/bookshelf'
+import { formatAuthors } from '@/components/books/book-info'
 import { BookSpine } from '@/components/books/book-spine'
 import { ShelfController } from '@/components/books/shelf-controller'
+import type { BookCategory } from '@/lib/book-types'
 
-/**
- * Container queries that show exactly one packed layout: the widest whose
- * column fits. Generated from `SHELF_BUCKETS` so the two never disagree.
- */
+const DESKTOP_WIDTH = 696
+const widths = SHELF_BUCKETS.filter((width) => width <= DESKTOP_WIDTH)
+
 function bucketCss(): string {
-  return SHELF_BUCKETS.map((w, i) => {
-    const wider = SHELF_BUCKETS[i - 1]
-    const isLast = i === SHELF_BUCKETS.length - 1
+  return widths.map((width, index) => {
+    const wider = widths[index - 1]
     const conditions = [
-      isLast ? null : `(min-width: ${w}px)`,
-      wider ? `(max-width: ${wider - 0.02}px)` : null,
+      index === widths.length - 1 ? null : `(min-width: ${width}px)`,
+      wider ? `(width < ${wider}px)` : null,
     ].filter(Boolean)
-    return `@container ${conditions.join(' and ')} { .bk-layout[data-w="${w}"] { display: block } }`
+    return `@container ${conditions.join(' and ')} { .bk-layout[data-w="${width}"] { display: block } }`
   }).join('\n')
-}
-
-function Lines({ lines }: { lines: string[] }) {
-  // The space keeps the heading's text whole ("Culture & Communication");
-  // in the flex column it takes no room.
-  return lines.map((line, i) => (
-    <span key={i}>
-      {i > 0 ? ' ' : ''}
-      {line}
-    </span>
-  ))
 }
 
 function Layout({ layout }: { layout: ShelfLayout }) {
   return (
     <div className="bk-layout" data-w={layout.width}>
-      {layout.shelves.map((shelf, ri) => (
-        <div
-          className="bk-row"
-          data-row={ri}
-          data-scaled={layout.scale < 1 || undefined}
-          key={ri}
-          style={{ '--plank': `${layout.plank}px`, '--k': layout.scale } as React.CSSProperties}
-        >
-          <div className="bk-stand" style={{ height: shelf.height, padding: `0 ${layout.padding}px` }}>
-            {shelf.items.map((item) =>
-              item.kind === 'book' ? (
-                <BookSpine item={item} key={item.book.slug} />
-              ) : (
-                <div
-                  className="bk-div"
-                  style={{ height: item.height, width: item.width, marginLeft: item.before, marginRight: item.after }}
-                  key={item.category}
-                >
-                  <h2 className="bk-div-label">
-                    <Lines lines={item.lines} />
-                  </h2>
+      <div className="bk-tracks" aria-hidden="true"><span /><span /><span /></div>
+      {layout.shelves.map((shelf, index) => {
+        const groups: { label?: BookCategory; books: ShelfBook[] }[] = []
+        for (const item of shelf.items) {
+          if (item.kind === 'divider') groups.push({ label: item.category, books: [] })
+          else {
+            if (!groups.length) groups.push({ books: [] })
+            groups[groups.length - 1].books.push(item)
+          }
+        }
+
+        return (
+          <div className="bk-row" key={index} style={layout.width === DESKTOP_WIDTH ? undefined : { minHeight: shelf.height + 44 }}>
+            <div className="bk-deck" aria-hidden="true"><span /><span /></div>
+            {groups.map(({ label, books }) => (
+              <div className="bk-group" key={books[0].book.slug}>
+                {label && <h2 className="bk-label">{label}</h2>}
+                <div className="bk-stand">
+                  {books.map((item) => <BookSpine item={item} key={item.book.slug} />)}
+                  {!books.at(-1)?.lean && <span className="bk-end" aria-hidden="true" />}
                 </div>
-              )
-            )}
-            {shelf.bookend !== undefined && <span className="bk-end" aria-hidden="true" style={{ height: shelf.bookend }} />}
+              </div>
+            ))}
+            <div className="bk-cap" aria-hidden="true"><span /></div>
           </div>
-          <div className="bk-plank" aria-hidden="true" />
-          <div className="bk-cap" aria-hidden="true">
-            <span />
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
 
-/**
- * The library. Every layout is packed at build time; CSS picks the one that
- * fits, and the controller adds the interaction on top.
- */
 export function Bookshelf() {
-  const books = getAllBooks()
-  const layouts = SHELF_BUCKETS.map((w) => layoutShelves(books, BOOK_CATEGORIES, w))
+  const catalog = getAllBooks()
+  const books = catalog.map(toBookView)
   return (
     <div className="bk-shelf">
       <style>{bucketCss()}</style>
-      <ShelfController books={books.map(toBookView)}>
-        {layouts.map((layout) => (
-          <Layout layout={layout} key={layout.width} />
+      <ShelfController
+        books={books}
+        shelf={widths.map((width) => (
+          <Layout key={width} layout={layoutShelves(catalog, BOOK_CATEGORIES, width)} />
         ))}
-      </ShelfController>
+        list={(
+          <div className="bk-list">
+            {BOOK_CATEGORIES.map((category) => (
+              <section className="bk-list-group" key={category}>
+                <h2>{category}</h2>
+                <ul>
+                  {books.filter((book) => book.category === category).map((book) => (
+                    <li key={book.slug}>
+                      <a className="bk-entry" data-slug={book.slug} href={`/books/${book.slug}/`}>
+                        <Image src={book.cover.src} alt="" width={book.cover.width} height={book.cover.height} />
+                        <span>
+                          <strong lang={book.language === 'en' ? undefined : book.language}>{book.title}</strong>
+                          <small>{formatAuthors(book.authors)}</small>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        )}
+      />
     </div>
   )
 }

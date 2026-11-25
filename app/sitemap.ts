@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getAllPosts } from '@/lib/posts'
+import { getAllBooks } from '@/lib/books'
 import { SITE_URL } from '@/lib/site'
 
 // `output: 'export'` requires this route to opt into static rendering
@@ -8,7 +9,7 @@ export const dynamic = 'force-static'
 
 /** Canonical English URLs only — the site has no other language. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPages = ['', '/blog', '/journey', '/projects', '/about'].map((path) => ({
+  const staticPages = ['', '/blog', '/journey', '/projects', '/books', '/about'].map((path) => ({
     url: `${SITE_URL}${path}/`,
     lastModified: new Date(),
   }))
@@ -18,5 +19,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(post.publishedDate),
   }))
 
-  return [...staticPages, ...posts]
+  const books = getAllBooks().map((book) => ({
+    url: `${SITE_URL}/books/${book.slug}/`,
+  }))
+
+  return [...staticPages, ...posts, ...books]
 }

@@ -1,0 +1,644 @@
+/*
+ * Books: the personal library (approved Concept D).
+ *
+ * Scoped to the /books routes. The shelf is the one deliberate exception to
+ * "no 3D effects" in docs/design-standards.md: oak planks, contact shadows and
+ * the extraction turn are the design, and they stop at this page.
+ */
+
+.bk {
+  --bk-oak-hi: #f7eedf;
+  --bk-oak-top: #ecdec6;
+  --bk-oak-1: #e4d2b5;
+  --bk-oak-2: #dbc7a7;
+  --bk-oak-3: #cfba98;
+  --bk-wall-shadow: rgba(70, 55, 35, 0.26);
+  --bk-contact: rgba(45, 35, 22, 0.5);
+  --bk-plate: #bba98c;
+  --bk-label: #4f4a42;
+  --bk-end: #3f4044;
+  --bk-spine-line: rgba(0, 0, 0, 0.09);
+}
+.dark .bk {
+  --bk-oak-hi: #93836b;
+  --bk-oak-top: #7d6e58;
+  --bk-oak-1: #6e604c;
+  --bk-oak-2: #635643;
+  --bk-oak-3: #584c3b;
+  --bk-wall-shadow: rgba(0, 0, 0, 0.6);
+  --bk-contact: rgba(0, 0, 0, 0.7);
+  --bk-plate: #8f8270;
+  --bk-label: #d2c9bb;
+  --bk-end: #7b7e85;
+  --bk-spine-line: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- the shelf, one layout per column width ---------- */
+.bk-shelf {
+  container-type: inline-size;
+  margin-top: -10px;
+}
+.bk-layout {
+  display: none;
+}
+
+.bk-row {
+  position: relative;
+  margin-bottom: 18px;
+}
+.bk-stand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* ---------- a book spine ---------- */
+.bk-book {
+  --lean: 0deg;
+  position: relative;
+  display: block;
+  flex: none;
+  width: var(--bw);
+  height: var(--bh);
+  border-radius: 1.5px 1.5px 1px 1px;
+  transform: rotate(var(--lean));
+  transform-origin: 0 100%;
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s, opacity 0.2s;
+  box-shadow: 1px 0 1.5px rgba(0, 0, 0, 0.22), 2px 0 5px -2px rgba(0, 0, 0, 0.14);
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+.bk-book[data-binding='hc'] {
+  border-radius: 2.5px 2.5px 1px 1px;
+}
+.bk-book:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+/* foot of the book where it meets the plank */
+.bk-book::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 12px;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.13), rgba(0, 0, 0, 0));
+}
+/* contact shadow on the plank */
+.bk-book::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  right: -2px;
+  top: 100%;
+  height: 7px;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--bk-contact) 0, rgba(0, 0, 0, 0) 1.5px),
+    radial-gradient(70% 100% at 45% 0, color-mix(in srgb, var(--bk-contact) 55%, transparent), transparent 80%);
+}
+.bk-book[data-lean]::before {
+  right: 60%;
+}
+@media (hover: hover) {
+  .bk-book:hover {
+    transform: rotate(var(--lean)) translateY(-2px) scale(1.035);
+    box-shadow: 2px 3px 7px -2px rgba(0, 0, 0, 0.35);
+    z-index: 3;
+  }
+}
+.bk-book:focus-visible {
+  transform: rotate(var(--lean)) translateY(-2px) scale(1.035);
+  box-shadow: 2px 3px 7px -2px rgba(0, 0, 0, 0.35);
+  z-index: 3;
+}
+.bk-book.is-out {
+  opacity: 0;
+  transform: rotate(var(--lean)) translateY(-14px);
+}
+
+.bk-spine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    inset 0 0 0 0.5px var(--bk-spine-line);
+  writing-mode: vertical-rl;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--bw) * 0.22);
+  padding: var(--pt) 0 var(--pb);
+  line-height: 1.02;
+  text-align: start;
+}
+.bk-spine[data-dir='btt'] {
+  transform: rotate(180deg);
+}
+/* the roundness of a real spine; the colours underneath are never filtered */
+.bk-spine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.16) 0, rgba(0, 0, 0, 0.03) 7%, rgba(255, 255, 255, 0.05) 28%,
+      rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.04) 86%, rgba(0, 0, 0, 0.14) 100%);
+}
+.bk-book[data-binding='hc'] .bk-spine::after {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.24) 0, rgba(0, 0, 0, 0.04) 9%, rgba(255, 255, 255, 0.13) 22%,
+      rgba(255, 255, 255, 0.05) 38%, rgba(255, 255, 255, 0) 58%, rgba(0, 0, 0, 0.08) 84%, rgba(0, 0, 0, 0.24) 100%);
+}
+.bk-acc {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 11%;
+  background: var(--ac);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.bk-acc[data-pos='top'] {
+  top: 0;
+}
+.bk-acc[data-pos='bottom'] {
+  bottom: 0;
+}
+.bk-tt {
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: var(--fs);
+  position: relative;
+  z-index: 1;
+}
+.bk-tt[data-lines='2'] {
+  white-space: normal;
+}
+.bk-sub {
+  display: block;
+  font-size: 0.58em;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+  margin-top: 0.15em;
+  font-weight: 500;
+}
+.bk-sa {
+  flex: none;
+  font-size: calc(var(--fs) * 0.7);
+  opacity: 0.9;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+.bk-pm {
+  flex: none;
+  font: 600 calc(var(--fs) * 0.48) / 1 var(--font-geist-sans), sans-serif;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+  opacity: 0.9;
+}
+.bk-f-sans {
+  font-family: var(--font-geist-sans), 'Helvetica Neue', Arial, sans-serif;
+}
+.bk-f-serif {
+  font-family: var(--font-spine-serif), Garamond, 'Times New Roman', serif;
+}
+.bk-f-condensed {
+  font-family: var(--font-spine-condensed), 'Arial Narrow', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- category dividers ---------- */
+.bk-div {
+  flex: none;
+  position: relative;
+  width: 24px;
+  margin-right: 6px;
+}
+.bk-div[data-first='false'] {
+  margin-left: 12px;
+}
+.bk-div::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 2px;
+  height: 90%;
+  border-radius: 1px 1px 0 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--bk-plate) 85%, #fff), color-mix(in srgb, var(--bk-plate) 75%, #000));
+  box-shadow: 1px 0 1.5px rgba(0, 0, 0, 0.16);
+}
+.bk-div-label {
+  position: absolute;
+  right: 6px;
+  bottom: 2px;
+  max-height: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0;
+  font-size: var(--div-fs, 12px);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  line-height: 1.15;
+  text-align: end;
+  color: var(--bk-label);
+  transform: rotate(180deg);
+  writing-mode: vertical-rl;
+}
+
+/* ---------- bookend, plank, caption ---------- */
+.bk-end {
+  flex: none;
+  position: relative;
+  width: 3px;
+  margin-left: 1px;
+  background: var(--bk-end);
+  border-radius: 1px 1px 0 0;
+}
+.bk-end::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 2px;
+  background: var(--bk-end);
+}
+.bk-plank {
+  position: relative;
+  height: var(--plank);
+  border-radius: 1.5px;
+  background: linear-gradient(180deg, var(--bk-oak-hi) 0, var(--bk-oak-top) 1px, var(--bk-oak-top) 5px,
+      rgba(255, 255, 255, 0.35) 5px, rgba(255, 255, 255, 0) 6px, rgba(0, 0, 0, 0.035) 6px, rgba(0, 0, 0, 0) 9px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='40'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0016 0.32' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 0.42  0 0 0 0 0.34  0 0 0 0 0.24  0 0 0 0.9 -0.36'/%3E%3C/filter%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.40  0 0 0 0 0.32  0 0 0 0 0.22  0 0 0 0.35 -0.12'/%3E%3C/filter%3E%3Crect width='900' height='40' filter='url(%23a)'/%3E%3Crect width='900' height='40' filter='url(%23b)'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0) 1.8%, rgba(0, 0, 0, 0) 98.2%, rgba(0, 0, 0, 0.06)),
+    linear-gradient(180deg, var(--bk-oak-1), var(--bk-oak-2) 65%, var(--bk-oak-3));
+  background-size: auto, 900px 100%, auto, auto;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 14px 20px -15px var(--bk-wall-shadow);
+}
+.dark .bk-plank {
+  background-blend-mode: normal, soft-light, normal, normal;
+}
+.bk-cap {
+  position: relative;
+  height: 18px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: hsl(var(--muted-foreground));
+  white-space: nowrap;
+}
+.bk-cap span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  transition: opacity 0.2s;
+  opacity: 0;
+}
+/* no hover on touch screens, so no room is kept for a caption */
+@media (hover: none) {
+  .bk-cap {
+    height: 4px;
+    margin-top: 0;
+  }
+}
+.bk-cap b {
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+/* ---------- the extracted book ---------- */
+.bk-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: 24px;
+}
+.bk-modal[hidden] {
+  display: none;
+}
+.bk-back {
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--background) / 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.bk-modal.is-on .bk-back {
+  opacity: 1;
+}
+.bk-panel {
+  position: relative;
+  width: min(800px, 100%);
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 14px;
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.45);
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.bk-modal.is-on .bk-panel {
+  opacity: 1;
+  transform: none;
+}
+@keyframes bk-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.bk-modal.is-on .bk-info {
+  animation: bk-rise 0.4s 0.52s both;
+}
+.bk-stage {
+  display: grid;
+  place-items: start center;
+  padding: 44px 16px 44px 44px;
+}
+.bk-stage .bk-covw {
+  width: 220px;
+  margin-top: 6px;
+}
+.bk-covw {
+  position: relative;
+  display: block;
+  line-height: 0;
+}
+.bk-covw.is-shown {
+  transition: opacity 0.2s;
+}
+.bk-cov {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1px 3px 3px 1px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14), 0 26px 40px -22px rgba(0, 0, 0, 0.55);
+}
+/* the hinge of the binding, drawn over the cover rather than baked into it */
+.bk-covw::after,
+.bk-fly .bk-bind {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 1px 3px 3px 1px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0, rgba(255, 255, 255, 0.16) 1.6%, rgba(0, 0, 0, 0.06) 3.2%, rgba(0, 0, 0, 0) 6%);
+}
+.bk-info {
+  padding: 44px 40px 26px 20px;
+  display: flex;
+  flex-direction: column;
+}
+.bk-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 22px;
+}
+.bk-nav-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 14px;
+}
+.bk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  max-width: 48%;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: hsl(var(--muted-foreground));
+  text-align: left;
+}
+.bk-btn span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bk-btn:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+.bk-btn:focus-visible,
+.bk-x:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+.bk-x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: hsl(var(--muted-foreground));
+}
+.bk-x:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+@media (max-width: 700px) {
+  .bk-modal {
+    padding: 0;
+    align-items: end;
+  }
+  .bk-panel {
+    grid-template-columns: minmax(0, 1fr);
+    border-radius: 16px 16px 0 0;
+    max-height: 92vh;
+    max-height: 92dvh;
+    transform: translateY(40px);
+  }
+  .bk-stage {
+    padding: 30px 20px 8px;
+    place-items: center;
+  }
+  .bk-stage .bk-covw {
+    width: 150px;
+    margin: 0;
+  }
+  .bk-info {
+    padding: 20px 20px 18px;
+  }
+}
+
+/* the book in flight: a box whose front is the spine and whose right side is the cover */
+.bk-fly-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  perspective: 2200px;
+  pointer-events: none;
+}
+.bk-fly {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.bk-fly .bk-face {
+  position: absolute;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.bk-fly .bk-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  border-radius: 1px;
+}
+
+/* ---------- detail content (shared by the dialog and the book page) ---------- */
+.bk-d-cat {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+}
+.bk-d-title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 650;
+  text-wrap: balance;
+  color: hsl(var(--foreground));
+}
+.bk-d-sub {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: hsl(var(--muted-foreground));
+}
+.bk-d-authors {
+  margin: 8px 0 0;
+  font-size: 15.5px;
+  color: hsl(var(--foreground) / 0.86);
+}
+.bk-d-desc {
+  margin: 16px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: hsl(var(--foreground) / 0.9);
+}
+.bk-meta {
+  margin: 18px 0 0;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 7px 18px;
+  font-size: 13.5px;
+}
+.bk-meta dt {
+  color: hsl(var(--muted-foreground));
+}
+.bk-meta dd {
+  margin: 0;
+  color: hsl(var(--foreground));
+}
+.bk-d-section {
+  margin-top: 20px;
+}
+.bk-d-section h3 {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+.bk-d-section p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+.bk-rel {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+.bk-rel a {
+  color: hsl(var(--brand));
+  text-underline-offset: 4px;
+}
+.bk-rel a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- the book page (/books/[slug]/) ---------- */
+.bk-page {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 36px;
+  align-items: start;
+}
+@media (max-width: 640px) {
+  .bk-page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .bk-page .bk-covw {
+    width: 170px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bk-book,
+  .bk-panel,
+  .bk-back,
+  .bk-cap span {
+    transition-property: opacity, color, background-color !important;
+  }
+  .bk-book:hover,
+  .bk-book:focus-visible,
+  .bk-book.is-out {
+    transform: rotate(var(--lean)) !important;
+  }
+  .bk-panel,
+  .bk-modal.is-on .bk-panel {
+    transform: none;
+  }
+  .bk-modal.is-on .bk-info {
+    animation: none;
+  }
+}

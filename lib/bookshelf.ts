@@ -22,7 +22,7 @@ export const SHELF_BUCKETS = [720, 696, 640, 580, 520, 460, 420, 380, 358, 328, 
  * the books; a shelf that opens in the middle of a category starts with a
  * smaller continuation card. Sizes are at full scale.
  */
-const DIVIDER = { gap: 14, after: 8 }
+const DIVIDER = { gap: 20, after: 8 }
 const CONTINUATION = { after: 6 }
 const FIRST_BOOK_GAP = DIVIDER.after
 
@@ -34,7 +34,8 @@ const FIRST_BOOK_GAP = DIVIDER.after
  */
 export const LABEL_TYPE = {
   divider: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 20 } },
-  continuation: { full: { size: 10.5, char: 5.7, line: 12, base: 15 }, scaled: { size: 10, char: 5.4, line: 11, base: 14 } },
+  // Continuation cards are lettered exactly like the divider they repeat.
+  continuation: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 20 } },
 } as const
 
 /**
@@ -57,9 +58,12 @@ export function labelLines(label: string, room: number, charWidth: number): stri
   return best
 }
 
-/** Room along a card for its label: the card's height less its top and bottom insets. */
+/**
+ * Room along a card for its label: the card's height less the tab and the
+ * bottom inset. Divider and continuation cards share both.
+ */
 export function labelRoom(height: number, continued: boolean, k: number): number {
-  return height - (continued ? 12 : 24) * k
+  return height - 24 * k
 }
 
 export interface CategoryCard {
@@ -79,7 +83,7 @@ export function dividerCard(category: string, bookHeight: number, k: number): Ca
 /** The smaller card that marks a category carried over from the shelf above. */
 export function continuationCard(category: string, bookHeight: number, k: number): CategoryCard {
   const t = LABEL_TYPE.continuation[k < 1 ? 'scaled' : 'full']
-  const height = Math.round(bookHeight * 0.72)
+  const height = Math.round(bookHeight * 0.8)
   const lines = labelLines(category, labelRoom(height, true, k), t.char)
   return { lines, height, width: t.base + (lines.length - 1) * t.line }
 }

@@ -247,30 +247,17 @@
   font-size: 11.5px;
   line-height: 14px;
 }
-.bk-div[data-continued] .bk-div-label {
-  bottom: calc(6px * var(--k, 1));
-  font-size: 10.5px;
-  font-weight: 500;
-  line-height: 12px;
-}
-.bk-row[data-scaled] .bk-div[data-continued] .bk-div-label {
-  font-size: 10px;
-  line-height: 11px;
-}
-
 /* Category divider: a library guide card with a paper face and a burnt-orange tab.
-   Continuation cards are shorter, with a thin tab and muted ink. */
+   Continuation cards look the same, only shorter. */
 .bk {
   --bk-card: #f6f1e7;
   --bk-card-edge: #d9cdb8;
   --bk-card-ink: #2a251e;
-  --bk-card-muted: #6c6152;
 }
 .dark .bk {
   --bk-card: #2c2822;
   --bk-card-edge: #463e33;
   --bk-card-ink: #f1ebe0;
-  --bk-card-muted: #b9ad9a;
 }
 .bk-div {
   border-radius: 2px 2px 1px 1px;
@@ -283,7 +270,7 @@
   left: 0;
   right: 0;
   top: 0;
-  height: calc(14px * var(--k, 1));
+  height: calc(8px * var(--k, 1));
   border-radius: 2px 2px 0 0;
   background: hsl(var(--brand-bright));
 }
@@ -299,17 +286,6 @@
 .bk-div-label {
   color: var(--bk-card-ink);
 }
-.bk-div[data-continued] {
-  background: var(--bk-card);
-  box-shadow: inset 0 0 0 1px var(--bk-card-edge), 1px 0 2px rgba(0, 0, 0, 0.12);
-}
-.bk-div[data-continued]::before {
-  height: 3px;
-}
-.bk-div[data-continued] .bk-div-label {
-  color: var(--bk-card-muted);
-}
-
 /* ---------- bookend, plank, caption ---------- */
 .bk-end {
   flex: none;

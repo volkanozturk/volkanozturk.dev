@@ -572,7 +572,7 @@ export const books: Book[] = [
       src: `${COVERS}/modern-operating-systems.webp`,
       provenance: 'publisher-cover',
       source: 'Open Library cover scan of the US third edition (ISBN 9780136006633)',
-      note: 'Placeholder until the cover is taken from a photograph of the owned copy: no clean image of the orange Pearson International Edition (ISBN 9780138134594) could be found online.',
+      note: 'Artwork of the US third edition: no clean image of the Pearson International Edition cover was available.',
     },
     spine: {
       background: '#c62b2b', color: '#ffffff', font: 'serif', weight: 600,

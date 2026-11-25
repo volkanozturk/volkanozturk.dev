@@ -10,7 +10,7 @@ book is missing from it.
 |---|---|
 | Books | 35 |
 | Covers: publisher artwork for the edition on the shelf | 34 |
-| Covers: artwork of a sibling edition, pending a photograph | 1 (Modern Operating Systems) |
+| Covers: publisher artwork of the same edition's US printing | 1 (Modern Operating Systems) |
 | Spines: photographs of the owner's copies | 0 |
 | Spines: reconstructed in CSS | 35 |
 | Unverified or unavailable | 0 |
@@ -61,7 +61,7 @@ place of the reconstruction.
 | `software-architecture-in-practice` | 9780321815736 | Third edition | O’Reilly Learning catalogue cover for this edition (listed under the ebook ISBN 9780132942799) | 600×781, 36 KB |
 | `microservices-patterns` | 9781617294549 | First edition | O’Reilly Learning catalogue cover for this edition | 600×752, 27 KB |
 | `mastering-kubernetes` | 9781804611395 | Fourth edition | O’Reilly Learning catalogue cover for this edition | 600×740, 32 KB |
-| `modern-operating-systems` | 9780138134594 | Third edition, Pearson International Edition | **Placeholder:** Open Library cover scan of the US third edition (ISBN 9780136006633). No clean image of the orange Pearson International Edition could be found: Google Books and AbeBooks list this ISBN with the wrong cover (the second edition, and *Operating Systems: Design and Implementation*), and Open Library holds only a title-page scan. To be replaced from a photograph of the owned copy. | 382×500, 46 KB |
+| `modern-operating-systems` | 9780138134594 | Third edition, Pearson International Edition | Open Library cover scan of the US third edition (ISBN 9780136006633), the same edition's US printing. No clean image of the Pearson International Edition cover was available: Google Books and AbeBooks list its ISBN with the wrong book, and Open Library holds only a title-page scan. | 382×500, 46 KB |
 | `computer-organization-and-design` | 9780124077263 | Fifth edition (MIPS) | Open Library cover scan of this ISBN | 423×500, 27 KB |
 | `thinking-in-systems` | 9781603580557 | First edition, edited by Diana Wright | Open Library cover scan of this ISBN | 332×499, 21 KB |
 | `the-culture-map` | 9781610392501 | First edition | Open Library cover scan of this ISBN | 600×953, 54 KB |

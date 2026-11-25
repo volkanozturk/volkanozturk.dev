@@ -375,8 +375,8 @@ design, and they stay on this page. Do not reuse them elsewhere.
 | Plank | 24px (21px when scaled), oak gradient + SVG grain | `app/books/books.css` |
 | Oak, light | `#f7eedf` highlight, `#e4d2b5` → `#cfba98` face | same |
 | Oak, dark | `#93836b` highlight, `#6e604c` → `#584c3b` face | same |
-| Divider card | paper `#f6f1e7` / dark `#2c2822`, 1px edge, 14px `--brand-bright` tab; label 12.5px / 600 (11.5px scaled), bottom to top, up to two lines | same |
-| Continuation card | 72% of the book height, 3px tab, muted ink, 10.5px / 500 | same |
+| Divider card | paper `#f6f1e7` / dark `#2c2822`, 1px edge, 8px `--brand-bright` tab, 20px gap before it; label 12.5px / 600 (11.5px scaled), bottom to top, up to two lines | same |
+| Continuation card | identical to the divider card, at 80% of the book height | same |
 | Spine type | Inter, EB Garamond, Oswald (the last two only on `/books`) | `app/books/layout.tsx` |
 | Leaning book | 3–5°, last book of a shelf with room, otherwise a bookend | `lib/bookshelf.ts` |
 | Dialog | 800px max, cover 220px (150px below 700px), 14px radius | `app/books/books.css` |

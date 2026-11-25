@@ -89,12 +89,13 @@ is no measuring in the browser and nothing moves after load.
   (always the same angle for the same book); otherwise the shelf ends with a
   bookend.
 - Each category starts with a divider card: a paper guide card slightly
-  taller than the first book, with a burnt-orange tab at the top and the
+  taller than the first book, set a little apart from the book before it,
+  with a short burnt-orange tab at the top and the
   category name reading bottom to top (12.5px / 600, 11.5px when scaled). The
   card is never narrower than its label: a long name breaks onto a second
   line rather than being cut, and the card widens by one line.
-- A category that runs onto the next shelf repeats a shorter continuation
-  card at the start of that shelf (thin tab, muted ink, 10.5px / 500). It is
+- A category that runs onto the next shelf repeats its card at the start of
+  that shelf: the same paper, tab and lettering, at 80% of the book's height. It is
   decorative (`aria-hidden`); the category heading is the first card only.
 - Spine type is fitted to the real spine: the font may grow to 80% of the
   spine's thickness (capped at 15px), but the book is never widened. On spines

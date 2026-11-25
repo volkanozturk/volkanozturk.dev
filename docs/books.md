@@ -88,15 +88,16 @@ is no measuring in the browser and nothing moves after load.
 - Where a shelf has room at its end, its last book leans 3–5° on its neighbour
   (always the same angle for the same book); otherwise the shelf ends with a
   bookend.
-- Each category starts with a divider card: a paper guide card slightly
-  taller than the first book, set a little apart from the book before it,
-  with a short burnt-orange tab at the top and the
-  category name reading bottom to top (12.5px / 600, 11.5px when scaled). The
-  card is never narrower than its label: a long name breaks onto a second
-  line rather than being cut, and the card widens by one line.
-- A category that runs onto the next shelf repeats its card at the start of
-  that shelf: the same paper, tab and lettering, at 80% of the book's height. It is
-  decorative (`aria-hidden`); the category heading is the first card only.
+- Each category starts with a thin oak divider as tall as its first book,
+  set a little apart from the book before it, with a small burnt-orange dot
+  on top. The category name is lettered beside it, reading bottom to top
+  (12.5px / 600, 11.5px when scaled), like library signage rather than
+  another spine. A long name breaks onto a second line rather than being cut,
+  and the divider widens by one line.
+- A category that runs onto the next shelf repeats its divider at the start
+  of that shelf: the same plate, dot and lettering, at 80% of the book's
+  height. It is decorative (`aria-hidden`); the category heading is the first
+  divider only.
 - Spine type is fitted to the real spine: the font may grow to 80% of the
   spine's thickness (capped at 15px), but the book is never widened. On spines
   thinner than about 8px the publisher mark is dropped, and the author too if

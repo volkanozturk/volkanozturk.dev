@@ -18,24 +18,24 @@ import type { Book, BookCategory } from './book-types'
 export const SHELF_BUCKETS = [720, 696, 640, 580, 520, 460, 420, 380, 358, 328, 300, 288, 240] as const
 
 /**
- * Category dividers. Each category starts with a divider card standing among
- * the books; a shelf that opens in the middle of a category starts with a
- * smaller continuation card. Sizes are at full scale.
+ * Category dividers. Each category starts with a thin oak divider, its name
+ * lettered beside it; a shelf that opens in the middle of a category starts
+ * with a shorter continuation divider. Sizes are at full scale.
  */
 const DIVIDER = { gap: 20, after: 8 }
 const CONTINUATION = { after: 6 }
 const FIRST_BOOK_GAP = DIVIDER.after
 
 /**
- * Card label type, which stays readable rather than scaling with the shelf:
- * divider 12.5px / 600 (11.5px on scaled shelves), continuation 10.5px / 500
- * (10px). `char` is the average advance per character; `line` the width each
- * line of text adds to the card; `base` the card's width with one line.
+ * Divider label type, which stays readable rather than scaling with the shelf:
+ * 12.5px / 600 (11.5px on scaled shelves). `char` is the average advance per
+ * character; `line` the width each line of text adds; `base` the divider's
+ * width with one line (label, gap and the 2px plate).
  */
 export const LABEL_TYPE = {
-  divider: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 20 } },
-  // Continuation cards are lettered exactly like the divider they repeat.
-  continuation: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 20 } },
+  divider: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 21 } },
+  // Continuation dividers are lettered exactly like the divider they repeat.
+  continuation: { full: { size: 12.5, char: 7.0, line: 15, base: 22 }, scaled: { size: 11.5, char: 6.45, line: 14, base: 21 } },
 } as const
 
 /**
@@ -59,11 +59,11 @@ export function labelLines(label: string, room: number, charWidth: number): stri
 }
 
 /**
- * Room along a card for its label: the card's height less the tab and the
- * bottom inset. Divider and continuation cards share both.
+ * Room beside a divider for its label: the divider's height less the dot
+ * and the insets. Divider and continuation dividers share both.
  */
 export function labelRoom(height: number, continued: boolean, k: number): number {
-  return height - 24 * k
+  return height - 14 * k
 }
 
 export interface CategoryCard {
@@ -72,15 +72,15 @@ export interface CategoryCard {
   height: number
 }
 
-/** The divider card that opens a category, beside a first book `bookHeight` tall. */
+/** The divider that opens a category, as tall as its first book. */
 export function dividerCard(category: string, bookHeight: number, k: number): CategoryCard {
   const t = LABEL_TYPE.divider[k < 1 ? 'scaled' : 'full']
-  const height = Math.round(bookHeight + 6 * k)
+  const height = Math.round(bookHeight)
   const lines = labelLines(category, labelRoom(height, false, k), t.char)
   return { lines, height, width: t.base + (lines.length - 1) * t.line }
 }
 
-/** The smaller card that marks a category carried over from the shelf above. */
+/** The shorter divider that marks a category carried over from the shelf above. */
 export function continuationCard(category: string, bookHeight: number, k: number): CategoryCard {
   const t = LABEL_TYPE.continuation[k < 1 ? 'scaled' : 'full']
   const height = Math.round(bookHeight * 0.8)
@@ -233,15 +233,15 @@ export interface ShelfBook {
 export interface ShelfDivider {
   kind: 'divider'
   category: BookCategory
-  /** The label, broken into lines when it is longer than the card. */
+  /** The label, broken into lines when it is longer than the divider. */
   lines: string[]
   width: number
-  /** The card stands a little taller than the book after it. */
+  /** The divider stands as tall as the book after it (80% for a continuation). */
   height: number
   first: boolean
-  /** A continuation card: the category carries over from the shelf above. */
+  /** A continuation divider: the category carries over from the shelf above. */
   continued: boolean
-  /** Space before and after the card, in pixels. */
+  /** Space before and after the divider, in pixels. */
   before: number
   after: number
 }

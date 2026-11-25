@@ -15,7 +15,7 @@
   --bk-wall-shadow: rgba(70, 55, 35, 0.26);
   --bk-contact: rgba(45, 35, 22, 0.5);
   --bk-plate: #bba98c;
-  --bk-label: #4f4a42;
+  --bk-label: #2f2a24;
   --bk-end: #3f4044;
   --bk-spine-line: rgba(0, 0, 0, 0.09);
 }
@@ -28,7 +28,7 @@
   --bk-wall-shadow: rgba(0, 0, 0, 0.6);
   --bk-contact: rgba(0, 0, 0, 0.7);
   --bk-plate: #8f8270;
-  --bk-label: #d2c9bb;
+  --bk-label: #ece4d6;
   --bk-end: #7b7e85;
   --bk-spine-line: rgba(255, 255, 255, 0.06);
 }
@@ -247,45 +247,36 @@
   font-size: 11.5px;
   line-height: 14px;
 }
-/* Category divider: a library guide card with a paper face and a burnt-orange tab.
-   Continuation cards look the same, only shorter. */
-.bk {
-  --bk-card: #f6f1e7;
-  --bk-card-edge: #d9cdb8;
-  --bk-card-ink: #2a251e;
-}
-.dark .bk {
-  --bk-card: #2c2822;
-  --bk-card-edge: #463e33;
-  --bk-card-ink: #f1ebe0;
-}
-.bk-div {
-  border-radius: 2px 2px 1px 1px;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.07)), var(--bk-card);
-  box-shadow: inset 0 0 0 1px var(--bk-card-edge), 1px 0 2px rgba(0, 0, 0, 0.18);
-}
+/* Category divider: a thin oak plate, as tall as the books beside it, with a
+   small burnt-orange dot on top and the category name lettered beside it like
+   library signage. Continuation dividers are the same, only shorter. */
 .bk-div::before {
   content: '';
   position: absolute;
-  left: 0;
   right: 0;
-  top: 0;
-  height: calc(8px * var(--k, 1));
-  border-radius: 2px 2px 0 0;
-  background: hsl(var(--brand-bright));
+  bottom: 0;
+  top: calc(9px * var(--k, 1));
+  width: 2px;
+  border-radius: 1px 1px 0 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--bk-plate) 85%, #fff), color-mix(in srgb, var(--bk-plate) 72%, #000));
+  box-shadow: 1px 0 1.5px rgba(0, 0, 0, 0.16);
 }
 .bk-div::after {
   content: '';
   position: absolute;
-  left: -1px;
-  right: -2px;
-  top: 100%;
-  height: 6px;
-  background: radial-gradient(70% 100% at 45% 0, color-mix(in srgb, var(--bk-contact) 55%, transparent), transparent 80%);
+  right: -1.5px;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: hsl(var(--brand-bright));
 }
 .bk-div-label {
-  color: var(--bk-card-ink);
+  right: 7px;
+  bottom: calc(2px * var(--k, 1));
+  color: var(--bk-label);
 }
+
 /* ---------- bookend, plank, caption ---------- */
 .bk-end {
   flex: none;

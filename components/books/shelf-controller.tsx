@@ -240,11 +240,22 @@ export function ShelfController({ books, shelf, list }: {
       const b = document.createElement('b')
       b.textContent = book.title
       cap.append(b, ` · ${formatAuthors(book.authors)}`)
+      cap.style.top = ''
       cap.style.opacity = '1'
-      const rowBox = row.getBoundingClientRect()
-      const cx = spine.getBoundingClientRect().left - rowBox.left + spine.offsetWidth / 2
+      // Centred under the book, kept inside both the shelf and the viewport.
+      const box = cap.parentElement!.getBoundingClientRect()
+      const spineBox = spine.getBoundingClientRect()
+      const viewport = document.documentElement.clientWidth
+      const min = Math.max(0, 8 - box.left)
+      const max = Math.min(box.width, viewport - 8 - box.left)
       const w = cap.offsetWidth
-      cap.style.left = `${Math.min(Math.max(cx, w / 2), rowBox.width - w / 2)}px`
+      const cx = spineBox.left - box.left + spineBox.width / 2
+      cap.style.left = `${Math.max(min, Math.min(cx - w / 2, max - w))}px`
+      // Below the fold, it moves above the book instead.
+      const h = cap.offsetHeight
+      if (box.top + h > window.innerHeight - 8 && spineBox.top - h - 8 >= 0) {
+        cap.style.top = `${spineBox.top - box.top - h - 8}px`
+      }
     },
     [bySlug]
   )

@@ -5,7 +5,7 @@ import path from 'node:path'
 import { books } from '../content/books.ts'
 import { BOOK_CATEGORIES } from '../lib/book-types.ts'
 import { isValidIsbn13, validateBooks } from '../lib/book-validation.ts'
-import { LABEL_TYPE, SHELF_BUCKETS, labelRoom, layoutShelves, pack, packBalanced, rowWidth, spineGeometry } from '../lib/bookshelf.ts'
+import { SHELF_BUCKETS, layoutShelves, pack, packBalanced, rowWidth, spineGeometry } from '../lib/bookshelf.ts'
 
 const root = path.resolve(import.meta.dirname, '..')
 const postSlugs = new Set(fs.readdirSync(path.join(root, 'content/posts')).map((f) => f.replace(/\.md$/, '')))
@@ -101,8 +101,36 @@ test('balanced packing uses no more rows than greedy packing', () => {
   for (const w of [200, 300, 500]) assert.ok(packBalanced(items, w).length <= pack(items, w).length)
 })
 
+/**
+ * The rendered shelf, as `app/books/books.css` draws it: categories stand as
+ * groups `gap` apart inside `pad` on each side, each group closed by a 3px
+ * bookend (with 1px margin) unless its last book leans, and labelled
+ * horizontally under its first book in 10px / 600 type. Below 696px a label
+ * may overhang its group by 13px and wraps beyond that. Keep in step with the
+ * CSS.
+ */
+const RENDER = (width) => (width >= 696 ? { pad: 16, gap: 52, labelOverhang: Infinity } : { pad: 12, gap: 16, labelOverhang: 13 })
+const BOOKEND = 4
+const LABEL = { char: 5.2, chrome: 12 }
+
+function renderedGroups(shelf) {
+  const groups = []
+  for (const it of shelf.items) {
+    if (it.kind === 'divider') groups.push({ label: it.category, books: [] })
+    else {
+      if (!groups.length) groups.push({ books: [] })
+      groups[groups.length - 1].books.push(it)
+    }
+  }
+  return groups.map((g) => {
+    const last = g.books[g.books.length - 1]
+    const width = g.books.reduce((sum, b) => sum + b.geometry.width + (b.lean ? b.lean.offset : 0), 0) + (last.lean ? 0 : BOOKEND)
+    return { ...g, width }
+  })
+}
+
 for (const width of SHELF_BUCKETS) {
-  test(`layout at ${width}px keeps every book once, in order, inside the column`, () => {
+  test(`layout at ${width}px keeps every book once, in order, inside the rendered shelf`, () => {
     const layout = layoutShelves(books, BOOK_CATEGORIES, width)
     const shelved = layout.shelves.flatMap((s) => s.items.filter((i) => i.kind === 'book').map((i) => i.book.slug))
     const expected = BOOK_CATEGORIES.flatMap((c) => books.filter((b) => b.category === c).map((b) => b.slug))
@@ -111,41 +139,36 @@ for (const width of SHELF_BUCKETS) {
     const dividers = layout.shelves.flatMap((s) => s.items.filter((i) => i.kind === 'divider').map((i) => i.category))
     assert.deepEqual(dividers, [...BOOK_CATEGORIES])
 
-    const inner = width - 2 * layout.padding
+    const { pad, gap, labelOverhang } = RENDER(width)
+    const inner = width - 2 * pad
     for (const [i, shelf] of layout.shelves.entries()) {
       const last = shelf.items[shelf.items.length - 1]
       assert.notEqual(last.kind, 'divider', `shelf ${i} ends in a divider`)
-      for (const it of shelf.items) if (it.kind === 'divider') assert.ok(it.height <= shelf.height, `card taller than shelf ${i}`)
-      const used = shelf.items.reduce((sum, it) => {
-        if (it.kind === 'divider') return sum + it.before + it.width + it.after
-        return sum + it.geometry.width + (it.lean ? it.lean.offset : 0)
-      }, 0)
-      assert.ok(used <= inner + 1, `shelf ${i} is ${used}px in a ${inner}px column`)
       const leaning = shelf.items.filter((it) => it.kind === 'book' && it.lean)
       assert.ok(leaning.length <= 1)
       for (const it of leaning) {
         assert.ok(Math.abs(it.lean.degrees) >= 3 && Math.abs(it.lean.degrees) <= 5)
         assert.equal(it, last, 'only the last book on a shelf leans')
       }
-      assert.ok(leaning.length === 1 || shelf.bookend !== undefined, `shelf ${i} has neither a leaning book nor a bookend`)
+
+      const groups = renderedGroups(shelf)
+      const used = groups.reduce((sum, g, j) => sum + g.width + (j ? gap : 0), 0)
+      assert.ok(used <= inner, `shelf ${i} is ${Math.round(used)}px in a ${inner}px shelf`)
+
+      // Labels stay on the shelf and clear of the next group.
+      let x = 0
+      for (const [j, g] of groups.entries()) {
+        if (g.label) {
+          const text = g.label.length * LABEL.char + LABEL.chrome
+          const box = Math.min(text, g.width + labelOverhang)
+          const limit = j < groups.length - 1 ? x + g.width + gap - 2 : inner + pad
+          assert.ok(x + box <= limit, `${width}: "${g.label}" runs ${Math.round(x + box - limit)}px into its neighbour`)
+        }
+        x += g.width + gap
+      }
     }
   })
 }
-
-test('category labels fit their cards without clipping', () => {
-  for (const width of SHELF_BUCKETS) {
-    const layout = layoutShelves(books, BOOK_CATEGORIES, width)
-    const k = layout.scale
-    for (const shelf of layout.shelves)
-      for (const it of shelf.items)
-        if (it.kind === 'divider') {
-          assert.ok(it.lines.length <= 2, `${width}: "${it.category}" needs ${it.lines.length} lines`)
-          const perChar = LABEL_TYPE[k < 1 ? 'scaled' : 'full'].char
-          const room = labelRoom(it.height, k)
-          for (const line of it.lines) assert.ok(line.length * perChar <= room, `${width}: "${line}" in ${Math.round(room)}px`)
-        }
-  }
-})
 
 test('spine size follows the book: taller books stand taller, thicker books are wider', () => {
   const tall = books.find((b) => b.slug === 'modern-operating-systems')

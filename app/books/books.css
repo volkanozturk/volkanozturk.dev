@@ -115,10 +115,11 @@ div:has(> main > .bk > .bk-library) {
   display: flex;
   align-items: flex-end;
   gap: 52px;
-  height: 300px;
+  min-height: 300px;
   padding: 0 16px 8px;
 }
-.bk-layout[data-w='696'] .bk-row:nth-child(2) { height: 274px; }
+/* The first desktop shelf hangs a little higher; a taller book still grows it. */
+.bk-layout[data-w='696'] .bk-tracks + .bk-row { min-height: 274px; }
 .bk-deck {
   position: absolute;
   inset: auto 0 0;
@@ -188,30 +189,39 @@ div:has(> main > .bk > .bk-library) {
   height: 2px;
   background: var(--bk-mount);
 }
+/* The caption sits under its shelf, in the gap the next shelf's books reach
+   into, so it is stacked above the books, tracks and labels of every shelf in
+   this layout (`.bk-layout` isolates the stacking) and carries its own plate. */
 .bk-cap {
   position: absolute;
   inset: auto 0 -46px;
+  z-index: 4;
   height: 18px;
   pointer-events: none;
   color: hsl(var(--muted-foreground));
   font-size: 13px;
+  line-height: 18px;
   text-align: center;
 }
 .bk-cap span {
   position: absolute;
   top: 0;
+  left: 0;
+  width: max-content;
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transform: translateX(-50%);
+  padding: 2px 8px;
+  border: 1px solid var(--bk-label-border);
+  border-radius: 3px;
+  background: var(--bk-label-bg);
+  box-shadow: 0 2px 6px -2px #2b281f33;
+  text-wrap: balance;
   opacity: 0;
   transition: opacity .2s;
 }
 .bk-cap b { color: hsl(var(--foreground)); font-weight: 500; }
 
 @container (width < 696px) {
-  .bk-row { gap: 16px; height: auto; padding-inline: 12px; }
+  .bk-row { gap: 16px; min-height: 0; padding-inline: 12px; }
   .bk-label { max-width: calc(100% + 13px); }
   .bk-row + .bk-row { margin-top: 25px; }
   .bk-cap { bottom: -57px; }

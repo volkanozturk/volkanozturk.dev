@@ -10,27 +10,30 @@ import type { Book, BookCategory } from './book-types'
  */
 
 /**
- * Column widths the shelf is packed for, widest first. They cover the content
- * column at every viewport the site supports: 720px at tablet width, 696px
- * beside the sidebar, down to 288px on a 320px phone. The last is a floor for
- * anything narrower.
+ * Column widths the shelf is packed for, widest first. 696px is the desktop
+ * shelf, the widest the page shows; 288px fits a 320px phone. The last is a
+ * floor for anything narrower.
  */
-export const SHELF_BUCKETS = [720, 696, 640, 580, 520, 460, 420, 380, 358, 328, 300, 288, 240] as const
+export const SHELF_BUCKETS = [696, 640, 580, 520, 460, 420, 380, 358, 328, 300, 288, 240] as const
 
 /**
- * Category dividers. Each category starts with a thin oak divider, its name
- * lettered beside it. Books continue in reading order across shelf breaks.
+ * Packing allowance for a category break. The rendered shelf places each
+ * category as a group with a horizontal label under it; the packer still
+ * reserves room for the break as a narrow card and a gap. These numbers give
+ * the approved arrangements (19/16 on the desktop shelf), and they keep enough
+ * slack on narrow shelves for the labels. `tests/books.test.mjs` checks the
+ * rendered widths and labels against every bucket, so a new book that would
+ * crowd a shelf fails the tests rather than the page.
  */
 const DIVIDER = { gap: 20, after: 8 }
 const FIRST_BOOK_GAP = DIVIDER.after
 
 /**
- * Divider label type, which stays readable rather than scaling with the shelf:
- * 12.5px / 600 (11.5px on scaled shelves). `char` is the average advance per
- * character; `line` the width each line of text adds; `base` the divider's
- * width with one line (label, gap and the 2px plate).
+ * Size of the category card the packer reserves. `char` is the average
+ * advance per character; `line` the width each extra line adds; `base` the
+ * card's width with one line.
  */
-export const LABEL_TYPE = {
+const LABEL_TYPE = {
   full: { char: 7.0, line: 15, base: 22 },
   scaled: { char: 6.45, line: 14, base: 21 },
 } as const
@@ -39,7 +42,7 @@ export const LABEL_TYPE = {
  * A label in as many lines as it needs to fit `room` pixels along the card.
  * Lines break between words, as evenly as possible.
  */
-export function labelLines(label: string, room: number, charWidth: number): string[] {
+function labelLines(label: string, room: number, charWidth: number): string[] {
   if (label.length * charWidth <= room) return [label]
   const words = label.split(' ')
   let best: string[] = [label]
@@ -55,22 +58,19 @@ export function labelLines(label: string, room: number, charWidth: number): stri
   return best
 }
 
-/**
- * Room beside a divider for its label: the divider's height less the dot
- * and the insets.
- */
-export function labelRoom(height: number, k: number): number {
+/** Room along a card for its label: the card's height less the insets. */
+function labelRoom(height: number, k: number): number {
   return height - 14 * k
 }
 
-export interface CategoryCard {
+interface CategoryCard {
   lines: string[]
   width: number
   height: number
 }
 
-/** The divider that opens a category, as tall as its first book. */
-export function dividerCard(category: string, bookHeight: number, k: number): CategoryCard {
+/** The card reserved where a category opens, as tall as its first book. */
+function dividerCard(category: string, bookHeight: number, k: number): CategoryCard {
   const t = LABEL_TYPE[k < 1 ? 'scaled' : 'full']
   const height = Math.round(bookHeight)
   const lines = labelLines(category, labelRoom(height, k), t.char)
@@ -215,32 +215,20 @@ export interface ShelfBook {
   lean?: { degrees: number; offset: number }
 }
 
+/** Where a category opens: its label goes under the books that follow. */
 export interface ShelfDivider {
   kind: 'divider'
   category: BookCategory
-  /** The label, broken into lines when it is longer than the divider. */
-  lines: string[]
-  width: number
-  /** The divider stands as tall as the book after it. */
-  height: number
-  /** Space before and after the divider, in pixels. */
-  before: number
-  after: number
 }
 
 export interface Shelf {
   items: (ShelfBook | ShelfDivider)[]
-  /** Height of the space above the plank. */
+  /** Height of the tallest book plus headroom. */
   height: number
-  /** Bookend height, when the shelf ends in a bookend rather than a leaning book. */
-  bookend?: number
 }
 
 export interface ShelfLayout {
   width: number
-  scale: number
-  padding: number
-  plank: number
   shelves: Shelf[]
 }
 
@@ -304,37 +292,19 @@ export function layoutShelves(books: Book[], categories: readonly BookCategory[]
       if (inner - rowWidth(row) > offset + 8) lean = { slug: lastItem.book.slug, degrees: -degrees, offset }
     }
 
-    const items = row.map((it, i): ShelfBook | ShelfDivider => {
+    const items = row.map((it): ShelfBook | ShelfDivider => {
       if (it.kind === 'book') {
         const g = geometry.get(it.book.slug)!
         return lean?.slug === it.book.slug
           ? { kind: 'book', book: it.book, geometry: g, lean: { degrees: lean.degrees, offset: lean.offset } }
           : { kind: 'book', book: it.book, geometry: g }
       }
-      const { lines, width, height } = it.card
-      return {
-        kind: 'divider',
-        category: it.category,
-        lines,
-        width,
-        height,
-        before: i === 0 ? 0 : it.gap,
-        after: Math.round(FIRST_BOOK_GAP * k),
-      }
+      return { kind: 'divider', category: it.category }
     })
-    return {
-      items,
-      height: Math.round(tallest + 12 * k),
-      bookend: lean ? undefined : Math.round(Math.min(...heights) * 0.5),
-    }
+    return { items, height: Math.round(tallest + 12 * k) }
   })
 
-  return { width, scale: k, padding, plank: Math.round(24 * Math.max(k, 0.86)), shelves }
-}
-
-/** The narrowest bucket a container of `width` pixels can show. */
-export function bucketFor(width: number): number {
-  return SHELF_BUCKETS.find((b) => b <= width) ?? SHELF_BUCKETS[SHELF_BUCKETS.length - 1]
+  return { width, shelves }
 }
 
 function round1(n: number): number {
